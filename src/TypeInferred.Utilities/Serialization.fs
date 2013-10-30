@@ -35,12 +35,7 @@ let (|ArrayType|_|) (t : Type) =
     else None
 
 let isType<'a> (t : Type) =
-    if t.FullName = typeof<'a>.FullName then 
-        let extract(obj : obj) =
-            match obj with
-            | :? 'a as x -> x
-            | _ -> failwith ("Expected a " + typeof<'a>.Name)
-        Some extract
+    if t.FullName = typeof<'a>.FullName then Some unbox<'a>
     else None
 
 let (|StringType|_|) t = isType<string> t
@@ -219,8 +214,11 @@ let precomputeDeserializerAux (precomputeDeserializer : _ -> _ Lazy) t : JsonRea
     | BoolType _ -> fun jr -> readValue Boolean.Parse jr
     | _ -> failwith ("Cannot serialize type: " + t.Name)
 
+type StringWriter with
+    member sw.Append(value : obj) =
+        sw.Write value; sw
 
-let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> StringBuilder -> unit =
+let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> StringWriter -> unit =
     match t with
     | RecordType pis ->
         let propWriters = pis |> Array.map (fun pi -> 
@@ -230,7 +228,7 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
             name, fun obj sb ->
                 let propertyObject = propertyReader obj
                 propertySerializer.Value propertyObject sb)
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             sb.Append "{" |> ignore
             for i = 0 to propWriters.Length - 1 do
                 if i <> 0 then
@@ -247,7 +245,7 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
             let serializers = uci.GetFields() |> Array.map (fun pi -> precomputeSerializer pi.PropertyType)
             fieldNames, readCase, serializers)
         let tagNames = ucis |> Array.map (fun uci -> uci.Name)
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let tag = readTag obj
             let name = tagNames.[tag]
             sb.Append("{").Append('"').Append(name).Append('"').Append(":{") |> ignore
@@ -264,20 +262,18 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
             sb.Append("}}") |> ignore
     | ArrayType elementType ->
         let serializeElement = precomputeSerializer elementType
-        fun obj (sb : StringBuilder) ->
-            match obj with
-            | :? Array as xs ->
-                sb.Append("[") |> ignore
-                for i = 0 to xs.Length - 1 do
-                    if i <> 0 then
-                        sb.Append(",") |> ignore
-                    serializeElement.Value (xs.GetValue i) sb
-                sb.Append("]") |> ignore
-            | _ -> failwith "Expected an object that is a sub type of System.Array."
+        fun obj (sb : StringWriter) ->
+            let xs = unbox<Array> obj
+            sb.Append("[") |> ignore
+            for i = 0 to xs.Length - 1 do
+                if i <> 0 then
+                    sb.Append(",") |> ignore
+                serializeElement.Value (xs.GetValue i) sb
+            sb.Append("]") |> ignore
     | TupleType ts ->
         let readTuple = FSharpValue.PreComputeTupleReader t
         let elementSerializers = ts |> Array.map precomputeSerializer
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let elements = readTuple obj
             sb.Append "{" |> ignore
             for i = 0 to elements.Length - 1 do
@@ -289,35 +285,35 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
                 serialize.Value element sb
             sb.Append "}" |> ignore
     | StringType extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append('"').Append(x).Append('"') |> ignore
     | Int32Type extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | Int64Type extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | UInt32Type extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | UInt64Type extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | FloatType extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | DecimalType extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             let x = extract obj
             sb.Append(x) |> ignore
     | BoolType extract ->
-        fun obj (sb : StringBuilder) ->
+        fun obj (sb : StringWriter) ->
             // NOTE: needs to be in lower case
             let value =
                 match extract obj with
@@ -333,14 +329,14 @@ let precomputeSerializer t =
 let precomputeTypeToJson t =
     let serialize = precomputeSerializer t
     fun (obj : obj) ->
-        let sb = StringBuilder()
+        use sb = new StringWriter()
         serialize obj sb
         sb.ToString()
 
 let precomputeToJson<'a>() =
     let serialize = precomputeSerializer typeof<'a>
     fun (obj : 'a) ->
-        let sb = StringBuilder()
+        use sb = new StringWriter()
         serialize obj sb
         sb.ToString()
 
