@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>TypeInferred.HashBang</id>
+    <authors>Zach Bray</authors>
+    <version>0.1</version>
+    <projectUrl>http://www.funscript.info</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A library for building web servers. Compatible with FunScript. Exports human-readable documentation.</description>
+    <copyright>Copyright 2013</copyright>
+    <tags>F# FSharp JavaScript TypeProvider FunScript</tags>
+  </metadata>
+</package>

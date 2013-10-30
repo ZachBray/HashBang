@@ -1,0 +1,19 @@
+bin
+obj
+[Rr]elease*/
+_ReSharper*/
+*.ReSharper
+*.ReSharper.user
+*.suo
+*.user
+*.fs.bak
+*.userprefs
+*.fs.bak
+*.nupkg
+*.*~
+:
+deploy/NuGet/lib
+build
+
+# Generated documentation
+Docs/output/*

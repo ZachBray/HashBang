@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.Utilities", "TypeInferred.Utilities\TypeInferred.Utilities.fsproj", "{2C4CDEF2-2613-4514-87EF-029E18A6D033}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Core", "TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj", "{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Provider", "TypeInferred.HashBang.Provider\TypeInferred.HashBang.Provider.fsproj", "{97AD7CCF-830D-444A-BE52-B6C0B5444C67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C4CDEF2-2613-4514-87EF-029E18A6D033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4CDEF2-2613-4514-87EF-029E18A6D033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4CDEF2-2613-4514-87EF-029E18A6D033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4CDEF2-2613-4514-87EF-029E18A6D033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97AD7CCF-830D-444A-BE52-B6C0B5444C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97AD7CCF-830D-444A-BE52-B6C0B5444C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97AD7CCF-830D-444A-BE52-B6C0B5444C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97AD7CCF-830D-444A-BE52-B6C0B5444C67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
