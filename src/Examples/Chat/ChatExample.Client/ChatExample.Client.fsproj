@@ -11,6 +11,8 @@
     <AssemblyName>FunScript.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>FunScript.Test</Name>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,20 +86,20 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="TypeInferred.HashBang.Core">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.2\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Provider">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.2\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.Utilities">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.2\lib\net40\TypeInferred.Utilities.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.Utilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="Client.fs" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -112,6 +114,7 @@
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

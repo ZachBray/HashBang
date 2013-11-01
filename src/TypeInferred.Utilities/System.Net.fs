@@ -22,7 +22,6 @@ module HttpListener =
 
     let create prefix handle =
         async {
-            Netsh.addUrlAcl prefix
             use listener = new HttpListener()
             listener.Prefixes.Add prefix
             listener.Start()

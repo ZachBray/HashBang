@@ -492,6 +492,7 @@ type Website =
                 "Pragma", "no-cache"
                 "Expires", "0"
                 "Access-Control-Allow-Origin", "*"
+                "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"
             |]
 
         HttpListener.create site.Prefix (fun rawReq rawResp ->

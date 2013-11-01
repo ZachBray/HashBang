@@ -3,7 +3,7 @@
   <metadata>
     <id>TypeInferred.HashBang</id>
     <authors>Zach Bray</authors>
-    <version>0.1.2</version>
+    <version>0.1.4</version>
     <projectUrl>http://www.funscript.info</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A library for building web servers. Compatible with FunScript. Exports human-readable documentation.</description>

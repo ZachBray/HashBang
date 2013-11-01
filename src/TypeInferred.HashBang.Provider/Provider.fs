@@ -16,9 +16,18 @@ type HashBangAPIProviderImpl(config : TypeProviderConfig) as this =
 
     let deserialize = precomputeFromJson<HandlerMetadata[]>()
 
+    let rec checkForChanges(json, schemaUrl) = async {
+        do! Async.Sleep 10000
+        let foundJson = 
+            File.ReadAllTextRelativeAbsoluteOrHttpText(config.ResolutionFolder, schemaUrl)
+        if json = foundJson then return! checkForChanges(json, schemaUrl)
+        else this.Invalidate()
+    }
+
     let generateTypeGraph requestedName schemaUrl =
         let root = ProvidedTypeDefinition(ass, nspace, requestedName, None)
         let json = File.ReadAllTextRelativeAbsoluteOrHttpText(config.ResolutionFolder, schemaUrl)
+        checkForChanges(json, schemaUrl) |> Async.Start
         let handlers = deserialize json
         let dataContext, domainTypes = Generation.generateFrom handlers
         root.AddMember dataContext
