@@ -60,6 +60,8 @@ let messageBox =
         loop [] []
     )
 
+let cometTimeout = 10000
+
 /// Creates a Chat API.
 let createServer() =
     // Here we define what the server will listen to.
@@ -90,8 +92,8 @@ let createServer() =
                 // The second curried parameter accepts a string, as this is a specified
                 // parameter in the route path "{id:%s}".
                 Handle = fun () lastId -> async {
-                    let! msgs = messageBox.PostAndTryAsyncReply(fun c -> 
-                                    GetSince(Some(Guid.Parse lastId), c))
+                    let! msgs = messageBox.PostAndTryAsyncReply((fun c -> 
+                                    GetSince(Some(Guid.Parse lastId), c)), cometTimeout)
                     return OK msgs
                 }
             }
@@ -100,8 +102,9 @@ let createServer() =
                 Resource = "Message"; Action = "GetAll"
                 Description = "Returns all the messages so far."
                 Handle = fun () () -> async {
-                    let timeout = 10000
-                    let! msgs = messageBox.PostAndTryAsyncReply((fun c -> GetSince(None, c)), timeout)
+                    
+                    let! msgs = messageBox.PostAndTryAsyncReply((fun c -> 
+                                    GetSince(None, c)), cometTimeout)
                     return OK msgs
                 }
             }
