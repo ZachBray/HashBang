@@ -46,15 +46,15 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="TypeInferred.HashBang.Core">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.5\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Provider">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.5\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.Utilities">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.4\lib\net40\TypeInferred.Utilities.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.5\lib\net40\TypeInferred.Utilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
