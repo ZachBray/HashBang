@@ -61,19 +61,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript">
-      <HintPath>..\packages\FunScript.1.1.0.15\lib\net40\FunScript.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.17\lib\net40\FunScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.BrowserAPI">
-      <HintPath>..\packages\FunScript.1.1.0.15\lib\net40\FunScript.BrowserAPI.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.17\lib\net40\FunScript.BrowserAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Data">
-      <HintPath>..\packages\FunScript.1.1.0.15\lib\net40\FunScript.Data.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.17\lib\net40\FunScript.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Interop">
-      <HintPath>..\packages\FunScript.1.1.0.15\lib\net40\FunScript.Interop.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.17\lib\net40\FunScript.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">

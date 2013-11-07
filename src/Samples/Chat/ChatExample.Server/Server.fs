@@ -119,6 +119,7 @@ let createServer() =
 [<EntryPoint>]
 let main argv = 
     printfn "%A" argv
+    System.Net.Netsh.addUrlAcl "http://*:8080/"
     use webserver = createServer()
     printfn "Press Return key to kill server."
     System.Console.ReadLine() |> ignore

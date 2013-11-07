@@ -3,6 +3,8 @@ module TypeInferred.HashBang.Core
 
 open System
 open System.Net
+open System.IO
+open System.IO.Compression
 open System.Text
 open System.Reflection
 open System.Globalization
@@ -492,9 +494,10 @@ type Website =
                 "Pragma", "no-cache"
                 "Expires", "0"
                 "Access-Control-Allow-Origin", "*"
-                "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+                "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Accept-Encoding"
             |]
 
+        // TODO: Do negotiations... content-type, encoding, etc.
         HttpListener.create site.Prefix (fun rawReq rawResp ->
             async {
                 try
@@ -522,14 +525,26 @@ type Website =
                         match content with
                         | None -> ()
                         | Some(contentType, body) ->
-                            let bodyBytes = Encoding.UTF8.GetBytes body
-                            rawResp.ContentType <- contentType.Mime
-                            rawResp.ContentEncoding <- Text.Encoding.UTF8
-                            rawResp.ContentLength64 <- bodyBytes.LongLength
-                            let stream = rawResp.OutputStream
+                            let bodyBytes = 
+                                let uncompressed = Encoding.UTF8.GetBytes body
+                                match rawReq.Headers.["Accept-Encoding"] with
+                                | vs when vs <> null && vs.Contains "gzip" -> 
+                                    rawResp.AddHeader("Content-Encoding", "gzip")
+                                    use memoryStream = new MemoryStream()
+                                    use compressor = new GZipStream(memoryStream, CompressionMode.Compress, false)
+                                    compressor.Write(uncompressed, 0, uncompressed.Length)
+                                    compressor.Flush()
+                                    compressor.Close()
+                                    memoryStream.ToArray()
+                                | _ -> 
+                                    rawResp.ContentEncoding <- Text.Encoding.UTF8
+                                    uncompressed                                
+                            rawResp.ContentLength64 <- bodyBytes.LongLength 
+                            rawResp.ContentType <- contentType.Mime                           
+                            use stream = rawResp.OutputStream
                             do! stream.AsyncWrite bodyBytes
                             let! _ = Async.AwaitIAsyncResult(stream.FlushAsync())
-                            rawResp.OutputStream.Close()
+                            stream.Close()
                     with ex ->
                         printfn "%s" (ex.ToString())
                         //TODO: log

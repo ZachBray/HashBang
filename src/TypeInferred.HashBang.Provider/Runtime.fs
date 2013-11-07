@@ -4,6 +4,8 @@ module TypeInferred.HashBang.Provider.Runtime
 open System
 open System.Net
 open System.Text
+open System.IO
+open System.IO.Compression
 open TypeInferred.HashBang.Runtime
 
 module Serialization =
@@ -65,9 +67,12 @@ type ApiRequest(httpMethod, urlParts : UrlPart[]) =
     
     member req.Send(dc) =
         async {
-            //TODO: Set content-type / read content-type
             let httpReq = WebRequest.Create(req.BuildUrl dc)
             httpReq.Method <- httpMethod
+            httpReq.Headers.Add("Accept", "application/json")
+            httpReq.Headers.Add("Accept-Encoding", "gzip")
+            // This causes an additional OPTIONS request...
+            // httpReq.Headers.Add("Content-Type", "application/json")
             headers |> Map.iter (fun key value ->
                 httpReq.Headers.Add(key, value))
             match body with
@@ -79,8 +84,13 @@ type ApiRequest(httpMethod, urlParts : UrlPart[]) =
             use! httpRsp = httpReq.AsyncGetResponse()
             if httpRsp.ContentLength > 0L then
                 use outputStream = httpRsp.GetResponseStream()
-                // Assumption: less than int32 bytes of content
-                let! outBytes = outputStream.AsyncRead (int httpRsp.ContentLength)
+                let! bytes = outputStream.AsyncRead(int httpRsp.ContentLength)
+                use memoryStream = new MemoryStream()
+                use uncompressedStream = new GZipStream(memoryStream, CompressionMode.Decompress, false)
+                uncompressedStream.Write(bytes, 0, bytes.Length)
+                uncompressedStream.Flush()
+                uncompressedStream.Close()
+                let outBytes = memoryStream.ToArray()
                 let outText = Encoding.UTF8.GetString outBytes
                 return Some outText
             else
