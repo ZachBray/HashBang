@@ -105,7 +105,15 @@ let findAttributes tag root =
                             elif str.StartsWith "#" then
                                 StringVariable(clean (str.Substring 1))
                             else Case(clean str))
-                    let description = descriptionNode.InnerText.Replace('\r',' ').Replace('\n',' ')
+                    let description = 
+                        descriptionNode.InnerText.Split([|'\r'; '\n'|])
+                        |> Seq.map (fun str -> str.Trim())
+                        |> String.concat " "
+                        |> fun str ->
+                            str.Replace("&lt;","<")
+                               .Replace("&gt;",">")
+                               .Replace("&quot;","\"")
+                               .Replace("&nbsp;"," ")
                     Some(name, values, description)
             else None
         | _ -> None)
@@ -269,32 +277,29 @@ let generateTagCode (tag, hasClosingTag, attributes) =
         let meth = if hasClosingTag then "tag" else "unclosedTag"
         let baseT = if hasClosingTag then "IClosedElement" else "IUnclosedElement"
         let t = "I" + toPascalCase tag
-        yield sprintf "type %s = inherit %s" t baseT
-        yield sprintf "let %s = %s \"%s\" : HtmlTag<%s>" (toCamelCase tag) meth tag t
-        match attributes with
-        | [||] -> ()
-        | _ ->
-            let valueTypes = attributes |> Array.map (generateValueType t)
-            let typeLookup = valueTypes |> Array.map fst |> Map.ofArray
-            for _, code in valueTypes do
-                yield! code
+        let valueTypes = attributes |> Array.map (generateValueType t)
+        let typeLookup = valueTypes |> Array.map fst |> Map.ofArray
+        for _, code in valueTypes do
+            yield! code
+        yield ""
+        yield sprintf "module %s =" (toPascalCase tag)
+        yield sprintf "    type %s = inherit %s" t baseT
+        yield sprintf "    let empty = %s \"%s\" : HtmlTag<%s>" meth tag t
+        for name, values, desc in attributes do
             yield ""
-            yield sprintf "module %s =" (toPascalCase tag)
-            for name, values, desc in attributes do
-                yield ""
-                yield sprintf "    /// %s" desc
-                let funName = toCamelCase name
-                match typeLookup.[name] with
-                | Some "string" ->
-                    yield sprintf "    let %s = set<%s> \"%s\"" funName t name
-                | Some "float" ->
-                    yield sprintf "    let %s (x : float) = set<%s> \"%s\" (x.ToString())" funName t name
-                | Some "int" ->
-                    yield sprintf "    let %s (x : int) = set<%s> \"%s\" (x.ToString())" funName t name
-                | Some vt ->
-                    yield sprintf "    let %s (x : %s) = set<%s> \"%s\" x.Value" funName vt t name
-                | None ->
-                    yield sprintf "    let %s = setEmpty<%s> \"%s\"" funName t name
+            yield sprintf "    /// %s" desc
+            let funName = toCamelCase name
+            match typeLookup.[name] with
+            | Some "string" ->
+                yield sprintf "    let %s = set<%s> \"%s\"" funName t name
+            | Some "float" ->
+                yield sprintf "    let %s (x : float) = set<%s> \"%s\" (x.ToString())" funName t name
+            | Some "int" ->
+                yield sprintf "    let %s (x : int) = set<%s> \"%s\" (x.ToString())" funName t name
+            | Some vt ->
+                yield sprintf "    let %s (x : %s) = set<%s> \"%s\" x.Value" funName vt t name
+            | None ->
+                yield sprintf "    let %s = setEmpty<%s> \"%s\"" funName t name
     ]
 
 let generateFile() =
