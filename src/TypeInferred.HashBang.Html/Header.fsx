@@ -1,5 +1,5 @@
 ﻿[<ReflectedDefinition>]
-module TypeInferred.HashBang.Html
+module TypeInferred.HashBang.Html.Tags
 
 type IHtmlTag =
     abstract Name : string

@@ -80,7 +80,7 @@ let findAttributes tag root =
             let children = n.ChildNodes |> Seq.filter (fun n -> n.Name <> "#text") |> Seq.toArray
             if children.Length = 3 && 
                children |> Array.forall (fun n -> n.Name = "td") &&
-               not(children.[2].InnerText.Contains("Not supported in HTML5")) then
+               not(children.[2].InnerText.Contains("Not supported in HTML")) then
                 let nameNode, valuesNode, descriptionNode = children.[0], children.[1], children.[2]
                 let name = 
                     let text = nameNode.InnerText
@@ -308,5 +308,5 @@ let generateFile() =
         let precursor = File.ReadAllText(Path.Combine(__SOURCE_DIRECTORY__, "Header.fsx"))
         let code = tags |> Seq.collect generateTagCode |> String.concat Environment.NewLine
         let fullCode = precursor + code
-        File.WriteAllText(Path.Combine(__SOURCE_DIRECTORY__, "Html.fs"), fullCode)
+        File.WriteAllText(Path.Combine(__SOURCE_DIRECTORY__, "Tags.fs"), fullCode)
     } |> Async.RunSynchronously

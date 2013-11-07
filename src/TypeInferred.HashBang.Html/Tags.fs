@@ -1,5 +1,5 @@
 [<ReflectedDefinition>]
-module TypeInferred.HashBang.Html
+module TypeInferred.HashBang.Html.Tags
 
 type IHtmlTag =
     abstract Name : string
@@ -959,21 +959,12 @@ module Hr =
 
 
 
-type Xmlns =
-    | Http___www_w3_org_1999_xhtml
-    member x.Value =
-        match x with
-        | Http___www_w3_org_1999_xhtml -> "http://www.w3.org/1999/xhtml"
-
 module Html =
     type IHtml = inherit IClosedElement
     let empty = tag "html" : HtmlTag<IHtml>
 
     /// Specifies the address of the document's cache manifest (for offline browsing)
     let manifest = set<IHtml> "manifest"
-
-    /// Not supported in HTML. Only for XHTML.  Specifies the XML namespace attribute (If you need your content to conform to XHTML)
-    let xmlns (x : Xmlns) = set<IHtml> "xmlns" x.Value
 
 
 
