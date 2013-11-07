@@ -4,15 +4,18 @@ module TypeInferred.HashBang.Html.Tags
 type IHtmlTag =
     abstract Name : string
     abstract Attributes : Map<string, string option>
-    abstract Children : IHtmlTag list
+    abstract Children : TagChild list
     abstract CanClose : bool
 
+and TagChild =
+    | Text of string
+    | Tag of IHtmlTag
 
 type HtmlTag<'a> =
     {
         Name : string
         Attributes : Map<string, string option>
-        Children : IHtmlTag list
+        Children : TagChild list
         CanClose : bool
     }
 
@@ -79,9 +82,17 @@ open Unchecked
 type IClosedElement = interface end
 type IUnclosedElement = interface end
 module Element =
-    /// Appends children to the element
+    /// Appends text|tag children to the element
     let append<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
         { x with Children = x.Children @ xs }
+
+    /// Appends tag children to the element
+    let appendTags<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+        { x with Children = x.Children @ (xs |> List.map Tag) }
+
+    /// Appends text children to the element
+    let appendText<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+        { x with Children = x.Children @ (xs |> List.map Text) }
 
     /// Specifies a shortcut key to activate/focus an element
     let accesskey v = set "accesskey" v

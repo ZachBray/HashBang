@@ -4,15 +4,18 @@ module TypeInferred.HashBang.Html.Tags
 type IHtmlTag =
     abstract Name : string
     abstract Attributes : Map<string, string option>
-    abstract Children : IHtmlTag list
+    abstract Children : TagChild list
     abstract CanClose : bool
 
+and TagChild =
+    | Text of string
+    | Tag of IHtmlTag
 
 type HtmlTag<'a> =
     {
         Name : string
         Attributes : Map<string, string option>
-        Children : IHtmlTag list
+        Children : TagChild list
         CanClose : bool
     }
 
@@ -79,9 +82,17 @@ open Unchecked
 type IClosedElement = interface end
 type IUnclosedElement = interface end
 module Element =
-    /// Appends children to the element
+    /// Appends text|tag children to the element
     let append<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
         { x with Children = x.Children @ xs }
+
+    /// Appends tag children to the element
+    let appendTags<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+        { x with Children = x.Children @ (xs |> List.map Tag) }
+
+    /// Appends text children to the element
+    let appendText<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+        { x with Children = x.Children @ (xs |> List.map Text) }
 
     /// Specifies a shortcut key to activate/focus an element
     let accesskey v = set "accesskey" v
@@ -141,7 +152,7 @@ type Rel =
     | Prefetch
     | Prev
     | Search
-    | Tag
+    | TagCase
     member x.Value =
         match x with
         | Alternate -> "alternate"
@@ -155,7 +166,7 @@ type Rel =
         | Prefetch -> "prefetch"
         | Prev -> "prev"
         | Search -> "search"
-        | Tag -> "tag"
+        | TagCase -> "tag"
 
 type Target =
     | Blank
@@ -375,12 +386,12 @@ module Aside =
 type Preload =
     | Auto
     | Metadata
-    | None
+    | NoneCase
     member x.Value =
         match x with
         | Auto -> "auto"
         | Metadata -> "metadata"
-        | None -> "none"
+        | NoneCase -> "none"
 
 module Audio =
     type IAudio = inherit IClosedElement
@@ -1090,7 +1101,7 @@ type IInputType =
     | Search
     | Submit
     | Tel
-    | Text
+    | TextCase
     | Time
     | Url
     | Week
@@ -1115,7 +1126,7 @@ type IInputType =
         | Search -> "search"
         | Submit -> "submit"
         | Tel -> "tel"
-        | Text -> "text"
+        | TextCase -> "text"
         | Time -> "time"
         | Url -> "url"
         | Week -> "week"
@@ -1312,7 +1323,7 @@ type ILinkRel =
     | Search
     | Sidebar
     | Stylesheet
-    | Tag
+    | TagCase
     | Up
     member x.Value =
         match x with
@@ -1335,7 +1346,7 @@ type ILinkRel =
         | Search -> "search"
         | Sidebar -> "sidebar"
         | Stylesheet -> "stylesheet"
-        | Tag -> "tag"
+        | TagCase -> "tag"
         | Up -> "up"
 
 type Sizes =

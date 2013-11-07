@@ -228,6 +228,14 @@ let generateValueType holderT (name, values, desc) =
                     let name = 
                         if i = 0 then toPascalCase x
                         else sprintf "%s%i" (toPascalCase x) i
+                    let name =
+                        // Exceptions
+                        match name with
+                        | "Some" -> "SomeCase"
+                        | "None" -> "NoneCase"
+                        | "Text" -> "TextCase"
+                        | "Tag" -> "TagCase"
+                        | _ -> name
                     match !used |> Map.tryFind name with
                     | Some y when x = y -> name
                     | Some _ -> convert (i+1) x
