@@ -1,11 +1,23 @@
 [<ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
+#if INTERACTIVE
+#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
+#r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
+#endif
+
+open FunScript
+
+type Map<'k,'v when 'k : comparison> = Microsoft.FSharp.Collections.Map<'k,'v>
 
 type IHtmlTag =
+    abstract Id : string
     abstract Name : string
     abstract Attributes : Map<string, string option>
     abstract Children : TagChild list
     abstract CanClose : bool
+    abstract Initialize : string -> unit
 
 and TagChild =
     | Text of string
@@ -13,25 +25,44 @@ and TagChild =
 
 type HtmlTag<'a> =
     {
+        Id : string
         Name : string
         Attributes : Map<string, string option>
         Children : TagChild list
         CanClose : bool
+        Initialize : string -> unit
     }
 
     interface IHtmlTag with
+        member tag.Id = tag.Id
         member tag.Name = tag.Name
         member tag.Attributes = tag.Attributes
         member tag.Children = tag.Children
         member tag.CanClose = tag.CanClose
+        member tag.Initialize v = tag.Initialize v
 
 module Unchecked =
+
+    let alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    
+    [<JSEmitInline("Math.floor(Math.random() * {0})")>]
+    let random maxExcl =
+        let rand = System.Random()
+        rand.Next maxExcl
+
+    let randomId() =
+        Array.init 10 (fun _ ->
+            alpha.[random alpha.Length].ToString())
+        |> String.concat ""
+
     let tag name =
         {
+            Id = randomId()
             Name = name
             Attributes = Map.empty
             Children = []
             CanClose = true
+            Initialize = ignore
         }
 
     let unclosedTag name =
@@ -81,6 +112,7 @@ type ElementDropZone =
 open Unchecked
 type IClosedElement = interface end
 type IUnclosedElement = interface end
+
 module Element =
     /// Appends text|tag children to the element
     let append<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
@@ -119,7 +151,7 @@ module Element =
     let hidden x = setEmpty "hidden" x
 
     /// Specifies a unique id for an element
-    let id v = set "id" v
+    let id v x = { x with Id = v }
 
     /// Specifies the language of the element's content
     let lang v = set "lang" v
@@ -138,6 +170,98 @@ module Element =
 
     /// Specifies whether the content of an element should be be translated or not
     let translate v = set "translate" v
+
+    /// Adds code that is run when the element is attached to the screen
+    let appendSetUpById f x =
+        { x with Initialize = fun id -> f id; x.Initialize id }
+
+    /// Adds code that is run when the element is attached to the screen
+    let appendSetUp f x =
+        appendSetUpById (fun id -> f (Globals.document.getElementById id)) x
+
+    /// Adds code that is run when the element is attached to the screen
+    let appendSetUpByJQuery f x =
+        appendSetUpById (fun id -> f (Globals.Dollar.Invoke("#" + id))) x
+
+    /// Fires on a mouse click on the element
+    let onclick f =
+        appendSetUp (fun el ->
+            el.onclick <- fun e -> f e; null)
+
+    /// Fires on a mouse double-click on the element
+    let ondblclick f =
+        appendSetUp (fun el ->
+            el.ondblclick <- fun e -> f e; null)
+
+    /// Script to be run when an element is dragged
+    let ondrag f =
+        appendSetUp (fun el ->
+            el.ondrag <- fun e -> f e; null)
+
+    /// Script to be run at the end of a drag operation
+    let ondragend f =
+        appendSetUp (fun el ->
+            el.ondragend <- fun e -> f e; null)
+
+    /// Script to be run when an element has been dragged to a valid drop target
+    let ondragenter f =
+        appendSetUp (fun el ->
+            el.ondragenter <- fun e -> f e; null)
+
+    /// Script to be run when an element leaves a valid drop target
+    let ondragleave f =
+        appendSetUp (fun el ->
+            el.ondragleave <- fun e -> f e; null)
+
+    /// Script to be run when an element is being dragged over a valid drop target
+    let ondragover f =
+        appendSetUp (fun el ->
+            el.ondragover <- fun e -> f e; null)
+
+    /// Script to be run at the start of a drag operation
+    let ondragstart f =
+        appendSetUp (fun el ->
+            el.ondragstart <- fun e -> f e; null)
+
+    /// Script to be run when dragged element is being dropped
+    let ondrop f =
+        appendSetUp (fun el ->
+            el.ondrop <- fun e -> f e; null)
+
+    /// Fires when a mouse button is pressed down on an element
+    let onmousedown f =
+        appendSetUp (fun el ->
+            el.onmousedown <- fun e -> f e; null)
+
+    /// Fires when the mouse pointer moves over an element
+    let onmousemove f =
+        appendSetUp (fun el ->
+            el.onmousemove <- fun e -> f e; null)
+
+    /// Fires when the mouse pointer moves out of an element
+    let onmouseout f =
+        appendSetUp (fun el ->
+            el.onmouseout <- fun e -> f e; null)
+
+    /// Fires when the mouse pointer moves over an element
+    let onmouseover f =
+        appendSetUp (fun el ->
+            el.onmouseover <- fun e -> f e; null)
+
+    /// Fires when a mouse button is released over an element
+    let onmouseup f =
+        appendSetUp (fun el ->
+            el.onmouseup <- fun e -> f e; null)
+
+    /// Script to be run when the mouse wheel is being rotated
+    let onmousewheel f =
+        appendSetUp (fun el ->
+            el.onmousewheel <- fun e -> f e; null)
+
+    /// Script to be run when an element's scrollbar is being scrolled
+    let onscroll f =
+        appendSetUp (fun el ->
+            el.onscroll <- fun e -> f e; null)
 
 
 type Rel =
@@ -276,6 +400,9 @@ module Applet =
     type IApplet = inherit IClosedElement
     let empty = tag "applet" : HtmlTag<IApplet>
 
+    let appendSetUp f (x : HtmlTag<IApplet>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLAppletElement> el)) x
+
     /// Specifies the file name of a Java applet
     let code = set<IApplet> "code"
 
@@ -339,6 +466,9 @@ module Area =
     type IArea = inherit IUnclosedElement
     let empty = unclosedTag "area" : HtmlTag<IArea>
 
+    let appendSetUp f (x : HtmlTag<IArea>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLAreaElement> el)) x
+
     /// Specifies an alternate text for the area. Required if the href attribute is present
     let alt = set<IArea> "alt"
 
@@ -397,6 +527,9 @@ module Audio =
     type IAudio = inherit IClosedElement
     let empty = tag "audio" : HtmlTag<IAudio>
 
+    let appendSetUp f (x : HtmlTag<IAudio>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLAudioElement> el)) x
+
     /// Specifies that the audio will start playing as soon as it is ready
     let autoplay = setEmpty<IAudio> "autoplay"
 
@@ -427,6 +560,9 @@ module Base =
     type IBase = inherit IUnclosedElement
     let empty = unclosedTag "base" : HtmlTag<IBase>
 
+    let appendSetUp f (x : HtmlTag<IBase>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLBaseElement> el)) x
+
     /// Specifies the base URL for all relative URLs in the page
     let href = set<IBase> "href"
 
@@ -438,6 +574,9 @@ module Base =
 module Basefont =
     type IBasefont = inherit IUnclosedElement
     let empty = unclosedTag "basefont" : HtmlTag<IBasefont>
+
+    let appendSetUp f (x : HtmlTag<IBasefont>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLBaseFontElement> el)) x
 
     /// Specifies a classname for an element
     let ``class`` = set<IBasefont> "class"
@@ -514,11 +653,17 @@ module Body =
     type IBody = inherit IClosedElement
     let empty = tag "body" : HtmlTag<IBody>
 
+    let appendSetUp f (x : HtmlTag<IBody>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLBodyElement> el)) x
+
 
 
 module Br =
     type IBr = inherit IUnclosedElement
     let empty = unclosedTag "br" : HtmlTag<IBr>
+
+    let appendSetUp f (x : HtmlTag<IBr>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLBRElement> el)) x
 
 
 
@@ -553,6 +698,9 @@ type Type =
 module Button =
     type IButton = inherit IClosedElement
     let empty = tag "button" : HtmlTag<IButton>
+
+    let appendSetUp f (x : HtmlTag<IButton>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLButtonElement> el)) x
 
     /// Specifies that a button should automatically get focus when the page loads
     let autofocus = setEmpty<IButton> "autofocus"
@@ -592,6 +740,9 @@ module Button =
 module Canvas =
     type ICanvas = inherit IClosedElement
     let empty = tag "canvas" : HtmlTag<ICanvas>
+
+    let appendSetUp f (x : HtmlTag<ICanvas>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLCanvasElement> el)) x
 
     /// Specifies the height of the canvas
     let height (x : int) = set<ICanvas> "height" (x.ToString())
@@ -699,11 +850,17 @@ module Datalist =
     type IDatalist = inherit IClosedElement
     let empty = tag "datalist" : HtmlTag<IDatalist>
 
+    let appendSetUp f (x : HtmlTag<IDatalist>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLDataListElement> el)) x
+
 
 
 module Dd =
     type IDd = inherit IClosedElement
     let empty = tag "dd" : HtmlTag<IDd>
+
+    let appendSetUp f (x : HtmlTag<IDd>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLDDElement> el)) x
 
 
 
@@ -771,6 +928,9 @@ module Div =
     type IDiv = inherit IClosedElement
     let empty = tag "div" : HtmlTag<IDiv>
 
+    let appendSetUp f (x : HtmlTag<IDiv>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLDivElement> el)) x
+
 
 
 module Dl =
@@ -783,6 +943,9 @@ module Dt =
     type IDt = inherit IClosedElement
     let empty = tag "dt" : HtmlTag<IDt>
 
+    let appendSetUp f (x : HtmlTag<IDt>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLDTElement> el)) x
+
 
 
 module Em =
@@ -794,6 +957,9 @@ module Em =
 module Embed =
     type IEmbed = inherit IUnclosedElement
     let empty = unclosedTag "embed" : HtmlTag<IEmbed>
+
+    let appendSetUp f (x : HtmlTag<IEmbed>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLEmbedElement> el)) x
 
     /// Specifies the height of the embedded content
     let height (x : int) = set<IEmbed> "height" (x.ToString())
@@ -812,6 +978,9 @@ module Embed =
 module Fieldset =
     type IFieldset = inherit IClosedElement
     let empty = tag "fieldset" : HtmlTag<IFieldset>
+
+    let appendSetUp f (x : HtmlTag<IFieldset>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLFieldSetElement> el)) x
 
     /// Specifies that a group of related form elements should be disabled
     let disabled = setEmpty<IFieldset> "disabled"
@@ -839,6 +1008,9 @@ module Figure =
 module Font =
     type IFont = inherit IClosedElement
     let empty = tag "font" : HtmlTag<IFont>
+
+    let appendSetUp f (x : HtmlTag<IFont>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLFontElement> el)) x
 
     /// Specifies a classname for an element
     let ``class`` = set<IFont> "class"
@@ -890,6 +1062,9 @@ module Form =
     type IForm = inherit IClosedElement
     let empty = tag "form" : HtmlTag<IForm>
 
+    let appendSetUp f (x : HtmlTag<IForm>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLFormElement> el)) x
+
     /// Specifies the character encodings that are to be used for the form  submission
     let accept_charset = set<IForm> "accept-charset"
 
@@ -920,6 +1095,9 @@ module Frame =
     type IFrame = inherit IUnclosedElement
     let empty = unclosedTag "frame" : HtmlTag<IFrame>
 
+    let appendSetUp f (x : HtmlTag<IFrame>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLFrameElement> el)) x
+
     /// Specifies a classname for an element
     let ``class`` = set<IFrame> "class"
 
@@ -937,6 +1115,9 @@ module Frame =
 module Frameset =
     type IFrameset = inherit IClosedElement
     let empty = tag "frameset" : HtmlTag<IFrameset>
+
+    let appendSetUp f (x : HtmlTag<IFrameset>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLFrameSetElement> el)) x
 
     /// Specifies a classname for an element
     let ``class`` = set<IFrameset> "class"
@@ -956,6 +1137,9 @@ module Head =
     type IHead = inherit IClosedElement
     let empty = tag "head" : HtmlTag<IHead>
 
+    let appendSetUp f (x : HtmlTag<IHead>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLHeadElement> el)) x
+
 
 
 module Header =
@@ -968,11 +1152,17 @@ module Hr =
     type IHr = inherit IUnclosedElement
     let empty = unclosedTag "hr" : HtmlTag<IHr>
 
+    let appendSetUp f (x : HtmlTag<IHr>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLHRElement> el)) x
+
 
 
 module Html =
     type IHtml = inherit IClosedElement
     let empty = tag "html" : HtmlTag<IHtml>
+
+    let appendSetUp f (x : HtmlTag<IHtml>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLHtmlElement> el)) x
 
     /// Specifies the address of the document's cache manifest (for offline browsing)
     let manifest = set<IHtml> "manifest"
@@ -1002,6 +1192,9 @@ type Sandbox =
 module Iframe =
     type IIframe = inherit IClosedElement
     let empty = tag "iframe" : HtmlTag<IIframe>
+
+    let appendSetUp f (x : HtmlTag<IIframe>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLIFrameElement> el)) x
 
     /// Specifies the height of an <iframe>
     let height (x : int) = set<IIframe> "height" (x.ToString())
@@ -1134,6 +1327,9 @@ type IInputType =
 module Input =
     type IInput = inherit IUnclosedElement
     let empty = unclosedTag "input" : HtmlTag<IInput>
+
+    let appendSetUp f (x : HtmlTag<IInput>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLInputElement> el)) x
 
     /// Specifies the types of files that the server accepts  (only for type="file")
     let accept (x : Accept) = set<IInput> "accept" x.Value
@@ -1280,6 +1476,9 @@ module Label =
     type ILabel = inherit IClosedElement
     let empty = tag "label" : HtmlTag<ILabel>
 
+    let appendSetUp f (x : HtmlTag<ILabel>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLLabelElement> el)) x
+
     /// Specifies which form element a label is bound to
     let ``for`` = set<ILabel> "for"
 
@@ -1292,11 +1491,17 @@ module Legend =
     type ILegend = inherit IClosedElement
     let empty = tag "legend" : HtmlTag<ILegend>
 
+    let appendSetUp f (x : HtmlTag<ILegend>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLLegendElement> el)) x
+
 
 
 module Li =
     type ILi = inherit IClosedElement
     let empty = tag "li" : HtmlTag<ILi>
+
+    let appendSetUp f (x : HtmlTag<ILi>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLLIElement> el)) x
 
     /// Specifies the value of a list item. The following list items will increment  from that number (only for <ol> lists)
     let value = set<ILi> "value"
@@ -1361,6 +1566,9 @@ module Link =
     type ILink = inherit IUnclosedElement
     let empty = unclosedTag "link" : HtmlTag<ILink>
 
+    let appendSetUp f (x : HtmlTag<ILink>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLLinkElement> el)) x
+
     /// Specifies the location of the linked document
     let href = set<ILink> "href"
 
@@ -1384,6 +1592,9 @@ module Link =
 module Map =
     type IMap = inherit IClosedElement
     let empty = tag "map" : HtmlTag<IMap>
+
+    let appendSetUp f (x : HtmlTag<IMap>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLMapElement> el)) x
 
     /// Required. Specifies the name of an image-map
     let name = set<IMap> "name"
@@ -1409,6 +1620,9 @@ type IMenuType =
 module Menu =
     type IMenu = inherit IClosedElement
     let empty = tag "menu" : HtmlTag<IMenu>
+
+    let appendSetUp f (x : HtmlTag<IMenu>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLMenuElement> el)) x
 
     /// Specifies a visible label for the menu
     let label = set<IMenu> "label"
@@ -1445,6 +1659,9 @@ type Name =
 module Meta =
     type IMeta = inherit IUnclosedElement
     let empty = unclosedTag "meta" : HtmlTag<IMeta>
+
+    let appendSetUp f (x : HtmlTag<IMeta>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLMetaElement> el)) x
 
     /// Specifies the character encoding for the HTML document
     let charset = set<IMeta> "charset"
@@ -1530,6 +1747,9 @@ module Object =
     type IObject = inherit IClosedElement
     let empty = tag "object" : HtmlTag<IObject>
 
+    let appendSetUp f (x : HtmlTag<IObject>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLObjectElement> el)) x
+
     /// Specifies the URL of the resource to be used by the object
     let data = set<IObject> "data"
 
@@ -1586,6 +1806,9 @@ module Optgroup =
     type IOptgroup = inherit IClosedElement
     let empty = tag "optgroup" : HtmlTag<IOptgroup>
 
+    let appendSetUp f (x : HtmlTag<IOptgroup>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLOptGroupElement> el)) x
+
     /// Specifies that an option-group should be disabled
     let disabled = setEmpty<IOptgroup> "disabled"
 
@@ -1597,6 +1820,9 @@ module Optgroup =
 module Option =
     type IOption = inherit IClosedElement
     let empty = tag "option" : HtmlTag<IOption>
+
+    let appendSetUp f (x : HtmlTag<IOption>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLOptionElement> el)) x
 
     /// Specifies that an option should be disabled
     let disabled = setEmpty<IOption> "disabled"
@@ -1637,6 +1863,9 @@ module Param =
     type IParam = inherit IUnclosedElement
     let empty = unclosedTag "param" : HtmlTag<IParam>
 
+    let appendSetUp f (x : HtmlTag<IParam>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLParamElement> el)) x
+
     /// Specifies the name of a parameter
     let name = set<IParam> "name"
 
@@ -1649,11 +1878,17 @@ module Pre =
     type IPre = inherit IClosedElement
     let empty = tag "pre" : HtmlTag<IPre>
 
+    let appendSetUp f (x : HtmlTag<IPre>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLPreElement> el)) x
+
 
 
 module Progress =
     type IProgress = inherit IClosedElement
     let empty = tag "progress" : HtmlTag<IProgress>
+
+    let appendSetUp f (x : HtmlTag<IProgress>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLProgressElement> el)) x
 
     /// Specifies how much work the task requires in total
     let max = set<IProgress> "max"
@@ -1706,6 +1941,9 @@ module Script =
     type IScript = inherit IClosedElement
     let empty = tag "script" : HtmlTag<IScript>
 
+    let appendSetUp f (x : HtmlTag<IScript>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLScriptElement> el)) x
+
     /// Specifies that the script is executed asynchronously (only for external scripts)
     let ``async`` = setEmpty<IScript> "async"
 
@@ -1732,6 +1970,9 @@ module Section =
 module Select =
     type ISelect = inherit IClosedElement
     let empty = tag "select" : HtmlTag<ISelect>
+
+    let appendSetUp f (x : HtmlTag<ISelect>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLSelectElement> el)) x
 
     /// Specifies that the drop-down list should automatically get focus when  the page loads
     let autofocus = setEmpty<ISelect> "autofocus"
@@ -1766,6 +2007,9 @@ module Source =
     type ISource = inherit IUnclosedElement
     let empty = unclosedTag "source" : HtmlTag<ISource>
 
+    let appendSetUp f (x : HtmlTag<ISource>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLSourceElement> el)) x
+
     /// Specifies the type of media resource
     let media = set<ISource> "media"
 
@@ -1780,6 +2024,9 @@ module Source =
 module Span =
     type ISpan = inherit IClosedElement
     let empty = tag "span" : HtmlTag<ISpan>
+
+    let appendSetUp f (x : HtmlTag<ISpan>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLSpanElement> el)) x
 
 
 
@@ -1823,6 +2070,9 @@ module Style =
     type IStyle = inherit IClosedElement
     let empty = tag "style" : HtmlTag<IStyle>
 
+    let appendSetUp f (x : HtmlTag<IStyle>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLStyleElement> el)) x
+
     /// Specifies what media/device the media resource is optimized for
     let media = set<IStyle> "media"
 
@@ -1864,6 +2114,9 @@ module Table =
     type ITable = inherit IClosedElement
     let empty = tag "table" : HtmlTag<ITable>
 
+    let appendSetUp f (x : HtmlTag<ITable>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLTableElement> el)) x
+
     /// Specifies whether the table cells should have borders or not
     let border (x : Border) = set<ITable> "border" x.Value
 
@@ -1901,6 +2154,9 @@ type Wrap =
 module Textarea =
     type ITextarea = inherit IUnclosedElement
     let empty = unclosedTag "textarea" : HtmlTag<ITextarea>
+
+    let appendSetUp f (x : HtmlTag<ITextarea>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLTextAreaElement> el)) x
 
     /// Specifies that a text area should automatically get focus when the page  loads
     let autofocus = setEmpty<ITextarea> "autofocus"
@@ -1992,6 +2248,9 @@ module Title =
     type ITitle = inherit IClosedElement
     let empty = tag "title" : HtmlTag<ITitle>
 
+    let appendSetUp f (x : HtmlTag<ITitle>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLTitleElement> el)) x
+
 
 
 module Tr =
@@ -2017,6 +2276,9 @@ type Kind =
 module Track =
     type ITrack = inherit IUnclosedElement
     let empty = unclosedTag "track" : HtmlTag<ITrack>
+
+    let appendSetUp f (x : HtmlTag<ITrack>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLTrackElement> el)) x
 
     /// Specifies that the track is to be enabled if the user's preferences do  not indicate that another track would be more appropriate
     let ``default`` = setEmpty<ITrack> "default"
@@ -2083,6 +2345,9 @@ module Var =
 module Video =
     type IVideo = inherit IClosedElement
     let empty = tag "video" : HtmlTag<IVideo>
+
+    let appendSetUp f (x : HtmlTag<IVideo>) =
+        Element.appendSetUp (fun el -> f(unbox<HTMLVideoElement> el)) x
 
     /// Specifies that the video will start playing as soon as it is ready
     let autoplay = setEmpty<IVideo> "autoplay"

@@ -5,7 +5,7 @@ open TypeInferred.HashBang.Html.Tags
 
 module Helpers =
     let indent xs = xs |> Seq.map (fun x -> "  " + x)
-
+       
     let attributes xs =
         xs |> Map.toSeq |> Seq.map (fun (k, v) -> 
             match v with
@@ -14,8 +14,7 @@ module Helpers =
         |> String.concat ""
 
     let openTag (tag : IHtmlTag) =
-        let attributes = tag.Attributes |> attributes
-        "<" + tag.Name + attributes + ">"
+        "<" + tag.Name + attributes tag.Attributes + ">"
 
     let closingTag (tag : IHtmlTag) = 
         "</" + tag.Name + ">"
@@ -39,3 +38,10 @@ let compile (html : HtmlTag<Html.IHtml>) =
         yield "<!DOCTYPE html>"
         yield! Helpers.compileTag html
     } |> String.concat "\r\n"
+
+
+let rec initialize (tag : IHtmlTag) =
+    tag.Initialize tag.Id
+    tag.Children |> List.iter (function
+        | Text _ -> ()
+        | Tag t -> initialize t)

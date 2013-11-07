@@ -1,6 +1,10 @@
 ﻿#r "System.Xml"
 #r "System.Xml.Linq"
-#r "../../lib/HtmlAgilityPack.dll"
+#r @"..\..\lib\HtmlAgilityPack.dll"
+#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
+#r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 
 open System
 open System.IO
@@ -278,6 +282,14 @@ let generateValueType holderT (name, values, desc) =
         | [|Empty|] -> (name, None), []
         | _ -> failwith "Unexpected values combination."
 
+let htmlAssembly =
+    typeof<HTMLDivElement>.Assembly
+
+let tryGetTagClass tag =
+    let t = htmlAssembly.GetType("HTML" + tag + "Element", false, true)
+    if t = null then None
+    else Some t.Name
+
 let generateTagCode (tag, hasClosingTag, attributes) =
     [
         yield ""
@@ -293,7 +305,14 @@ let generateTagCode (tag, hasClosingTag, attributes) =
         yield sprintf "module %s =" (toPascalCase tag)
         yield sprintf "    type %s = inherit %s" t baseT
         yield sprintf "    let empty = %s \"%s\" : HtmlTag<%s>" meth tag t
+        match tryGetTagClass tag with
+        | None -> ()
+        | Some specialization ->
+            yield ""
+            yield sprintf "    let appendSetUp f (x : HtmlTag<%s>) =" t
+            yield sprintf "        Element.appendSetUp (fun el -> f(unbox<%s> el)) x" specialization
         for name, values, desc in attributes do
+            
             yield ""
             yield sprintf "    /// %s" desc
             let funName = toCamelCase name
