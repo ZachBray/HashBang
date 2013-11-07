@@ -42,7 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Runtime.fs" />
-    <Compile Include="HashBang.fs" />
+    <Compile Include="UrlMatching.fs" />
+    <Compile Include="Response.fs" />
+    <Compile Include="Metadata.fs" />
+    <Compile Include="RequestHandler.fs" />
+    <Compile Include="HandlerPatterns.fs" />
+    <Compile Include="HandlerUtils.fs" />
+    <Compile Include="Website.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeInferred.Utilities\TypeInferred.Utilities.fsproj">

@@ -1,8 +1,8 @@
 ﻿[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
-#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.dll"
-#r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Interop.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 #endif
