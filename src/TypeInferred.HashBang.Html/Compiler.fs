@@ -14,7 +14,7 @@ module Helpers =
         |> String.concat ""
 
     let openTag (tag : IHtmlTag) =
-        "<" + tag.Name + attributes tag.Attributes + ">"
+        "<" + tag.Name + " id=\"" + tag.Id + "\"" + attributes tag.Attributes + ">"
 
     let closingTag (tag : IHtmlTag) = 
         "</" + tag.Name + ">"
@@ -33,12 +33,15 @@ module Helpers =
         | Text str -> Seq.singleton str
         | Tag t -> compileTag t
 
-let compile (html : HtmlTag<Html.IHtml>) =
+let compilePage (html : HtmlTag<Html.IHtml>) =
     seq {
         yield "<!DOCTYPE html>"
         yield! Helpers.compileTag html
     } |> String.concat "\r\n"
 
+
+let compileSection tag =
+    Helpers.compileTag tag |> String.concat "\r\n"
 
 let rec initialize (tag : IHtmlTag) =
     tag.Initialize tag.Id

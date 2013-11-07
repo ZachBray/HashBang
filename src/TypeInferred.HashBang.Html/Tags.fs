@@ -1,4 +1,4 @@
-[<ReflectedDefinition>]
+﻿[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
 #r @"..\packages\FunScript.1.1.0.14\lib\net40\FunScript.dll"
