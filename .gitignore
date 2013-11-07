@@ -15,5 +15,8 @@ _ReSharper*/
 deploy/NuGet/lib
 build
 
+src/packages/*
+!src/packages/repositories.config
+
 # Generated documentation
 Docs/output/*
