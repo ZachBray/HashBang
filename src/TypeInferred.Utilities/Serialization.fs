@@ -323,7 +323,6 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
     | _ -> failwith ("Cannot serialize type: " + t.Name)
 
 let precomputeSerializer t =
-    //TODO: Remove memoization for javascript version? Or implement lazy and conc.dict.?
     memoizeRecLazy precomputeSerializerAux t
 
 let precomputeTypeToJson t =
@@ -341,7 +340,6 @@ let precomputeToJson<'a>() =
         sb.ToString()
 
 let precomputeDeserializer t =
-    //TODO: Remove memoization for javascript version? Or implement lazy and conc.dict.?
     memoizeRecLazy precomputeDeserializerAux t
 
 let precomputeTypeFromJson t =

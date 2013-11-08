@@ -12,43 +12,41 @@ type HandlerSpecification<'a, 't, 'b> =
         Handle : 'a -> 't -> 'b Response Async
     }
 
+    member spec.ToMetadata() =
+        {   HandlerMetadata.Empty with
+                Resource = spec.Resource
+                Action = spec.Action
+                Description = spec.Description
+        }
+
 module Json =
 
     let GET fmt (spec : HandlerSpecification<_,_,_>) = 
         let serialize = precomputeToJson<'f>()
         RequestHandler.create fmt spec.Handle {
-            HandlerMetadata.Empty with
-                Resource = spec.Resource
-                Action = spec.Action
-                Description = spec.Description
+            spec.ToMetadata() with
                 Method = Get
-                ResponseType = Some(Application Json, TypeMetadata.From typeof<'f>)
+                ResponseType = Some(ContentTypes.Application.json, TypeMetadata.From typeof<'f>)
         }
-        |> RequestHandler.mapOut (Response.map (fun x -> Application Json, serialize x))
+        |> RequestHandler.mapOut (Response.map (fun x -> ContentTypes.Application.json, serialize x))
 
     let DELETE fmt (spec : HandlerSpecification<_,_,_>) =
         let serialize = lazy precomputeToJson<'f>()
         RequestHandler.create fmt spec.Handle {
-            HandlerMetadata.Empty with
-                Resource = spec.Resource
-                Action = spec.Action
-                Description = spec.Description
+            spec.ToMetadata() with
                 Method = Delete
                 //ResponseType = Some(TypeMetadata.From(typeof<'f>, Application Json))
         }
-        |> RequestHandler.mapOut (Response.map (fun x -> Application Json, serialize.Value x))
+        |> RequestHandler.mapOut (Response.map (fun x -> ContentTypes.Application.json, serialize.Value x))
 
     let POST fmt (spec : HandlerSpecification<_,_,_>) =
         let serialize = precomputeToJson<'f>()
         let deserialize = precomputeFromJson<'g>()
         RequestHandler.create fmt spec.Handle {
-            HandlerMetadata.Empty with
-                Resource = spec.Resource
-                Action = spec.Action
-                Description = spec.Description
+            spec.ToMetadata() with
                 Method = Post
-                RequestType = Some(Application Json, TypeMetadata.From typeof<'g>)
-                ResponseType = Some(Application Json, TypeMetadata.From typeof<'f>)
+                RequestType = Some(ContentTypes.Application.json, TypeMetadata.From typeof<'g>)
+                ResponseType = Some(ContentTypes.Application.json, TypeMetadata.From typeof<'f>)
         }
         |> RequestHandler.bindIn (fun req y -> async {
             try
@@ -61,16 +59,22 @@ module Json =
                 printfn "%s" (ex.ToString())
                 return BadRequest
         })
-        |> RequestHandler.mapOut (Response.map (fun x -> Application Json, serialize x))
+        |> RequestHandler.mapOut (Response.map (fun x -> ContentTypes.Application.json, serialize x))
 
 module PlainText =
     
-    let GET fmt (spec : HandlerSpecification<'f,_,_>) =
+    let GET fmt (spec : HandlerSpecification<_,_,string>) =
         RequestHandler.create fmt spec.Handle {
-            HandlerMetadata.Empty with
-                Resource = spec.Resource
-                Action = spec.Action
-                Description = spec.Description
+            spec.ToMetadata() with
                 Method = Get
-                ResponseType = Some(Text Plain, TypeMetadata.From typeof<'f>)
+                ResponseType = Some(ContentTypes.Text.plain, TypeMetadata.From typeof<string>)
+        }
+
+module Binary =
+    
+    let GET fmt (spec : HandlerSpecification<_,_,byte[]>) =
+        RequestHandler.create fmt spec.Handle {
+            spec.ToMetadata() with
+                Method = Get
+                ResponseType = Some(ContentTypes.Application.octet_stream, TypeMetadata.From typeof<byte[]>)
         }

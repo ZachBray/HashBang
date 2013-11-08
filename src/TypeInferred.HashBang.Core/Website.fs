@@ -21,9 +21,9 @@ type Website =
         {
             Prefix = prefix
             Handlers = []
-            RedirectTemplate = fun uri -> Text Plain, "Resource is now located at: " + uri.ToString()
-            ErrorTemplate = fun msg -> Text Plain, "Error: " + msg
-            NotFoundTemplate = Text Plain, "Resource not found."
+            RedirectTemplate = fun uri -> ContentTypes.Text.plain, "Resource is now located at: " + uri.ToString()
+            ErrorTemplate = fun msg -> ContentTypes.Text.plain, "Error: " + msg
+            NotFoundTemplate = ContentTypes.Text.plain, "Resource not found."
         }
 
     static member WithRouteHandlers newHandlers (site : Website) =
