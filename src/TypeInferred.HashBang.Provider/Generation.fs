@@ -51,7 +51,7 @@ let private genReturnTypeAndExpr (handler : HandlerMetadata) =
         typeof<unit Async>, 
         fun req context -> 
             <@@ (%%req : ApiRequest).SendIgnore(%%context : ApiDataContext) @@>
-    | Some(Application Json, meta) ->
+    | Some (contentType, meta) when contentType = ContentTypes.Application.json ->
         let t = meta.RuntimeType
         let asyncT = asyncType t
         let tExpr = typeOfExpr t
@@ -71,7 +71,7 @@ let private generateParams (handler : HandlerMetadata) =
             for p in requiredParams do yield generateParameterInfo UrlParameter p
             match handler.RequestType with
             | None -> ()
-            | Some (Application Json, meta) -> yield generateBodyInfo meta
+            | Some (contentType, meta) when contentType = ContentTypes.Application.json -> yield generateBodyInfo meta
             | Some _ -> failwith "Not implemented: only application/json is supported."
         ] |> List.map (fun (name, t, setter) -> ProvidedParameter(name, t), setter)
     requiredParams
