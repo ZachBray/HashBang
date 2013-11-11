@@ -1,4 +1,4 @@
-[<ReflectedDefinition>]
+﻿[<ReflectedDefinition>]
 module TypeInferred.HashBang.Runtime
 
 type PrimitiveType =
@@ -6,7 +6,7 @@ type PrimitiveType =
     | IntType
     | StringType
     | UIntType
-    | HexType
+    //| HexType
     //| OctalType
     | FloatType
     | DecimalType

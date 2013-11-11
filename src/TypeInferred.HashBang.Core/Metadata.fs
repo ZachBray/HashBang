@@ -56,7 +56,7 @@ type HandlerMetadata =
         UrlParts : UrlPart[]
         Method : HttpMethod
         Headers : ParameterMetadata[]
-        //Parameters : ParameterMetadata[]
+        QueryParameters : ParameterMetadata[]
         RequestType : (ContentType * TypeMetadata) option
         ResponseType : (ContentType * TypeMetadata) option
     }
@@ -69,7 +69,7 @@ type HandlerMetadata =
             UrlParts = [||]
             Method = Get
             Headers = [||]
-            //Parameters = [||]
+            QueryParameters = [||]
             RequestType = None
             ResponseType = None
         }

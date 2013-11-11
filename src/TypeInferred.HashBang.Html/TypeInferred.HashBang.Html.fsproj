@@ -60,20 +60,16 @@
       <HintPath>..\packages\FSharp.Data.Experimental.1.1.5\lib\net40\FSharp.Data.Experimental.DesignTime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FunScript">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.dll</HintPath>
+    <Reference Include="FunScript, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>True</Private>
     </Reference>
-    <Reference Include="FunScript.BrowserAPI">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.BrowserAPI.dll</HintPath>
+    <Reference Include="FunScript.BrowserAPI, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>True</Private>
     </Reference>
-    <Reference Include="FunScript.Data">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Data.dll</HintPath>
+    <Reference Include="FunScript.Data, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>True</Private>
     </Reference>
-    <Reference Include="FunScript.Interop">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Interop.dll</HintPath>
+    <Reference Include="FunScript.Interop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">

@@ -62,52 +62,33 @@ let messageBox =
 
 let cometTimeout = 10000
 
+// Here we define any route patterns that the server can handle.
+type Routes = RoutesProvider< "
+POST    /messages                          # Messages.Send   # Broadcasts a new message
+GET     /messages?since=string_option      # Messages.Since  # Returns all the messages since the given id
+">
+
 /// Creates a Chat API.
 let createServer() =
     // Here we define what the server will listen to.
     Website.At "http://*:8080/"
-    // Here we specify all the routes the server will handle.
+    // Here we bind the route patterns to handlers.
     |> Website.WithRouteHandlers 
         [
-            // All handlers are of the form <ContentType>.<HttpMethod> { Handler }
-            Json.POST "/messages" { 
-                // Resource, Action & Description are published in the
-                // metadata. They help describe the API for the HashBangAPI type provider.
-                Resource = "Message"; Action = "Send"
-                Description = "Broadcasts a new message."
-                // A POST handle takes a typed message and asynchronously returns
-                // a response. The second curried parameter accepts unit because
-                // there are no parameters in the route path.
-                Handle = fun (message : Message, ()) () -> async {
-                    messageBox.Post(Send message)
-                    return OK message
-                }
-            }
+            Routes.Messages.Send.CreateHandler Json Json (fun ((), message) ps -> async {
+                messageBox.Post(Send message)
+                return OK message
+            })
 
-            Json.GET "/messages/since/{id:%s}" {
-                Resource = "Message"; Action = "GetSince"
-                Description = "Returns all the messages since the given id."
-                // A GET handle accepts a unit as the first parameter (except
-                // in more complex cases where things like authentication are involved).
-                // The second curried parameter accepts a string, as this is a specified
-                // parameter in the route path "{id:%s}".
-                Handle = fun () lastId -> async {
-                    let! msgs = messageBox.PostAndTryAsyncReply((fun c -> 
-                                    GetSince(Some(Guid.Parse lastId), c)), cometTimeout)
-                    return OK msgs
-                }
-            }
-
-            Json.GET "/messages/all" {
-                Resource = "Message"; Action = "GetAll"
-                Description = "Returns all the messages so far."
-                Handle = fun () () -> async {
-                    
-                    let! msgs = messageBox.PostAndTryAsyncReply((fun c -> 
-                                    GetSince(None, c)), cometTimeout)
-                    return OK msgs
-                }
-            }
+            Routes.Messages.Since.CreateHandler Json (fun () ps -> async {
+                let lastId =
+                    match ps.since with
+                    | None -> None
+                    | Some id -> Some(Guid.Parse id)
+                let! msgs = messageBox.PostAndTryAsyncReply((fun c -> 
+                                GetSince(lastId, c)), cometTimeout)
+                return OK msgs
+            })
         ] 
     // Here we specify that the API should publish metadata.
     // This allows us to hook into the API in a type safe way from the
@@ -115,7 +96,7 @@ let createServer() =
     |> Website.WithMetadata
     // This runs the server.
     |> Website.Start
-
+    
 [<EntryPoint>]
 let main argv = 
     printfn "%A" argv

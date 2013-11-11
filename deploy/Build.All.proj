@@ -4,6 +4,7 @@
         <ProjectsToBuild Include="..\src\TypeInferred.Utilities\TypeInferred.Utilities.fsproj" />
         <ProjectsToBuild Include="..\src\TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj" />
         <ProjectsToBuild Include="..\src\TypeInferred.HashBang.Provider\TypeInferred.HashBang.Provider.fsproj" />
+        <ProjectsToBuild Include="..\src\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj" />
     </ItemGroup>
     
     <PropertyGroup>

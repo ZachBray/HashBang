@@ -14,7 +14,7 @@ module Authorization =
             | _ -> None
 
     let filterByAuthToken (authTokens : TimedCache<_,_>) handler =
-        handler |> RequestHandler.bindIn (fun (req : HttpListenerRequest) () -> async {
+        handler |> RequestHandler.bindIn (fun (Request(_,_,req : HttpListenerRequest)) () -> async {
             match tryGetToken req with
             | None -> return Unauthorized
             | Some token ->

@@ -2,16 +2,13 @@
 
 open System
 open System.Reflection
+open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Quotations
 open Samples.FSharp.ProvidedTypes
 open TypeInferred.HashBang
 open TypeInferred.HashBang.Runtime
 open TypeInferred.HashBang.Provider.Runtime
 open ProviderImplementation.QuotationBuilder
-
-type private ParamType =
-    | HeaderParameter
-    | UrlParameter
 
 let private typeOfExpr t = 
     let fsCore = typedefof<list<_>>.Assembly
@@ -25,20 +22,46 @@ let private castExpr t =
 let private asyncType t =
     typedefof<Async<_>>.MakeGenericType [| t |]
 
-let private generateParameterInfo paramType (param : ParameterMetadata) =
-    let setter req arg = 
-        let key = param.Key
-        match paramType with
-        | UrlParameter -> <@@ (%%req : ApiRequest).AddParameter(key, (%%arg).ToString()) @@>
-        | HeaderParameter -> <@@ (%%req : ApiRequest).AddParameter(key, (%%arg).ToString()) @@>
-    param.Key, param.Type.RuntimeType, setter
+let private generateHeaderParamInfo (param : ParameterMetadata) =
+    let key = param.Key
+    ProvidedParameter(param.Key, param.Type.RuntimeType),
+    fun req arg ->
+        let arg = Expr.Coerce(arg, typeof<obj>) 
+        <@ (%req : ApiRequest).AddHeader(key, (%%arg).ToString()) @>
+
+let private generateUrlParamInfo (param : ParameterMetadata) =
+    let key = param.Key
+    ProvidedParameter(param.Key, param.Type.RuntimeType),
+    fun req arg -> 
+        let arg = Expr.Coerce(arg, typeof<obj>)
+        <@ (%req : ApiRequest).AddUrlParameter(key, (%%arg).ToString()) @>
+    
+let private generateQueryParamInfo (param : ParameterMetadata) =
+    let key = param.Key
+    if param.IsRequired then
+        ProvidedParameter(param.Key, param.Type.RuntimeType),
+        fun req arg ->
+            let arg = Expr.Coerce(arg, typeof<obj>)
+            <@ (%req : ApiRequest).AddQueryParameter(key, (%%arg).ToString()) @>
+    else
+        let optionalType = typedefof<_ option>.MakeGenericType [| param.Type.RuntimeType |]
+        let valueProp = optionalType.GetProperty("Value")
+        ProvidedParameter(param.Key, optionalType, optionalValue = null),
+        fun req arg ->
+            let argAsObj = Expr.Coerce(arg, typeof<obj>)
+            let value = Expr.Coerce(Expr.PropertyGet(arg, valueProp), typeof<obj>)
+            <@ 
+                if not(obj.ReferenceEquals(%%argAsObj, null)) then
+                    (%req : ApiRequest).AddQueryParameter(key, (%%value).ToString()) @>
+            
     
 let private generateBodyInfo (meta : TypeMetadata) =
     let t = meta.RuntimeType
     let tExpr = typeOfExpr t
     let setter req arg = 
-        <@@ (%%req : ApiRequest).AddBody(Serialization.serialize (%%tExpr : Type) (%%arg : obj)) @@>
-    "body", t, setter
+        let arg = Expr.Coerce(arg, typeof<obj>)
+        <@ (%req : ApiRequest).AddBody(Serialization.serialize (%%tExpr : Type) (%%arg : obj)) @>
+    ProvidedParameter("body", t), setter
 
 let private serializeParts = precomputeToJson<UrlPart[]>()
 let private marshallParts parts =
@@ -61,42 +84,32 @@ let private genReturnTypeAndExpr (handler : HandlerMetadata) =
     | Some _ -> failwith "Not implemented: only application/json is supported." 
 
 let private generateParams (handler : HandlerMetadata) =
-    let requiredParams, optionalParams = 
-        handler.Parameters |> Array.partition (fun p -> p.IsRequired)
-    let requiredHeaders, optionalHeaders = 
-        handler.Headers |> Array.partition (fun p -> p.IsRequired)
-    let requiredParams =
-        [
-            for p in requiredHeaders do yield generateParameterInfo HeaderParameter p
-            for p in requiredParams do yield generateParameterInfo UrlParameter p
-            match handler.RequestType with
-            | None -> ()
-            | Some (contentType, meta) when contentType = ContentTypes.Application.json -> yield generateBodyInfo meta
-            | Some _ -> failwith "Not implemented: only application/json is supported."
-        ] |> List.map (fun (name, t, setter) -> ProvidedParameter(name, t), setter)
-    requiredParams
+    [
+        for p in handler.Headers do yield generateHeaderParamInfo p
+        for p in handler.Parameters do yield generateUrlParamInfo p
+        for p in handler.QueryParameters do yield generateQueryParamInfo p
+        match handler.RequestType with
+        | None -> ()
+        | Some (contentType, meta) when contentType = ContentTypes.Application.json -> yield generateBodyInfo meta
+        | Some _ -> failwith "Not implemented: only application/json is supported."
+    ]
 
 let private generateActionMethod (handler : HandlerMetadata) =
     let requiredParams = generateParams handler
-//    let optParams =
-//        [
-//            for p in optionalHeaders do yield generateParameterInfo HeaderParameter p
-//            for p in optionalParams do yield generateParameterInfo UrlParameter p
-//        ] |> List.map (fun (name, t, setter) -> ProvidedParameter(name, t), setter)
     let returnType, returnExpr = genReturnTypeAndExpr handler
     let requestVar = Var("request", typeof<ApiRequest>)
     let requestExpr = Expr.Var requestVar
     let parts = marshallParts handler.UrlParts //TODO: Perf?
     let methodName = handler.Method.HttpName
     let sendExpr (args : Expr list) =
-        let argExpr i = Expr.Coerce(args.[i+1], typeof<obj>)
+        let argExpr i = args.[i+1]
         let setExprs =
             requiredParams |> List.map snd |> List.mapi (fun i setter ->
-                setter requestExpr (argExpr i))
+                setter <@ %%requestExpr : ApiRequest @> (argExpr i))
         let bodyExpr =
             if setExprs |> List.isEmpty then requestExpr
             else
-                let setAllExpr = setExprs |> List.reduce(fun x y -> Expr.Sequential(x, y))
+                let setAllExpr = setExprs |> List.map (fun e -> e.Raw) |> List.reduce(fun x y -> Expr.Sequential(x, y))
                 Expr.Sequential(setAllExpr, requestExpr)
         Expr.Let(
             requestVar, <@@ ApiRequest(methodName, %%parts) @@>, 

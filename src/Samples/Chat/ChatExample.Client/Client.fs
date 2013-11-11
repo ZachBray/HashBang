@@ -31,9 +31,9 @@ let rec trackMessages lastId =
         let getMessagesAsync =
             match lastId with
             // We need to get all the messages if we haven't seen a message yet.
-            | None -> ctx.Value.Message.GetAll()
+            | None -> ctx.Value.Messages.Since()
             // Otherwise, we need to get all the messages since the last message.
-            | Some id -> ctx.Value.Message.GetSince id
+            | Some id -> ctx.Value.Messages.Since(Some id)
         // We ask the server for the messages
         let! messages = getMessagesAsync
         match messages with
@@ -65,7 +65,7 @@ let sendMessage() =
     if content <> null && content <> "" then
         async {
             // We send the message asynchronously.
-            let! _ = ctx.Value.Message.Send {
+            let! _ = ctx.Value.Messages.Send {
                 Content = content
                 Sender = "user1"
                 Subject =  "no subject"

@@ -40,15 +40,15 @@ type ApiDataContext =
 
 type ApiRequest(httpMethod, urlParts : UrlPart[]) =
     let mutable headers = Map.empty<string, string>
-    let mutable parameters = Map.empty<string, string>
+    let mutable urlParameters = Map.empty<string, string>
     let mutable queryParameters = Map.empty<string, string>
     let mutable body = None
 
     member __.AddHeader(key, value) = 
         headers <- headers.Add(key, value)
 
-    member __.AddParameter(key, value) =
-        parameters <- parameters.Add(key, value)
+    member __.AddUrlParameter(key, value) =
+        urlParameters <- urlParameters.Add(key, value)
 
     member __.AddQueryParameter(key, value) =
         queryParameters <- queryParameters.Add(key, value)
@@ -58,12 +58,22 @@ type ApiRequest(httpMethod, urlParts : UrlPart[]) =
     member __.Headers = headers
 
     member __.BuildUrl(dc : ApiDataContext) =
-        dc.BaseUrl + (
-            urlParts |> Array.map (fun part ->
-                match part with
-                | FixedPart section -> section
-                | VariablePart(name, _) -> parameters.[name])
-            |> String.concat "/")
+        let segments =
+            dc.BaseUrl + (
+                urlParts |> Array.map (fun part ->
+                    match part with
+                    | FixedPart section -> section
+                    | VariablePart(name, _) -> urlParameters.[name])
+                |> String.concat "/")
+        let queryString =
+            if queryParameters.Count = 0 then ""
+            else
+                let queryParams =
+                    queryParameters |> Map.toArray |> Array.map (fun (name, value) ->
+                        name + "=" + value)
+                    |> String.concat "&"
+                "?" + queryParams
+        segments + queryString
     
     member req.Send(dc) =
         async {

@@ -55,19 +55,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.20\lib\net40\FunScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.BrowserAPI">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.BrowserAPI.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.20\lib\net40\FunScript.BrowserAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Data">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Data.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.20\lib\net40\FunScript.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Interop">
-      <HintPath>..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Interop.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.20\lib\net40\FunScript.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">
@@ -86,15 +86,19 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="TypeInferred.HashBang.Core">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.12\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.14\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Provider">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.12\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.14\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.HashBang.Routing">
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.14\lib\net40\TypeInferred.HashBang.Routing.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.Utilities">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.12\lib\net40\TypeInferred.Utilities.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.14\lib\net40\TypeInferred.Utilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

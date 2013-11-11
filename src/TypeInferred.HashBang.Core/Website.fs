@@ -11,19 +11,23 @@ open TypeInferred.HashBang.Runtime
 type Website =
     {
         Prefix : string
-        Handlers : RequestHandler<unit, ContentType * string> list
-        RedirectTemplate : Uri -> ContentType * string
-        ErrorTemplate : string -> ContentType * string
-        NotFoundTemplate : ContentType * string
+        Handlers : RequestHandler<unit, ContentType * byte[]> list
+        RedirectTemplate : Uri -> ContentType * byte[]
+        ErrorTemplate : string -> ContentType * byte[]
+        NotFoundTemplate : ContentType * byte[]
     }
 
     static member At prefix =
         {
             Prefix = prefix
             Handlers = []
-            RedirectTemplate = fun uri -> ContentTypes.Text.plain, "Resource is now located at: " + uri.ToString()
-            ErrorTemplate = fun msg -> ContentTypes.Text.plain, "Error: " + msg
-            NotFoundTemplate = ContentTypes.Text.plain, "Resource not found."
+            RedirectTemplate = fun uri -> 
+                ContentTypes.Text.plain, 
+                Encoding.UTF8.GetBytes("Resource is now located at: " + uri.ToString())
+            ErrorTemplate = fun msg -> 
+                ContentTypes.Text.plain, 
+                 Encoding.UTF8.GetBytes("Error: " + msg)
+            NotFoundTemplate = ContentTypes.Text.plain, Encoding.UTF8.GetBytes "Resource not found."
         }
 
     static member WithRouteHandlers newHandlers (site : Website) =
@@ -37,23 +41,21 @@ type Website =
             |> List.map (fun handler -> handler.Metadata) 
             |> List.toArray
         site |> Website.WithRouteHandlers [
-            Json.GET "/metadata" {
-                Resource = "Metadata"; Action = "Get"
-                Description = "Returns website metadata."
-                Handle = fun req () -> async {
-                    return OK handlersMetadata
-                }
+            GET Json --|"/metadata"|--> fun () () -> async {
+                return OK handlersMetadata
             }
         ]
 
     static member Start (site : Website) =
         
-        let getResponse request = async {
+        let getResponse (Request(_,_,raw) as request) = async {
         // TODO: Could speed this up by building a radix tree of the UrlParts.
             try
                 let result = 
                     site.Handlers |> List.tryPick (fun (handler : RequestHandler<_,_>) -> 
-                        handler.TryHandle request |> Option.map (fun f -> f()))
+                        if raw.HttpMethod = handler.Metadata.Method.HttpName then
+                            handler.TryHandle request |> Option.map (fun f -> f())
+                        else None)
                 return! defaultArgAsync result NotFound
             with ex ->
                 return InternalServerError(ex.ToString())
@@ -72,9 +74,8 @@ type Website =
             async {
                 try
                     try
-                        let request = 
-                            let path = rawReq.RawUrl.Split([|'/'|], StringSplitOptions.RemoveEmptyEntries)
-                            Request(path, rawReq)
+                        let segments, queryParams = System.Net.WebUtility.SplitRelativeUri rawReq.RawUrl
+                        let request = Request(segments, queryParams, rawReq)
                         let! response = getResponse request
                         rawResp.StatusCode <- response.Code
                         defaultHeaders |> Array.iter rawResp.AddHeader
@@ -94,9 +95,8 @@ type Website =
                                 site.ErrorTemplate "Unauthorized access." |> Some
                         match content with
                         | None -> ()
-                        | Some(contentType, body) ->
+                        | Some(contentType, uncompressed) ->
                             let bodyBytes = 
-                                let uncompressed = Encoding.UTF8.GetBytes body
                                 match rawReq.Headers.["Accept-Encoding"] with
                                 | vs when vs <> null && vs.Contains "gzip" -> 
                                     rawResp.AddHeader("Content-Encoding", "gzip")
@@ -107,7 +107,7 @@ type Website =
                                     compressor.Close()
                                     memoryStream.ToArray()
                                 | _ -> 
-                                    rawResp.ContentEncoding <- Text.Encoding.UTF8
+                                    rawResp.ContentEncoding <- Encoding.UTF8
                                     uncompressed                                
                             rawResp.ContentLength64 <- bodyBytes.LongLength 
                             rawResp.ContentType <- contentType.Mime                           
