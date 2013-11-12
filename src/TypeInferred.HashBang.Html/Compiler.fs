@@ -39,6 +39,11 @@ let compilePage (html : HtmlTag<Html.IHtml>) =
         yield! Helpers.compileTag html
     } |> String.concat "\r\n"
 
+let compilePageUnsafe (html : IHtmlTag) =
+    seq {
+        yield "<!DOCTYPE html>"
+        yield! Helpers.compileTag html
+    } |> String.concat "\r\n"
 
 let compileSection tag =
     Helpers.compileTag tag |> String.concat "\r\n"

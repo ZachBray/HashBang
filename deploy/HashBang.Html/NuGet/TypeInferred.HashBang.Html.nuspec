@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>TypeInferred.HashBang.Html</id>
+    <authors>Zach Bray</authors>
+    <version>0.1.27</version>
+    <projectUrl>http://www.funscript.info</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An extension library for building dynamic websites with F# and FunScript that are capable of SEO.</description>
+    <copyright>Copyright 2013</copyright>
+    <tags>F# FSharp JavaScript TypeProvider FunScript</tags>
+    <dependencies>
+        <dependency id="FunScript" version="1.1.0.22" />
+        <dependency id="TypeInferred.HashBang" version="0.1.15" />
+    </dependencies>
+  </metadata>
+</package>

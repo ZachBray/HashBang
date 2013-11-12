@@ -64,6 +64,7 @@ let private generateBodyInfo (meta : TypeMetadata) =
     ProvidedParameter("body", t), setter
 
 let private serializeParts = precomputeToJson<UrlPart[]>()
+// TODO: Perf! This is unnecessary. We can create Expr.NewArray instead.
 let private marshallParts parts =
     let json = serializeParts parts
     Expr.Coerce(<@@ Serialization.deserialize typeof<UrlPart[]> json @@>, typeof<UrlPart[]>)

@@ -1,8 +1,8 @@
 ﻿[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
-#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.dll"
-#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.Interop.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 #endif
@@ -40,6 +40,25 @@ type HtmlTag<'a> =
         member tag.Children = tag.Children
         member tag.CanClose = tag.CanClose
         member tag.Initialize v = tag.Initialize v
+
+module HtmlTag =
+    
+    let rec replace id newTag root =
+        let rec replaceAux (node : IHtmlTag) =
+            if node.Id = id then newTag
+            else
+                {
+                    Id = node.Id
+                    Name = node.Name
+                    Attributes = node.Attributes
+                    Children = 
+                        node.Children |> List.map (function
+                            | Text _ as x -> x
+                            | Tag x -> Tag(replaceAux x))
+                    CanClose = node.CanClose
+                    Initialize = node.Initialize
+                } :> IHtmlTag
+        replaceAux root
 
 module Unchecked =
 

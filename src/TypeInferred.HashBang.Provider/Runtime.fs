@@ -58,22 +58,12 @@ type ApiRequest(httpMethod, urlParts : UrlPart[]) =
     member __.Headers = headers
 
     member __.BuildUrl(dc : ApiDataContext) =
-        let segments =
-            dc.BaseUrl + (
-                urlParts |> Array.map (fun part ->
-                    match part with
-                    | FixedPart section -> section
-                    | VariablePart(name, _) -> urlParameters.[name])
-                |> String.concat "/")
-        let queryString =
-            if queryParameters.Count = 0 then ""
-            else
-                let queryParams =
-                    queryParameters |> Map.toArray |> Array.map (fun (name, value) ->
-                        name + "=" + value)
-                    |> String.concat "&"
-                "?" + queryParams
-        segments + queryString
+        let segments = 
+            urlParts |> Array.map (fun part ->
+                match part with
+                | FixedPart section -> section
+                | VariablePart(name, _) -> urlParameters.[name])
+        System.Net.WebUtility.CreateUri(dc.BaseUrl, segments, queryParameters)
     
     member req.Send(dc) =
         async {

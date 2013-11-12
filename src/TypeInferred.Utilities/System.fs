@@ -30,6 +30,7 @@ module Char =
 module Decimal =
     let TryConvert str = tryConvert str : decimal Nullable
 
+[<ReflectedDefinition>]
 module Option =
     let bindNullable f x =
         match x with

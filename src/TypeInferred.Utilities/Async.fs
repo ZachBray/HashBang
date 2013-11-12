@@ -4,20 +4,22 @@ module AsyncExtensions
 open System
 open System.Threading
 
-type Async with
-    static member StartDisposable task =
+[<ReflectedDefinition>]
+module Async =
+    let StartDisposable task =
         let cts = new CancellationTokenSource()
         Async.Start(task, cts.Token)
         Disposable.by (fun () ->
             cts.Cancel()
             cts.Dispose())
         
-    static member map f xAsync =
+    let map f xAsync =
         async {
             let! x = xAsync
             return f x
         }
 
+[<ReflectedDefinition>]
 module List =
     let tryPickAsync f xs =
         let rec tryPickAsync = function
@@ -30,3 +32,14 @@ module List =
                     | Some _ -> return y
                 }
         tryPickAsync xs
+
+    let foldAsync f seed xs =
+        let rec foldAsync acc = function
+            | [] -> async { return acc }
+            | x::xs -> 
+                async { 
+                    let! acc = f acc x
+                    return! foldAsync acc xs
+                }
+        foldAsync seed xs
+            

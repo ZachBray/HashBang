@@ -31,8 +31,8 @@ let Text contentType () =
     }
     
 let PlainText = Text ContentTypes.Text.plain
-let Html = Text ContentTypes.Text.html
-let Css = Text ContentTypes.Text.css
+let HtmlText = Text ContentTypes.Text.html
+let CssText = Text ContentTypes.Text.css
 let JavaScript = Text ContentTypes.Application.javascript
 
 let Binary contentType () =

@@ -5,12 +5,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>ff0b1036-f743-4cda-8d5d-73ec6d68dbd3</ProjectGuid>
+    <ProjectGuid>6f479bce-a3f5-41e4-9ce2-b95dcf6904b6</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>TypeInferred.HashBang.Html</RootNamespace>
-    <AssemblyName>TypeInferred.HashBang.Html</AssemblyName>
+    <RootNamespace>TypeInferred.HashBang.Dynamic</RootNamespace>
+    <AssemblyName>TypeInferred.HashBang.Dynamic</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Name>TypeInferred.HashBang.Html</Name>
+    <Name>TypeInferred.HashBang.Dynamic</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\TypeInferred.HashBang.Html.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\TypeInferred.HashBang.Dynamic.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,21 +29,23 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\TypeInferred.HashBang.Html.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\TypeInferred.HashBang.Dynamic.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <ItemGroup>
-    <Compile Include="Tags.fs" />
-    <Compile Include="Compiler.fs" />
-    <Compile Include="Extensions.fs" />
-    <None Include="Generate.fsx" />
-    <None Include="Header.fsx" />
+    <Compile Include="Linq.fs" />
+    <Compile Include="Dynamic.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj">
+      <Name>TypeInferred.HashBang.Routing</Name>
+      <Project>{bc60e4cb-6af7-4571-b8db-a2e1c61794e9}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="FSharp.Data">
       <HintPath>..\packages\FSharp.Data.1.1.5\lib\net40\FSharp.Data.dll</HintPath>
       <Private>True</Private>
@@ -91,6 +93,21 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj">
+      <Name>TypeInferred.HashBang.Core</Name>
+      <Project>{43ec7d0c-04ae-48bd-b1c3-be3f2b8ec4a3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeInferred.HashBang.Html\TypeInferred.HashBang.Html.fsproj">
+      <Name>TypeInferred.HashBang.Html</Name>
+      <Project>{ff0b1036-f743-4cda-8d5d-73ec6d68dbd3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeInferred.Utilities\TypeInferred.Utilities.fsproj">
+      <Name>TypeInferred.Utilities</Name>
+      <Project>{2c4cdef2-2613-4514-87ef-029e18a6d033}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

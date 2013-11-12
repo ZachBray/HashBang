@@ -31,6 +31,7 @@ module HttpListener =
         } |> Async.StartDisposable
 
 
+[<ReflectedDefinition>]
 module WebUtility =
     
     module Helpers =
@@ -49,13 +50,25 @@ module WebUtility =
     let SplitRelativeUri (uri : string) =
         let parts = uri.Split([|'?'|], StringSplitOptions.RemoveEmptyEntries)
         let segments =
-            match parts with
-            | [|path|] | [|path; _|] -> 
-                path.Split([|'/'|], StringSplitOptions.RemoveEmptyEntries)
-            | _ -> failwith "Multiple '?' characters found in URI."
+            if parts.Length = 1 || parts.Length = 2 then
+                 parts.[0].Split([|'/'|], StringSplitOptions.RemoveEmptyEntries)
+            else failwith "Multiple '?' characters found in URI."
         let queryParameters =
-            match parts with
-            | [|_; query|] -> Helpers.consumeParams query
-            | _ -> Map.empty
+            if parts.Length = 2 then
+                Helpers.consumeParams parts.[1]
+            else Map.empty
         segments, queryParameters
         
+    let CreateUri (baseUri : string, segments, queryParameters : Map<_,_>) =
+        let segments =
+            let sep = if baseUri.Length = 0 || baseUri.[baseUri.Length - 1] <> '/' then "/" else ""
+            baseUri + sep + (segments |> String.concat "/")
+        let queryString =
+            if queryParameters.Count = 0 then ""
+            else
+                let queryParams =
+                    queryParameters |> Map.toArray |> Array.map (fun (name, value) ->
+                        name + "=" + WebUtility.UrlEncode value)
+                    |> String.concat "&"
+                "?" + queryParams
+        segments + queryString

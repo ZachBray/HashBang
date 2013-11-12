@@ -20,6 +20,38 @@ type Route =
         Description : string
     }
 
+[<ReflectedDefinition>]
+type RouteUriBuilder(urlParts : UrlPart[]) =
+    let mutable urlParameters = Map.empty<string, string>
+    let mutable queryParameters = Map.empty<string, string>
+
+    member __.AddUrlParameter(key, value) =
+        urlParameters <- urlParameters.Add(key, value)
+
+    member __.AddQueryParameter(key, value) =
+        queryParameters <- queryParameters.Add(key, value)
+
+
+    member __.Build() =
+        let segments = 
+            urlParts |> Array.map (fun part ->
+                match part with
+                | FixedPart section -> section
+                | VariablePart(name, _) -> urlParameters.[name])
+        System.Net.WebUtility.CreateUri("#!", segments, queryParameters)
+    
+[<ReflectedDefinition>]
+type ClientRoute<'ParamT>(tryParse : Path -> QueryParams -> 'ParamT option) =
+    member __.CreateHandler(handle : 'ParamT -> 'HtmlT option Async) =
+        fun path queryParams -> 
+            async {
+                match tryParse path queryParams with
+                | None -> return None
+                | Some ps -> return! handle ps
+            }
+    //member __.CreateCall
+
+
 module Generation =
     
     let parseRoute (routeFormat : string) =
@@ -40,6 +72,26 @@ module Generation =
                         | _ -> failwith "Unsupported HTTP method."
                     {
                         Method = httpMethod
+                        UrlFormat = path
+                        Resource = resource
+                        Action = action
+                        Description = doc
+                    }
+                | _ -> fail()
+            | _ -> fail()
+        | _ -> fail()
+
+    let parseClientRoute (routeFormat : string) =
+        let fail() = 
+            failwithf "Expected '<segments> # <resource>.<action> # <description>' but got '%s'" routeFormat
+        match routeFormat.Split [|'#'|] with
+        | [|route; resourcePath; doc|] ->
+            match route.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) with
+            | [|path|] ->
+                match resourcePath.Trim().Split [|'.'|] with
+                | [|resource; action|] ->
+                    {
+                        Method = Get
                         UrlFormat = path
                         Resource = resource
                         Action = action
@@ -161,7 +213,7 @@ module Generation =
         |> Array.iter t.AddMember
         erasedType, t, erasedTypeFactory
 
-    let buildParseBody urlParts queryParams parameterType parameterFactory segs qs =        
+    let buildParseBody urlParts queryParams erasedType parameterFactory segs qs =        
         let partExprs =
             urlParts |> Seq.mapi (fun i (part, _) ->
                 let element = <@ (%%segs : Path).[i] @>
@@ -200,12 +252,13 @@ module Generation =
                 prior, check, Some access)
         let priors, checkExprs, accessExprs = Seq.append partExprs queryExprs |> Seq.toList |> List.unzip3
         let completeCheck =
+            let expectedLength = urlParts |> Seq.length
             checkExprs |> List.fold (fun acc check ->
-                <@ %acc && %%check @>) <@ true @>
+                <@ %acc && %%check @>) <@ (%%segs : Path).Length = expectedLength @>
         let tupleExpr =
             accessExprs |> List.choose id |> parameterFactory
         let genericOption = typedefof<_ option>
-        let specificOption = genericOption.MakeGenericType [| parameterType |]
+        let specificOption = genericOption.MakeGenericType [| erasedType |]
         let cases = FSharpType.GetUnionCases(specificOption)
         let none, some = cases.[0], cases.[1]
         let testAndCreateExpr =
@@ -217,50 +270,133 @@ module Generation =
                 f acc) testAndCreateExpr
         fullExpr
 
-    let buildParseRequestExpr parameterType parameterFactory urlParts queryParams =
+    let buildParseRequestExpr erasedType parameterFactory urlParts queryParams =
         let segsVar = Var("segs", typeof<Path>)
         let qsVar = Var("qs", typeof<QueryParams>)
         Expr.Lambda(segsVar,
             Expr.Lambda(qsVar,
                 buildParseBody 
                     urlParts queryParams 
-                    parameterType parameterFactory 
+                    erasedType parameterFactory 
                     (Expr.Var segsVar) (Expr.Var qsVar)))
 
-    let generateRouteProperty(route : Route) =
-        let urlParts, queryParams, metadataExpr = generateMetadata route
-        let erasedType, parameterType, parameterFactory = generateTypeAndFactory route urlParts queryParams
-        let parseRequestExpr = buildParseRequestExpr erasedType parameterFactory urlParts queryParams
-        let genericFactory = 
+    let private generateUrlParamInfo (param : ParameterMetadata) =
+        let key = param.Key
+        ProvidedParameter(param.Key, param.Type.RuntimeType),
+        fun req arg -> 
+            let arg = Expr.Coerce(arg, typeof<obj>)
+            <@ (%req : RouteUriBuilder).AddUrlParameter(key, (%%arg).ToString()) @>
+    
+    let private generateQueryParamInfo (param : ParameterMetadata) =
+        let key = param.Key
+        if param.IsRequired then
+            ProvidedParameter(param.Key, param.Type.RuntimeType),
+            fun req arg ->
+                let arg = Expr.Coerce(arg, typeof<obj>)
+                <@ (%req : RouteUriBuilder).AddQueryParameter(key, (%%arg).ToString()) @>
+        else
+            let optionalType = typedefof<_ option>.MakeGenericType [| param.Type.RuntimeType |]
+            let valueProp = optionalType.GetProperty("Value")
+            ProvidedParameter(param.Key, optionalType, optionalValue = null),
+            fun req arg ->
+                let argAsObj = Expr.Coerce(arg, typeof<obj>)
+                let value = Expr.Coerce(Expr.PropertyGet(arg, valueProp), typeof<obj>)
+                <@ 
+                    if not(obj.ReferenceEquals(%%argAsObj, null)) then
+                        (%req : RouteUriBuilder).AddQueryParameter(key, (%%value).ToString()) @>
+
+
+    let buildConstructRouteMethodParams urlParts queryParams =
+        let parameters = 
+            urlParts |> Array.choose (fun (part, _) ->
+                match part with
+                | FixedPart _ -> None
+                | VariablePart(name, t) -> Some { Key = name; Type = t; IsRequired = true })
+        let queryParameters = queryParams |> Map.toSeq |> Seq.map (snd >> fst)
+        [
+            for p in parameters do yield generateUrlParamInfo p
+            for p in queryParameters do yield generateQueryParamInfo p
+        ]
+
+    let buildUrlPartsExpr urlParts =
+        let elementExprs = urlParts |> Array.map snd |> Array.toList
+        Expr.NewArray(typeof<UrlPart>, elementExprs)
+
+    let buildConstructRouteMethod urlParts queryParams =
+        let partsExpr = buildUrlPartsExpr urlParts
+        let allParams = buildConstructRouteMethodParams urlParts queryParams
+        let builderVar = Var("builder", typeof<RouteUriBuilder>)
+        let builderExpr = Expr.Var builderVar
+        let createExpr (args : Expr list) =
+            let argExpr i = args.[i+1]
+            let setExprs =
+                allParams |> List.map snd |> List.mapi (fun i setter ->
+                    setter <@ %%builderExpr : RouteUriBuilder @> (argExpr i))
+            let bodyExpr =
+                if setExprs |> List.isEmpty then builderExpr
+                else
+                    let setAllExpr = setExprs |> List.map (fun e -> e.Raw) |> List.reduce(fun x y -> Expr.Sequential(x, y))
+                    Expr.Sequential(setAllExpr, builderExpr)
+            Expr.Let(
+                builderVar, <@@ RouteUriBuilder(%%partsExpr) @@>, 
+                Expr.Sequential(bodyExpr, <@ (%%builderExpr : RouteUriBuilder).Build() @>))
+        ProvidedMethod(
+            "CreateUri",
+            allParams |> List.map fst,
+            typeof<string>,
+            InvokeCode = createExpr)
+            
+    let constructorFactory (route : Route) parameterType erasedType metadataExpr parseRequestExpr =
+        let genericFactory =
             match route.Method with
             | Get -> typedefof<GetRequestHandlerFactory<_>>
             | Post -> typedefof<PostRequestHandlerFactory<_>>
             | Put -> typedefof<PutRequestHandlerFactory<_>>
             | Delete -> typedefof<DeleteRequestHandlerFactory<_>>
         let propType = genericFactory.MakeGenericType [| parameterType :> Type |]
-        let completeExpr =
+        let consExpr =
             let erasedPropType = genericFactory.MakeGenericType [| erasedType |]
             let cons = erasedPropType.GetConstructors().[0]
             Expr.NewObject(cons, [metadataExpr; parseRequestExpr])
+        propType, consExpr
+
+    let clientConstructorFactory (route : Route) parameterType erasedType metadataExpr parseRequestExpr =
+        let genericFactory = typedefof<_ ClientRoute>
+        let propType = genericFactory.MakeGenericType [| parameterType :> Type |]
+        let consExpr =
+            let erasedPropType = genericFactory.MakeGenericType [| erasedType |]
+            let cons = erasedPropType.GetConstructors().[0]
+            Expr.NewObject(cons, [parseRequestExpr])
+        propType, consExpr
+
+    let generateRouteProperty constructorFactory (route : Route) =
+        let urlParts, queryParams, metadataExpr = generateMetadata route
+        let erasedType, parameterType, parameterFactory = generateTypeAndFactory route urlParts queryParams
+        let parseRequestExpr = buildParseRequestExpr erasedType parameterFactory urlParts queryParams
+        let propType, consExpr = constructorFactory route parameterType erasedType metadataExpr parseRequestExpr
+        let extendedType =
+            ProvidedTypeDefinition(route.Action + "Factory", Some propType, HideObjectMethods = true)
+        extendedType.AddMember(buildConstructRouteMethod urlParts queryParams)
+        extendedType.AddMember parameterType
         let property = 
             ProvidedProperty(
-                route.Action, propType,
+                route.Action, extendedType,
                 IsStatic = true,
-                GetterCode = fun _ -> completeExpr)
+                GetterCode = fun _ -> consExpr)
         property.AddXmlDoc(route.UrlFormat + " : " + route.Description)
         seq {
-            yield parameterType :> MemberInfo
+            yield extendedType :> MemberInfo
             yield upcast property
         }
 
-    let generateRoutes (routesFormat : string) =
+    let generateRoutes (routesFormat : string) parseRoute routeFactoryType =
         let routes = 
             routesFormat.Split([|'\r';'\n'|], StringSplitOptions.RemoveEmptyEntries)
             |> Array.map parseRoute
         routes |> Seq.groupBy (fun route -> route.Resource)
         |> Seq.map (fun (resource, subRoutes) ->
             let t = ProvidedTypeDefinition(resource, Some typeof<obj>, HideObjectMethods = true)
-            subRoutes |> Seq.collect generateRouteProperty |> Seq.iter t.AddMember
+            subRoutes |> Seq.collect (generateRouteProperty routeFactoryType) |> Seq.iter t.AddMember
             t)
         |> Seq.toArray
 
@@ -274,7 +410,7 @@ type RouteImpl(config : TypeProviderConfig) as this =
 
     let generateTypeGraph requestedName routesFormat =
         let root = ProvidedTypeDefinition(ass, nspace, requestedName, Some typeof<obj>, HideObjectMethods = true)
-        Generation.generateRoutes routesFormat
+        Generation.generateRoutes routesFormat Generation.parseRoute Generation.constructorFactory
         |> Array.iter root.AddMember
         root
     do
@@ -283,6 +419,33 @@ type RouteImpl(config : TypeProviderConfig) as this =
         |> Array.map Path.GetDirectoryName 
         |> Seq.distinct |> Seq.iter this.RegisterProbingFolder
         let providerType = ProvidedTypeDefinition(ass, nspace, "RoutesProvider", None)
+        let schemaUrl = ProvidedStaticParameter("RoutesFormat", typeof<string>)
+        providerType.DefineStaticParameters(
+            [schemaUrl], 
+            fun requestedName -> 
+            function
+                | [| :? string as url |] -> generateTypeGraph requestedName url
+                | _ -> failwith "Invalid parameters")
+        this.AddNamespace(nspace, [providerType])
+
+[<TypeProvider>]
+type ClientRouteImpl(config : TypeProviderConfig) as this =
+    inherit TypeProviderForNamespaces()
+    
+    let ass = Assembly.GetExecutingAssembly()
+    let nspace = "TypeInferred.HashBang"
+
+    let generateTypeGraph requestedName routesFormat =
+        let root = ProvidedTypeDefinition(ass, nspace, requestedName, Some typeof<obj>, HideObjectMethods = true)
+        Generation.generateRoutes routesFormat Generation.parseClientRoute Generation.clientConstructorFactory
+        |> Array.iter root.AddMember
+        root
+    do
+        this.RegisterRuntimeAssemblyLocationAsProbingFolder config
+        config.ReferencedAssemblies 
+        |> Array.map Path.GetDirectoryName 
+        |> Seq.distinct |> Seq.iter this.RegisterProbingFolder
+        let providerType = ProvidedTypeDefinition(ass, nspace, "ClientRoutesProvider", None)
         let schemaUrl = ProvidedStaticParameter("RoutesFormat", typeof<string>)
         providerType.DefineStaticParameters(
             [schemaUrl], 

@@ -1,8 +1,8 @@
 ﻿#r "System.Xml"
 #r "System.Xml.Linq"
 #r @"..\..\lib\HtmlAgilityPack.dll"
-#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.dll"
-#r @"..\packages\FunScript.1.1.0.19\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.Interop.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 
@@ -162,7 +162,7 @@ let fsharpKeywords =
             "lsl"; "lsr"; "lxor"; "mod"; "sig"; "int"; "sbyte"; "byte"; "uint";
             "uint32"; "int32"; "int64"; "uint64"; "int16"; "uint16"; "float";
             "decimal"; "float32"; "bool"; "obj"; "unit"; "global"; "recursive"; 
-            "use"; "let"; "do"; "yield"; "lazy"; "constructor"; "base" |]
+            "use"; "let"; "do"; "yield"; "lazy"; "constructor"; "base"|]
 
 let clean (str : string) =
     str.TrimStart([|'_'|])
@@ -183,6 +183,7 @@ let toPascalCase name =
         | _ -> c)
     |> function
         | "" -> "Empty"
+        | "Map" -> "MapElement"
         | x -> x
 
 let toCamelCase name =

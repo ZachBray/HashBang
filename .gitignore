@@ -12,7 +12,10 @@ _ReSharper*/
 *.nupkg
 *.*~
 :
-deploy/NuGet/lib
+
+deploy/**/*/*.nupkg
+deploy/**/*/lib
+
 build
 
 src/packages/*
