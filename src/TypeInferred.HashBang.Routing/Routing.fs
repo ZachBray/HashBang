@@ -38,7 +38,7 @@ type RouteUriBuilder(urlParts : UrlPart[]) =
                 match part with
                 | FixedPart section -> section
                 | VariablePart(name, _) -> urlParameters.[name])
-        System.Net.WebUtility.CreateUri("#!", segments, queryParameters)
+        System.Net.WebUtility.CreateUri("/#!", segments, queryParameters)
     
 [<ReflectedDefinition>]
 type ClientRoute<'ParamT>(tryParse : Path -> QueryParams -> 'ParamT option) =

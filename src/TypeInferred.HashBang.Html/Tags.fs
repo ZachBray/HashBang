@@ -63,10 +63,10 @@ module HtmlTag =
 module Unchecked =
 
     let alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    
+    let private rand = System.Random()
+
     [<JSEmitInline("Math.floor(Math.random() * {0})")>]
     let random maxExcl =
-        let rand = System.Random()
         rand.Next maxExcl
 
     let randomId() =

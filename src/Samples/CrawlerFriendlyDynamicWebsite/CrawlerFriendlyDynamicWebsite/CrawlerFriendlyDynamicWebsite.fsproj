@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>dbdc2a24-b997-47e9-8a90-ef60a4d2a38e</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CrawlerFriendlyDynamicWebsite</RootNamespace>
+    <AssemblyName>CrawlerFriendlyDynamicWebsite</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <Name>CrawlerFriendlyDynamicWebsite</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>bin\Debug\CrawlerFriendlyDynamicWebsite.XML</DocumentationFile>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>bin\Release\CrawlerFriendlyDynamicWebsite.XML</DocumentationFile>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Data">
+      <HintPath>..\packages\FSharp.Data.1.1.5\lib\net40\FSharp.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Data.DesignTime">
+      <HintPath>..\packages\FSharp.Data.1.1.5\lib\net40\FSharp.Data.DesignTime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Data.Experimental">
+      <HintPath>..\packages\FSharp.Data.Experimental.1.1.5\lib\net40\FSharp.Data.Experimental.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Data.Experimental.DesignTime">
+      <HintPath>..\packages\FSharp.Data.Experimental.1.1.5\lib\net40\FSharp.Data.Experimental.DesignTime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript">
+      <HintPath>..\packages\FunScript.1.1.0.25\lib\net40\FunScript.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript.BrowserAPI">
+      <HintPath>..\packages\FunScript.1.1.0.25\lib\net40\FunScript.BrowserAPI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript.Data">
+      <HintPath>..\packages\FunScript.1.1.0.25\lib\net40\FunScript.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript.Interop">
+      <HintPath>..\packages\FunScript.1.1.0.25\lib\net40\FunScript.Interop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript.TypeScript.Binding.jquery">
+      <HintPath>..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FunScript.TypeScript.Binding.lib">
+      <HintPath>..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="TypeInferred.HashBang.Core">
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.HashBang.Dynamic">
+      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.29\lib\net40\TypeInferred.HashBang.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.HashBang.Html">
+      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.29\lib\net40\TypeInferred.HashBang.Html.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.HashBang.Provider">
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.HashBang.Routing">
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Routing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeInferred.Utilities">
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.Utilities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
