@@ -16,22 +16,28 @@ open TypeInferred.HashBang.Html
 // variable segments, query parameters and optional query parameters.
 // The second column specifies the "resource" and "action". These are used
 // to generate the type tree in a nice way. The third column supplies documentation.
-type Routes = TypeInferred.HashBang.ClientRoutesProvider<"
+type Routes = ClientRoutesProvider<"
 /               # Home.Open     # The home page
 /page?id=int    # Page.Nth      # The nth page
 ">
+
+type Bootstrap = CssClassesProvider<"http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
+type BootstrapTheme = CssClassesProvider<"http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap-theme.min.css">
+type Application = CssClassesProvider<"../../../../lib/css/app.css">
 
 // Here we define what the head of the HTML document will look like using the
 // HashBang Html DSL.
 let headTemplate =
     Head.empty
     |> Element.appendTags [
-        Title.empty |> Element.appendText ["CrawlerFriendlyDynamicWebsite"]
+        yield Title.empty |> Element.appendText ["CrawlerFriendlyDynamicWebsite"] :> IHtmlTag
 
-        Meta.empty |> Meta.name (Name.Generator "viewport")
-        |> Meta.content "width=device-width, initial-scale=1.0"
-
-        //TODO: CSS
+        yield Meta.empty |> Meta.name (Name.Generator "viewport")
+              |> Meta.content "width=device-width, initial-scale=1.0" :> _
+               
+        for sheet in [Bootstrap.RawStyleSheet; BootstrapTheme.RawStyleSheet; Application.RawStyleSheet] do
+            yield Style.empty |> Style.``type`` IStyleType.Text_css
+                  |> Element.appendText [ sheet ] :> _
     ]
     |> Element.appendText [
         """
@@ -62,6 +68,7 @@ let bodyTemplate =
         |> Element.appendText ["Content will go here!"]
 
         Script.empty |> Script.src "http://code.jquery.com/jquery.min.js"
+        Script.empty |> Script.src "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"
     ]
 
 // Here we define handlers to update the content section. Each handler is 
@@ -76,8 +83,8 @@ let contentHandlers =
             async {
                 return
                     Div.empty
-                    |> Element.appendText ["Home Page!"]
                     |> Element.appendTags [
+                        H1.empty |> Element.appendText ["Home Page!"]
                         // We can use the Routes type for type-safe url hash creation.
                         A.empty |> A.href (Routes.Page.Nth.CreateUri 1)
                         |> Element.appendText ["Page 1"]
@@ -88,11 +95,20 @@ let contentHandlers =
         Routes.Page.Nth.CreateHandler(fun ps ->
             async {
                 return Div.empty
-                    |> Element.appendText ["Page #" + ps.id.ToString()]
                     |> Element.appendTags [
+                        yield H1.empty |> Element.appendText ["Page #" + ps.id.ToString()] :> IHtmlTag
                         // We can use the Routes type for type-safe url hash creation.
-                        A.empty |> A.href (Routes.Page.Nth.CreateUri (ps.id + 1))
-                        |> Element.appendText ["Page " + (ps.id + 1).ToString()]
+                        
+                        if ps.id > 1 then
+                            yield A.empty |> Element.style Bootstrap.btn
+                              |> Element.style Bootstrap.btn_info
+                              |> A.href (Routes.Page.Nth.CreateUri (ps.id - 1))
+                              |> Element.appendText ["Page " + (ps.id - 1).ToString()] :> _
+
+                        yield A.empty |> Element.style Bootstrap.btn
+                              |> Element.style Bootstrap.btn_info
+                              |> A.href (Routes.Page.Nth.CreateUri (ps.id + 1))
+                              |> Element.appendText ["Page " + (ps.id + 1).ToString()] :> _
                     ] :> IHtmlTag
                     |> Some
             })

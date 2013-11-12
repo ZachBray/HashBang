@@ -84,27 +84,27 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="TypeInferred.HashBang.Core">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.31\lib\net40\TypeInferred.HashBang.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Dynamic">
-      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.29\lib\net40\TypeInferred.HashBang.Dynamic.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.31\lib\net40\TypeInferred.HashBang.Dynamic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Html">
-      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.29\lib\net40\TypeInferred.HashBang.Html.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.31\lib\net40\TypeInferred.HashBang.Html.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Provider">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.31\lib\net40\TypeInferred.HashBang.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.HashBang.Routing">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.HashBang.Routing.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.0.1.31\lib\net40\TypeInferred.HashBang.Routing.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="TypeInferred.Utilities">
-      <HintPath>..\packages\TypeInferred.HashBang.0.1.29\lib\net40\TypeInferred.Utilities.dll</HintPath>
+      <HintPath>..\packages\TypeInferred.HashBang.Html.0.1.31\lib\net40\TypeInferred.Utilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

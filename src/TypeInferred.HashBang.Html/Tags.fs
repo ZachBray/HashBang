@@ -1,8 +1,8 @@
-﻿[<AutoOpen; ReflectedDefinition>]
+[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
-#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.dll"
-#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.1.1.0.25\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.25\lib\net40\FunScript.Interop.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 #endif
@@ -281,6 +281,30 @@ module Element =
     let onscroll f =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null)
+
+module H1 =
+    type IH1 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH1>
+
+module H2 =
+    type IH2 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH2>
+
+module H3 =
+    type IH3 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH3>
+
+module H4 =
+    type IH4 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH4>
+
+module H5 =
+    type IH5 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH5>
+
+module H6 =
+    type IH6 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH6>
 
 
 type Rel =

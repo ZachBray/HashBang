@@ -39,8 +39,10 @@
     <Compile Include="Tags.fs" />
     <Compile Include="Compiler.fs" />
     <Compile Include="Extensions.fs" />
+    <Compile Include="CssProvider.fs" />
     <None Include="Generate.fsx" />
     <None Include="Header.fsx" />
+    <None Include="CssSandbox.fsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +93,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeInferred.Utilities\TypeInferred.Utilities.fsproj">
+      <Name>TypeInferred.Utilities</Name>
+      <Project>{2c4cdef2-2613-4514-87ef-029e18a6d033}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

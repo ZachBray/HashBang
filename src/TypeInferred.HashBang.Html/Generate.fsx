@@ -1,8 +1,8 @@
 ﻿#r "System.Xml"
 #r "System.Xml.Linq"
 #r @"..\..\lib\HtmlAgilityPack.dll"
-#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.dll"
-#r @"..\packages\FunScript.1.1.0.22\lib\net40\FunScript.Interop.dll"
+#r @"..\packages\FunScript.1.1.0.25\lib\net40\FunScript.dll"
+#r @"..\packages\FunScript.1.1.0.25\lib\net40\FunScript.Interop.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.lib.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.lib.dll"
 #r @"..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.13\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 

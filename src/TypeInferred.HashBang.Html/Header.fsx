@@ -281,3 +281,27 @@ module Element =
     let onscroll f =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null)
+
+module H1 =
+    type IH1 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH1>
+
+module H2 =
+    type IH2 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH2>
+
+module H3 =
+    type IH3 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH3>
+
+module H4 =
+    type IH4 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH4>
+
+module H5 =
+    type IH5 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH5>
+
+module H6 =
+    type IH6 = inherit IClosedElement
+    let empty = tag "div" : HtmlTag<IH6>
