@@ -134,7 +134,7 @@ let sections =
     ]
 
 // Here we open up the port for non-admin VS instances.
-System.Net.Netsh.addUrlAcl "http://*:8081/"
+System.Net.Netsh.addUrlAcl "http://*:8080/"
 
 // Here we define the address of the website and its
 // parts that we have defined above.
