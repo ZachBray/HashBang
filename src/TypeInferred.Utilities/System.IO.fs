@@ -28,14 +28,23 @@ module File =
             ServicePointManager.ServerCertificateValidationCallback <- acceptAllCerts            
             let req = System.Net.WebRequest.Create(Uri(fileName))
             let resp = req.GetResponse() 
-            new StreamReader(resp.GetResponseStream())
+            resp.GetResponseStream()
         else
             // If the second path is absolute, Path.Combine returns it without change
             let file = 
                 if fileName.StartsWith ".." then Path.Combine(resolutionFolder, fileName)
                 else fileName
-            new StreamReader(file)
+            upcast new FileStream(file, FileMode.Open)
 
-    let ReadAllTextRelativeAbsoluteOrHttpText(resolutionFolder, fileName) =
+    let ReadAllTextRelativeAbsoluteOrHttp(resolutionFolder, fileName) =
         use stream = OpenStreamRelativeAbsoluteOrHttp(resolutionFolder, fileName)
-        stream.ReadToEnd()
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd()
+
+    let ReadAllBytesRelativeAbsoluteOrHttp(resolutionFolder, fileName) =
+        use stream = OpenStreamRelativeAbsoluteOrHttp(resolutionFolder, fileName)
+        use memory = new MemoryStream()
+        stream.CopyTo memory
+        stream.Flush()
+        stream.Close()
+        memory.ToArray()

@@ -2,6 +2,7 @@
     
     <ItemGroup>
         <ProjectsToBuild Include="..\..\src\TypeInferred.Utilities\TypeInferred.Utilities.fsproj" />
+        <ProjectsToBuild Include="..\..\src\TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj" />
         <ProjectsToBuild Include="..\..\src\TypeInferred.HashBang.Html\TypeInferred.HashBang.Html.fsproj" />
         <ProjectsToBuild Include="..\..\src\TypeInferred.HashBang.Dynamic\TypeInferred.HashBang.Dynamic.fsproj" />
     </ItemGroup>

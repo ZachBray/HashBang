@@ -121,6 +121,12 @@ module RequestHandler =
                         |]
             })
 
+    /// Tells the server that the content will never change
+    /// so the response can be cached.
+    let cache handler =
+        handler |> updateMetadata (fun meta ->
+            { meta with CanCacheResponse = true })
+
 [<AutoOpen>]
 module Operators =
     let (--|) handlerMapping route = handlerMapping, route

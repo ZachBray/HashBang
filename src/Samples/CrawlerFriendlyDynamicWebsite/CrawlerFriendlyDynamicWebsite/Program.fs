@@ -21,9 +21,17 @@ type Routes = ClientRoutesProvider<"
 /page?id=int    # Page.Nth      # The nth page
 ">
 
-type Bootstrap = CssClassesProvider<"http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
-type BootstrapTheme = CssClassesProvider<"http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap-theme.min.css">
-type Application = CssClassesProvider<"../../../../lib/css/app.css">
+// Embedded CSS
+type Bootstrap = CssClassesProvider< "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css", ShouldMonitorChanges = false >
+type BootstrapTheme = CssClassesProvider< "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap-theme.min.css", ShouldMonitorChanges = false >
+type Application = CssClassesProvider< "../../../../lib/css/app.css", ShouldMonitorChanges = true >
+
+// Embedded Scripts
+type JQueryScript = ResourceProvider< "http://code.jquery.com/jquery.min.js" >
+type BootstrapScript = ResourceProvider< "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js" >
+
+// Embedded Images
+type AllTheThings = ResourceProvider< "../www/images/all-the-things.jpg" >
 
 // Here we define what the head of the HTML document will look like using the
 // HashBang Html DSL.
@@ -35,7 +43,10 @@ let headTemplate =
         yield Meta.empty |> Meta.name (Name.Generator "viewport")
               |> Meta.content "width=device-width, initial-scale=1.0" :> _
                
-        for sheet in [Bootstrap.RawStyleSheet; BootstrapTheme.RawStyleSheet; Application.RawStyleSheet] do
+        for sheet in [Bootstrap.RawStyleSheet
+                      BootstrapTheme.RawStyleSheet
+                      Application.RawStyleSheet] 
+            do
             yield Style.empty |> Style.``type`` IStyleType.Text_css
                   |> Element.appendText [ sheet ] :> _
     ]
@@ -67,8 +78,8 @@ let bodyTemplate =
         Div.empty |> Element.id TemplateSections.content
         |> Element.appendText ["Content will go here!"]
 
-        Script.empty |> Script.src "http://code.jquery.com/jquery.min.js"
-        Script.empty |> Script.src "http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"
+        Script.empty |> Element.appendText [JQueryScript.RawTextContents]
+        Script.empty |> Element.appendText [BootstrapScript.RawTextContents]
     ]
 
 // Here we define handlers to update the content section. Each handler is 
@@ -99,15 +110,17 @@ let contentHandlers =
                         yield H1.empty |> Element.appendText ["Page #" + ps.id.ToString()] :> IHtmlTag
                         // We can use the Routes type for type-safe url hash creation.
                         
+                        yield Img.empty |> Img.src AllTheThings.RawImageData :> _
+
                         if ps.id > 1 then
-                            yield A.empty |> Element.style Bootstrap.btn
-                              |> Element.style Bootstrap.btn_info
-                              |> A.href (Routes.Page.Nth.CreateUri (ps.id - 1))
+                            yield A.empty
+                              |> A.href (Routes.Page.Nth.CreateUri (ps.id - 1)) 
+                              |> Element.classes [Bootstrap.btn; Bootstrap.btn_info]
                               |> Element.appendText ["Page " + (ps.id - 1).ToString()] :> _
 
-                        yield A.empty |> Element.style Bootstrap.btn
-                              |> Element.style Bootstrap.btn_info
+                        yield A.empty
                               |> A.href (Routes.Page.Nth.CreateUri (ps.id + 1))
+                              |> Element.classes [Bootstrap.btn; Bootstrap.btn_info]
                               |> Element.appendText ["Page " + (ps.id + 1).ToString()] :> _
                     ] :> IHtmlTag
                     |> Some
@@ -125,7 +138,7 @@ System.Net.Netsh.addUrlAcl "http://*:8081/"
 
 // Here we define the address of the website and its
 // parts that we have defined above.
-DynamicWebsite.At "http://*:8081/"
+DynamicWebsite.At "http://*:8080/"
 |> DynamicWebsite.WithHeadTemplate headTemplate
 |> DynamicWebsite.WithBodyTemplate bodyTemplate
 // For the sections map we need to pass in a Quotation Expression.
@@ -136,10 +149,10 @@ DynamicWebsite.At "http://*:8081/"
 |> ignore
 
 /// Typical user (client-side) rendering...
-System.Diagnostics.Process.Start("http://localhost:8081/") |> ignore
+System.Diagnostics.Process.Start("http://localhost:8080/") |> ignore
 
 /// Crawler (server-side) rendering...
-System.Diagnostics.Process.Start("http://localhost:8081/?_escaped_fragment_=%2Fpage%3Fid%3D2") |> ignore
+System.Diagnostics.Process.Start("http://localhost:8080/?_escaped_fragment_=%2Fpage%3Fid%3D2") |> ignore
 
 printfn "Press return to kill server!"
 Console.ReadLine() |> ignore

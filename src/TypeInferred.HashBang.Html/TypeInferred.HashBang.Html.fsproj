@@ -39,7 +39,7 @@
     <Compile Include="Tags.fs" />
     <Compile Include="Compiler.fs" />
     <Compile Include="Extensions.fs" />
-    <Compile Include="CssProvider.fs" />
+    <Compile Include="Providers.fs" />
     <None Include="Generate.fsx" />
     <None Include="Header.fsx" />
     <None Include="CssSandbox.fsx" />
@@ -95,6 +95,11 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj">
+      <Name>TypeInferred.HashBang.Core</Name>
+      <Project>{43ec7d0c-04ae-48bd-b1c3-be3f2b8ec4a3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\TypeInferred.Utilities\TypeInferred.Utilities.fsproj">
       <Name>TypeInferred.Utilities</Name>
       <Project>{2c4cdef2-2613-4514-87ef-029e18a6d033}</Project>

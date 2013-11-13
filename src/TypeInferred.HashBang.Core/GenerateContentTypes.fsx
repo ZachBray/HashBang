@@ -117,7 +117,11 @@ let generateCode() =
         let! text = downloadAsync "http://www.freeformatter.com/mime-types-list.html"
         let html = HtmlDocument()
         html.LoadHtml text
-        let pairs = extractTuples html.DocumentNode
+        let pairs = 
+            extractTuples html.DocumentNode
+            |> Seq.collect (fun (x, y, zs) ->
+                zs.Split([|' '; ','|], StringSplitOptions.RemoveEmptyEntries)
+                |> Seq.map (fun z -> x, y, z))
         return 
             seq {
                 yield ""

@@ -140,5 +140,6 @@ type DynamicWebsite =
                 async {
                     return OK compiledPage
                 })
+            |> RequestHandler.cache
         ]
         |> Website.Start

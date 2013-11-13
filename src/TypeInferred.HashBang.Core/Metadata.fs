@@ -59,6 +59,7 @@ type HandlerMetadata =
         QueryParameters : ParameterMetadata[]
         RequestType : (ContentType * TypeMetadata) option
         ResponseType : (ContentType * TypeMetadata) option
+        CanCacheResponse : bool
     }
 
     static member Empty =
@@ -72,6 +73,7 @@ type HandlerMetadata =
             QueryParameters = [||]
             RequestType = None
             ResponseType = None
+            CanCacheResponse = false
         }
 
     member meta.Parameters =

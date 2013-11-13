@@ -284,27 +284,27 @@ module Element =
 
 module H1 =
     type IH1 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH1>
+    let empty = tag "h1" : HtmlTag<IH1>
 
 module H2 =
     type IH2 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH2>
+    let empty = tag "h2" : HtmlTag<IH2>
 
 module H3 =
     type IH3 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH3>
+    let empty = tag "h3" : HtmlTag<IH3>
 
 module H4 =
     type IH4 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH4>
+    let empty = tag "h4" : HtmlTag<IH4>
 
 module H5 =
     type IH5 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH5>
+    let empty = tag "h5" : HtmlTag<IH5>
 
 module H6 =
     type IH6 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH6>
+    let empty = tag "h6" : HtmlTag<IH6>
 
 
 type Rel =

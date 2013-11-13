@@ -1,4 +1,4 @@
-﻿[<ReflectedDefinition>]
+[<ReflectedDefinition>]
 module TypeInferred.HashBang.Runtime
 
 type PrimitiveType =
@@ -39,13 +39,13 @@ type ContentType =
     member x.Mime = 
         let (ContentType mime) = x
         mime
-
 module ContentTypes =
     let lookupByExtension =
         Map [|
             "N/A", ContentType "application/andrew-inset"
             ".aw", ContentType "application/applixware"
-            ".atom, .xml", ContentType "application/atom+xml"
+            ".atom", ContentType "application/atom+xml"
+            ".xml", ContentType "application/atom+xml"
             ".atomcat", ContentType "application/atomcat+xml"
             ".atomsvc", ContentType "application/atomsvc+xml"
             ".ccxml", ContentType "application/ccxml+xml,"
@@ -91,7 +91,6 @@ module ContentTypes =
             ".onetoc", ContentType "application/onenote"
             ".xer", ContentType "application/patch-ops-error+xml"
             ".pdf", ContentType "application/pdf"
-            "", ContentType "application/pgp-encrypted"
             ".pgp", ContentType "application/pgp-signature"
             ".prf", ContentType "application/pics-rules"
             ".p10", ContentType "application/pkcs10"
@@ -114,7 +113,8 @@ module ContentTypes =
             ".rld", ContentType "application/resource-lists-diff+xml"
             ".rs", ContentType "application/rls-services+xml"
             ".rsd", ContentType "application/rsd+xml"
-            ".rss, .xml", ContentType "application/rss+xml"
+            ".rss", ContentType "application/rss+xml"
+            ".xml", ContentType "application/rss+xml"
             ".rtf", ContentType "application/rtf"
             ".sbml", ContentType "application/sbml+xml"
             ".scq", ContentType "application/scvp-cv-request"
@@ -609,7 +609,8 @@ module ContentTypes =
             ".g3", ContentType "image/g3fax"
             ".gif", ContentType "image/gif"
             ".ief", ContentType "image/ief"
-            ".jpeg, .jpg", ContentType "image/jpeg"
+            ".jpeg", ContentType "image/jpeg"
+            ".jpg", ContentType "image/jpeg"
             ".ktx", ContentType "image/ktx"
             ".png", ContentType "image/png"
             ".btif", ContentType "image/prs.btif"
@@ -873,9 +874,6 @@ module ContentTypes =
 
         /// "application/pdf": Adobe Portable Document Format
         let pdf = ContentType "application/pdf"
-
-        /// "application/pgp-encrypted": Pretty Good Privacy
-        let pgp_encrypted = ContentType "application/pgp-encrypted"
 
         /// "application/pgp-signature": Pretty Good Privacy - Signature
         let pgp_signature = ContentType "application/pgp-signature"
