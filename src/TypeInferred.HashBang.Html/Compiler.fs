@@ -33,7 +33,7 @@ module Helpers =
         | Text str -> Seq.singleton str
         | Tag t -> compileTag t
 
-let compilePage (html : HtmlTag<Html.IHtml>) =
+let compilePage (html : HtmlTag<IHtmlElement>) =
     seq {
         yield "<!DOCTYPE html>"
         yield! Helpers.compileTag html

@@ -297,20 +297,21 @@ let generateTagCode (tag, hasClosingTag, attributes) =
         yield ""
         let meth = if hasClosingTag then "tag" else "unclosedTag"
         let baseT = if hasClosingTag then "IClosedElement" else "IUnclosedElement"
-        let t = "I" + toPascalCase tag
+        let t = "I" + toPascalCase tag + "Element"
         let valueTypes = attributes |> Array.map (generateValueType t)
         let typeLookup = valueTypes |> Array.map fst |> Map.ofArray
         for _, code in valueTypes do
             yield! code
         yield ""
-        yield sprintf "module %s =" (toPascalCase tag)
-        yield sprintf "    type %s = inherit %s" t baseT
-        yield sprintf "    let empty = %s \"%s\" : HtmlTag<%s>" meth tag t
+        yield sprintf "type %s = inherit %s" t baseT
+        yield ""
+        yield sprintf "type %s() =" (toPascalCase tag)
+        yield sprintf "    static member empty = %s \"%s\" : HtmlTag<%s>" meth tag t
         match tryGetTagClass tag with
         | None -> ()
         | Some specialization ->
             yield ""
-            yield sprintf "    let appendSetUp f (x : HtmlTag<%s>) =" t
+            yield sprintf "    static member appendSetUp f (x : HtmlTag<%s>) =" t
             yield sprintf "        Element.appendSetUp (fun el -> f(unbox<%s> el)) x" specialization
         for name, values, desc in attributes do
             
@@ -319,15 +320,15 @@ let generateTagCode (tag, hasClosingTag, attributes) =
             let funName = toCamelCase name
             match typeLookup.[name] with
             | Some "string" ->
-                yield sprintf "    let %s = set<%s> \"%s\"" funName t name
+                yield sprintf "    static member %s = set<%s> \"%s\"" funName t name
             | Some "float" ->
-                yield sprintf "    let %s (x : float) = set<%s> \"%s\" (x.ToString())" funName t name
+                yield sprintf "    static member %s (x : float) = set<%s> \"%s\" (x.ToString())" funName t name
             | Some "int" ->
-                yield sprintf "    let %s (x : int) = set<%s> \"%s\" (x.ToString())" funName t name
+                yield sprintf "    static member %s (x : int) = set<%s> \"%s\" (x.ToString())" funName t name
             | Some vt ->
-                yield sprintf "    let %s (x : %s) = set<%s> \"%s\" x.Value" funName vt t name
+                yield sprintf "    static member %s (x : %s) = set<%s> \"%s\" x.Value" funName vt t name
             | None ->
-                yield sprintf "    let %s = setEmpty<%s> \"%s\"" funName t name
+                yield sprintf "    static member %s = setEmpty<%s> \"%s\"" funName t name
     ]
 
 let generateFile() =

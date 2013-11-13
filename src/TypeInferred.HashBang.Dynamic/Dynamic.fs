@@ -46,8 +46,8 @@ module Helpers =
 type DynamicWebsite =
     {
         Prefix : string
-        HeadTemplate : HtmlTag<Head.IHead>
-        BodyTemplate : HtmlTag<Body.IBody>
+        HeadTemplate : HtmlTag<IHeadElement>
+        BodyTemplate : HtmlTag<IBodyElement>
         ErrorBody : IHtmlTag Expr
         Sections : Map<ElementId, DynamicWebsiteHandler list> Expr
     }

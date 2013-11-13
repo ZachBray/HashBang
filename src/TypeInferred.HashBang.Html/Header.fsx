@@ -282,26 +282,27 @@ module Element =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null)
 
-module H1 =
-    type IH1 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH1>
 
-module H2 =
-    type IH2 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH2>
+type IH1Element = inherit IClosedElement
+type H1() =
+    static member empty = tag "div" : HtmlTag<IH1Element>
 
-module H3 =
-    type IH3 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH3>
+type IH2Element = inherit IClosedElement
+type H2() =
+    static member empty = tag "div" : HtmlTag<IH2Element>
 
-module H4 =
-    type IH4 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH4>
+type IH3Element = inherit IClosedElement
+type H3() =
+    static member empty = tag "div" : HtmlTag<IH3Element>
 
-module H5 =
-    type IH5 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH5>
+type IH4Element = inherit IClosedElement
+type H4() =
+    static member empty = tag "div" : HtmlTag<IH4Element>
 
-module H6 =
-    type IH6 = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IH6>
+type IH5Element = inherit IClosedElement
+type H5() =
+    static member empty = tag "div" : HtmlTag<IH5Element>
+
+type IH6Element = inherit IClosedElement
+type H6() =
+    static member empty = tag "div" : HtmlTag<IH6Element>

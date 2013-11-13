@@ -282,29 +282,30 @@ module Element =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null)
 
-module H1 =
-    type IH1 = inherit IClosedElement
-    let empty = tag "h1" : HtmlTag<IH1>
 
-module H2 =
-    type IH2 = inherit IClosedElement
-    let empty = tag "h2" : HtmlTag<IH2>
+type IH1Element = inherit IClosedElement
+type H1() =
+    static member empty = tag "div" : HtmlTag<IH1Element>
 
-module H3 =
-    type IH3 = inherit IClosedElement
-    let empty = tag "h3" : HtmlTag<IH3>
+type IH2Element = inherit IClosedElement
+type H2() =
+    static member empty = tag "div" : HtmlTag<IH2Element>
 
-module H4 =
-    type IH4 = inherit IClosedElement
-    let empty = tag "h4" : HtmlTag<IH4>
+type IH3Element = inherit IClosedElement
+type H3() =
+    static member empty = tag "div" : HtmlTag<IH3Element>
 
-module H5 =
-    type IH5 = inherit IClosedElement
-    let empty = tag "h5" : HtmlTag<IH5>
+type IH4Element = inherit IClosedElement
+type H4() =
+    static member empty = tag "div" : HtmlTag<IH4Element>
 
-module H6 =
-    type IH6 = inherit IClosedElement
-    let empty = tag "h6" : HtmlTag<IH6>
+type IH5Element = inherit IClosedElement
+type H5() =
+    static member empty = tag "div" : HtmlTag<IH5Element>
+
+type IH6Element = inherit IClosedElement
+type H6() =
+    static member empty = tag "div" : HtmlTag<IH6Element>
 
 
 type Rel =
@@ -349,36 +350,38 @@ type Target =
         | Top -> "_top"
         | Framename framename -> framename
 
-module A =
-    type IA = inherit IClosedElement
-    let empty = tag "a" : HtmlTag<IA>
+type IAElement = inherit IClosedElement
+
+type A() =
+    static member empty = tag "a" : HtmlTag<IAElement>
 
     /// Specifies the hyperlink target to be downloaded
-    let download = set<IA> "download"
+    static member download = set<IAElement> "download"
 
     /// Specifies the URL of the page the link goes to
-    let href = set<IA> "href"
+    static member href = set<IAElement> "href"
 
     /// Specifies the language of the linked document
-    let hreflang = set<IA> "hreflang"
+    static member hreflang = set<IAElement> "hreflang"
 
     /// Specifies what media/device the linked document is optimized for
-    let media = set<IA> "media"
+    static member media = set<IAElement> "media"
 
     /// Specifies the relationship between the current document and the linked document
-    let rel (x : Rel) = set<IA> "rel" x.Value
+    static member rel (x : Rel) = set<IAElement> "rel" x.Value
 
     /// Specifies where to open the linked document
-    let target (x : Target) = set<IA> "target" x.Value
+    static member target (x : Target) = set<IAElement> "target" x.Value
 
     /// Specifies the MIME  type of the linked document
-    let ``type`` = set<IA> "type"
+    static member ``type`` = set<IAElement> "type"
 
 
 
-module Abbr =
-    type IAbbr = inherit IClosedElement
-    let empty = tag "abbr" : HtmlTag<IAbbr>
+type IAbbrElement = inherit IClosedElement
+
+type Abbr() =
+    static member empty = tag "abbr" : HtmlTag<IAbbrElement>
 
 
 
@@ -390,36 +393,38 @@ type DirType =
         | Rtl -> "rtl"
         | Ltr -> "ltr"
 
-module Acronym =
-    type IAcronym = inherit IClosedElement
-    let empty = tag "acronym" : HtmlTag<IAcronym>
+type IAcronymElement = inherit IClosedElement
+
+type Acronym() =
+    static member empty = tag "acronym" : HtmlTag<IAcronymElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<IAcronym> "class"
+    static member ``class`` = set<IAcronymElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<IAcronym> "dir" x.Value
+    static member dir (x : DirType) = set<IAcronymElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IAcronym> "id"
+    static member id = set<IAcronymElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IAcronym> "lang"
+    static member lang = set<IAcronymElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IAcronym> "style"
+    static member style = set<IAcronymElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IAcronym> "title"
+    static member title = set<IAcronymElement> "title"
 
     /// Specifies a language code for the content in an element, in  XHTML documents
-    let xml_lang = set<IAcronym> "xml:lang"
+    static member xml_lang = set<IAcronymElement> "xml:lang"
 
 
 
-module Address =
-    type IAddress = inherit IClosedElement
-    let empty = tag "address" : HtmlTag<IAddress>
+type IAddressElement = inherit IClosedElement
+
+type Address() =
+    static member empty = tag "address" : HtmlTag<IAddressElement>
 
 
 
@@ -439,57 +444,58 @@ type Align =
         | Middle -> "middle"
         | Baseline -> "baseline"
 
-module Applet =
-    type IApplet = inherit IClosedElement
-    let empty = tag "applet" : HtmlTag<IApplet>
+type IAppletElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IApplet>) =
+type Applet() =
+    static member empty = tag "applet" : HtmlTag<IAppletElement>
+
+    static member appendSetUp f (x : HtmlTag<IAppletElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAppletElement> el)) x
 
     /// Specifies the file name of a Java applet
-    let code = set<IApplet> "code"
+    static member code = set<IAppletElement> "code"
 
     /// Specifies a reference to a serialized representation of an  applet
-    let ``object`` = set<IApplet> "object"
+    static member ``object`` = set<IAppletElement> "object"
 
     /// Specifies the alignment of an applet according to  surrounding elements
-    let align (x : Align) = set<IApplet> "align" x.Value
+    static member align (x : Align) = set<IAppletElement> "align" x.Value
 
     /// Specifies an alternate text for an applet
-    let alt = set<IApplet> "alt"
+    static member alt = set<IAppletElement> "alt"
 
     /// Specifies the location of an archive file
-    let archive = set<IApplet> "archive"
+    static member archive = set<IAppletElement> "archive"
 
     /// Specifies a relative base URL for applets specified in the  code attribute
-    let codebase = set<IApplet> "codebase"
+    static member codebase = set<IAppletElement> "codebase"
 
     /// Specifies the height of an applet
-    let height (x : int) = set<IApplet> "height" (x.ToString())
+    static member height (x : int) = set<IAppletElement> "height" (x.ToString())
 
     /// Defines the horizontal spacing around an applet
-    let hspace (x : int) = set<IApplet> "hspace" (x.ToString())
+    static member hspace (x : int) = set<IAppletElement> "hspace" (x.ToString())
 
     /// Defines the name for an applet (to use in scripts)
-    let name = set<IApplet> "name"
+    static member name = set<IAppletElement> "name"
 
     /// Defines the vertical spacing around an applet
-    let vspace (x : int) = set<IApplet> "vspace" (x.ToString())
+    static member vspace (x : int) = set<IAppletElement> "vspace" (x.ToString())
 
     /// Specifies the width of an applet
-    let width (x : int) = set<IApplet> "width" (x.ToString())
+    static member width (x : int) = set<IAppletElement> "width" (x.ToString())
 
     /// Specifies a classname for an element
-    let ``class`` = set<IApplet> "class"
+    static member ``class`` = set<IAppletElement> "class"
 
     /// Specifies a unique id for an element
-    let id = set<IApplet> "id"
+    static member id = set<IAppletElement> "id"
 
     /// Specifies an inline style for an element
-    let style = set<IApplet> "style"
+    static member style = set<IAppletElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IApplet> "title"
+    static member title = set<IAppletElement> "title"
 
 
 
@@ -505,54 +511,57 @@ type Shape =
         | Circle -> "circle"
         | Poly -> "poly"
 
-module Area =
-    type IArea = inherit IUnclosedElement
-    let empty = unclosedTag "area" : HtmlTag<IArea>
+type IAreaElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IArea>) =
+type Area() =
+    static member empty = unclosedTag "area" : HtmlTag<IAreaElement>
+
+    static member appendSetUp f (x : HtmlTag<IAreaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAreaElement> el)) x
 
     /// Specifies an alternate text for the area. Required if the href attribute is present
-    let alt = set<IArea> "alt"
+    static member alt = set<IAreaElement> "alt"
 
     /// Specifies the coordinates of the area
-    let coords = set<IArea> "coords"
+    static member coords = set<IAreaElement> "coords"
 
     /// Specifies the hyperlink target to be downloaded
-    let download = set<IArea> "download"
+    static member download = set<IAreaElement> "download"
 
     /// Specifies the hyperlink target for the area
-    let href = set<IArea> "href"
+    static member href = set<IAreaElement> "href"
 
     /// Specifies the language of the target URL
-    let hreflang = set<IArea> "hreflang"
+    static member hreflang = set<IAreaElement> "hreflang"
 
     /// Specifies what media/device the target URL is optimized for
-    let media = set<IArea> "media"
+    static member media = set<IAreaElement> "media"
 
     /// Specifies the relationship between the current document and  the target URL
-    let rel (x : Rel) = set<IArea> "rel" x.Value
+    static member rel (x : Rel) = set<IAreaElement> "rel" x.Value
 
     /// Specifies the shape of the area
-    let shape (x : Shape) = set<IArea> "shape" x.Value
+    static member shape (x : Shape) = set<IAreaElement> "shape" x.Value
 
     /// Specifies where to open the target URL
-    let target (x : Target) = set<IArea> "target" x.Value
+    static member target (x : Target) = set<IAreaElement> "target" x.Value
 
     /// Specifies the MIME  type of the target URL
-    let ``type`` = set<IArea> "type"
+    static member ``type`` = set<IAreaElement> "type"
 
 
 
-module Article =
-    type IArticle = inherit IClosedElement
-    let empty = tag "article" : HtmlTag<IArticle>
+type IArticleElement = inherit IClosedElement
+
+type Article() =
+    static member empty = tag "article" : HtmlTag<IArticleElement>
 
 
 
-module Aside =
-    type IAside = inherit IClosedElement
-    let empty = tag "aside" : HtmlTag<IAside>
+type IAsideElement = inherit IClosedElement
+
+type Aside() =
+    static member empty = tag "aside" : HtmlTag<IAsideElement>
 
 
 
@@ -566,146 +575,156 @@ type Preload =
         | Metadata -> "metadata"
         | NoneCase -> "none"
 
-module Audio =
-    type IAudio = inherit IClosedElement
-    let empty = tag "audio" : HtmlTag<IAudio>
+type IAudioElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IAudio>) =
+type Audio() =
+    static member empty = tag "audio" : HtmlTag<IAudioElement>
+
+    static member appendSetUp f (x : HtmlTag<IAudioElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAudioElement> el)) x
 
     /// Specifies that the audio will start playing as soon as it is ready
-    let autoplay = setEmpty<IAudio> "autoplay"
+    static member autoplay = setEmpty<IAudioElement> "autoplay"
 
     /// Specifies that audio controls should be displayed (such as a play/pause  button etc).
-    let controls = setEmpty<IAudio> "controls"
+    static member controls = setEmpty<IAudioElement> "controls"
 
     /// Specifies that the audio will start over again, every time it  is finished
-    let loop = setEmpty<IAudio> "loop"
+    static member loop = setEmpty<IAudioElement> "loop"
 
     /// Specifies that the audio output should be muted
-    let muted = setEmpty<IAudio> "muted"
+    static member muted = setEmpty<IAudioElement> "muted"
 
     /// Specifies if and how the author thinks the audio should be loaded when the page loads
-    let preload (x : Preload) = set<IAudio> "preload" x.Value
+    static member preload (x : Preload) = set<IAudioElement> "preload" x.Value
 
     ///   Specifies the URL of the audio file
-    let src = set<IAudio> "src"
+    static member src = set<IAudioElement> "src"
 
 
 
-module B =
-    type IB = inherit IClosedElement
-    let empty = tag "b" : HtmlTag<IB>
+type IBElement = inherit IClosedElement
+
+type B() =
+    static member empty = tag "b" : HtmlTag<IBElement>
 
 
 
-module Base =
-    type IBase = inherit IUnclosedElement
-    let empty = unclosedTag "base" : HtmlTag<IBase>
+type IBaseElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IBase>) =
+type Base() =
+    static member empty = unclosedTag "base" : HtmlTag<IBaseElement>
+
+    static member appendSetUp f (x : HtmlTag<IBaseElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBaseElement> el)) x
 
     /// Specifies the base URL for all relative URLs in the page
-    let href = set<IBase> "href"
+    static member href = set<IBaseElement> "href"
 
     /// Specifies the default target for all hyperlinks and forms in the page
-    let target (x : Target) = set<IBase> "target" x.Value
+    static member target (x : Target) = set<IBaseElement> "target" x.Value
 
 
 
-module Basefont =
-    type IBasefont = inherit IUnclosedElement
-    let empty = unclosedTag "basefont" : HtmlTag<IBasefont>
+type IBasefontElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IBasefont>) =
+type Basefont() =
+    static member empty = unclosedTag "basefont" : HtmlTag<IBasefontElement>
+
+    static member appendSetUp f (x : HtmlTag<IBasefontElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBaseFontElement> el)) x
 
     /// Specifies a classname for an element
-    let ``class`` = set<IBasefont> "class"
+    static member ``class`` = set<IBasefontElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<IBasefont> "dir" x.Value
+    static member dir (x : DirType) = set<IBasefontElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IBasefont> "id"
+    static member id = set<IBasefontElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IBasefont> "lang"
+    static member lang = set<IBasefontElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IBasefont> "style"
+    static member style = set<IBasefontElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IBasefont> "title"
+    static member title = set<IBasefontElement> "title"
 
 
 
-module Bdi =
-    type IBdi = inherit IClosedElement
-    let empty = tag "bdi" : HtmlTag<IBdi>
+type IBdiElement = inherit IClosedElement
+
+type Bdi() =
+    static member empty = tag "bdi" : HtmlTag<IBdiElement>
 
 
 
-module Bdo =
-    type IBdo = inherit IClosedElement
-    let empty = tag "bdo" : HtmlTag<IBdo>
+type IBdoElement = inherit IClosedElement
+
+type Bdo() =
+    static member empty = tag "bdo" : HtmlTag<IBdoElement>
 
     /// Required. Specifies the text direction of the text inside the <bdo> element
-    let dir (x : DirType) = set<IBdo> "dir" x.Value
+    static member dir (x : DirType) = set<IBdoElement> "dir" x.Value
 
 
 
-module Big =
-    type IBig = inherit IClosedElement
-    let empty = tag "big" : HtmlTag<IBig>
+type IBigElement = inherit IClosedElement
+
+type Big() =
+    static member empty = tag "big" : HtmlTag<IBigElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<IBig> "class"
+    static member ``class`` = set<IBigElement> "class"
 
     /// Specifies the text direction for the content in an element
-    let dir (x : DirType) = set<IBig> "dir" x.Value
+    static member dir (x : DirType) = set<IBigElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IBig> "id"
+    static member id = set<IBigElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IBig> "lang"
+    static member lang = set<IBigElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IBig> "style"
+    static member style = set<IBigElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IBig> "title"
+    static member title = set<IBigElement> "title"
 
     /// Specifies a language code for the content in an element, in  XHTML documents
-    let xml_lang = set<IBig> "xml:lang"
+    static member xml_lang = set<IBigElement> "xml:lang"
 
 
 
-module Blockquote =
-    type IBlockquote = inherit IClosedElement
-    let empty = tag "blockquote" : HtmlTag<IBlockquote>
+type IBlockquoteElement = inherit IClosedElement
+
+type Blockquote() =
+    static member empty = tag "blockquote" : HtmlTag<IBlockquoteElement>
 
     /// Specifies the source of the quotation
-    let cite = set<IBlockquote> "cite"
+    static member cite = set<IBlockquoteElement> "cite"
 
 
 
-module Body =
-    type IBody = inherit IClosedElement
-    let empty = tag "body" : HtmlTag<IBody>
+type IBodyElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IBody>) =
+type Body() =
+    static member empty = tag "body" : HtmlTag<IBodyElement>
+
+    static member appendSetUp f (x : HtmlTag<IBodyElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBodyElement> el)) x
 
 
 
-module Br =
-    type IBr = inherit IUnclosedElement
-    let empty = unclosedTag "br" : HtmlTag<IBr>
+type IBrElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IBr>) =
+type Br() =
+    static member empty = unclosedTag "br" : HtmlTag<IBrElement>
+
+    static member appendSetUp f (x : HtmlTag<IBrElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBRElement> el)) x
 
 
@@ -738,124 +757,132 @@ type Type =
         | Reset -> "reset"
         | Submit -> "submit&nbsp;"
 
-module Button =
-    type IButton = inherit IClosedElement
-    let empty = tag "button" : HtmlTag<IButton>
+type IButtonElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IButton>) =
+type Button() =
+    static member empty = tag "button" : HtmlTag<IButtonElement>
+
+    static member appendSetUp f (x : HtmlTag<IButtonElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLButtonElement> el)) x
 
     /// Specifies that a button should automatically get focus when the page loads
-    let autofocus = setEmpty<IButton> "autofocus"
+    static member autofocus = setEmpty<IButtonElement> "autofocus"
 
     /// Specifies that a button should be disabled
-    let disabled = setEmpty<IButton> "disabled"
+    static member disabled = setEmpty<IButtonElement> "disabled"
 
     /// Specifies one or more forms the button belongs to
-    let form = set<IButton> "form"
+    static member form = set<IButtonElement> "form"
 
     /// Specifies where to send the form-data when a form is submitted. Only for type="submit"
-    let formaction = set<IButton> "formaction"
+    static member formaction = set<IButtonElement> "formaction"
 
     /// Specifies how form-data should be encoded before sending it to a server. Only for type="submit"
-    let formenctype (x : Formenctype) = set<IButton> "formenctype" x.Value
+    static member formenctype (x : Formenctype) = set<IButtonElement> "formenctype" x.Value
 
     /// Specifies how to send the form-data (which HTTP method to use). Only for type="submit"
-    let formmethod (x : Formmethod) = set<IButton> "formmethod" x.Value
+    static member formmethod (x : Formmethod) = set<IButtonElement> "formmethod" x.Value
 
     /// Specifies that the form-data should not be validated on submission. Only for type="submit"
-    let formnovalidate = setEmpty<IButton> "formnovalidate"
+    static member formnovalidate = setEmpty<IButtonElement> "formnovalidate"
 
     /// Specifies where to display the response after submitting the form. Only for type="submit"
-    let formtarget (x : Target) = set<IButton> "formtarget" x.Value
+    static member formtarget (x : Target) = set<IButtonElement> "formtarget" x.Value
 
     /// Specifies a name for the button
-    let name = set<IButton> "name"
+    static member name = set<IButtonElement> "name"
 
     /// Specifies the type of button
-    let ``type`` (x : Type) = set<IButton> "type" x.Value
+    static member ``type`` (x : Type) = set<IButtonElement> "type" x.Value
 
     /// Specifies an initial value for the button
-    let value = set<IButton> "value"
+    static member value = set<IButtonElement> "value"
 
 
 
-module Canvas =
-    type ICanvas = inherit IClosedElement
-    let empty = tag "canvas" : HtmlTag<ICanvas>
+type ICanvasElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ICanvas>) =
+type Canvas() =
+    static member empty = tag "canvas" : HtmlTag<ICanvasElement>
+
+    static member appendSetUp f (x : HtmlTag<ICanvasElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLCanvasElement> el)) x
 
     /// Specifies the height of the canvas
-    let height (x : int) = set<ICanvas> "height" (x.ToString())
+    static member height (x : int) = set<ICanvasElement> "height" (x.ToString())
 
     /// Specifies the width of the canvas
-    let width (x : int) = set<ICanvas> "width" (x.ToString())
+    static member width (x : int) = set<ICanvasElement> "width" (x.ToString())
 
 
 
-module Caption =
-    type ICaption = inherit IUnclosedElement
-    let empty = unclosedTag "caption" : HtmlTag<ICaption>
+type ICaptionElement = inherit IUnclosedElement
+
+type Caption() =
+    static member empty = unclosedTag "caption" : HtmlTag<ICaptionElement>
 
 
 
-module Center =
-    type ICenter = inherit IClosedElement
-    let empty = tag "center" : HtmlTag<ICenter>
+type ICenterElement = inherit IClosedElement
+
+type Center() =
+    static member empty = tag "center" : HtmlTag<ICenterElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<ICenter> "class"
+    static member ``class`` = set<ICenterElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<ICenter> "dir" x.Value
+    static member dir (x : DirType) = set<ICenterElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<ICenter> "id"
+    static member id = set<ICenterElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<ICenter> "lang"
+    static member lang = set<ICenterElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<ICenter> "style"
+    static member style = set<ICenterElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<ICenter> "title"
+    static member title = set<ICenterElement> "title"
 
 
 
-module Cite =
-    type ICite = inherit IClosedElement
-    let empty = tag "cite" : HtmlTag<ICite>
+type ICiteElement = inherit IClosedElement
+
+type Cite() =
+    static member empty = tag "cite" : HtmlTag<ICiteElement>
 
 
 
-module Code =
-    type ICode = inherit IClosedElement
-    let empty = tag "code" : HtmlTag<ICode>
+type ICodeElement = inherit IClosedElement
+
+type Code() =
+    static member empty = tag "code" : HtmlTag<ICodeElement>
 
 
 
-module Col =
-    type ICol = inherit IUnclosedElement
-    let empty = unclosedTag "col" : HtmlTag<ICol>
+type IColElement = inherit IUnclosedElement
+
+type Col() =
+    static member empty = unclosedTag "col" : HtmlTag<IColElement>
 
     /// Specifies the number of columns a <col> element should span
-    let span = set<ICol> "span"
+    static member span = set<IColElement> "span"
 
 
 
-module Colgroup =
-    type IColgroup = inherit IClosedElement
-    let empty = tag "colgroup" : HtmlTag<IColgroup>
+type IColgroupElement = inherit IClosedElement
+
+type Colgroup() =
+    static member empty = tag "colgroup" : HtmlTag<IColgroupElement>
 
     /// Specifies the number of columns a column group should span
-    let span = set<IColgroup> "span"
+    static member span = set<IColgroupElement> "span"
 
 
 
-type ICommandType =
+type ICommandElementType =
     | Checkbox
     | Command
     | Radio
@@ -865,219 +892,237 @@ type ICommandType =
         | Command -> "command"
         | Radio -> "radio"
 
-module Command =
-    type ICommand = inherit IClosedElement
-    let empty = tag "command" : HtmlTag<ICommand>
+type ICommandElement = inherit IClosedElement
+
+type Command() =
+    static member empty = tag "command" : HtmlTag<ICommandElement>
 
     /// Specifies that the command should be checked when the page loads. Only  for type="radio" or type="checkbox"
-    let ``checked`` = setEmpty<ICommand> "checked"
+    static member ``checked`` = setEmpty<ICommandElement> "checked"
 
     /// Specifies that the command should be disabled
-    let disabled = setEmpty<ICommand> "disabled"
+    static member disabled = setEmpty<ICommandElement> "disabled"
 
     /// Specifies an image that represents the command
-    let icon = set<ICommand> "icon"
+    static member icon = set<ICommandElement> "icon"
 
     /// Required. Specifies the name of the command, as shown to the user
-    let label = set<ICommand> "label"
+    static member label = set<ICommandElement> "label"
 
     /// Specifies the name of the group of commands that will be toggled when the command itself is toggled.  Only for type="radio"
-    let radiogroup = set<ICommand> "radiogroup"
+    static member radiogroup = set<ICommandElement> "radiogroup"
 
     /// Specifies the type of command
-    let ``type`` (x : ICommandType) = set<ICommand> "type" x.Value
+    static member ``type`` (x : ICommandElementType) = set<ICommandElement> "type" x.Value
 
 
 
-module Datalist =
-    type IDatalist = inherit IClosedElement
-    let empty = tag "datalist" : HtmlTag<IDatalist>
+type IDatalistElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IDatalist>) =
+type Datalist() =
+    static member empty = tag "datalist" : HtmlTag<IDatalistElement>
+
+    static member appendSetUp f (x : HtmlTag<IDatalistElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDataListElement> el)) x
 
 
 
-module Dd =
-    type IDd = inherit IClosedElement
-    let empty = tag "dd" : HtmlTag<IDd>
+type IDdElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IDd>) =
+type Dd() =
+    static member empty = tag "dd" : HtmlTag<IDdElement>
+
+    static member appendSetUp f (x : HtmlTag<IDdElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDDElement> el)) x
 
 
 
-module Del =
-    type IDel = inherit IClosedElement
-    let empty = tag "del" : HtmlTag<IDel>
+type IDelElement = inherit IClosedElement
+
+type Del() =
+    static member empty = tag "del" : HtmlTag<IDelElement>
 
     /// Specifies a URL to a document that explains the reason why the text was deleted
-    let cite = set<IDel> "cite"
+    static member cite = set<IDelElement> "cite"
 
     /// Specifies the date and time of when the text was deleted
-    let datetime = set<IDel> "datetime"
+    static member datetime = set<IDelElement> "datetime"
 
 
 
-module Details =
-    type IDetails = inherit IClosedElement
-    let empty = tag "details" : HtmlTag<IDetails>
+type IDetailsElement = inherit IClosedElement
+
+type Details() =
+    static member empty = tag "details" : HtmlTag<IDetailsElement>
 
     /// Specifies that the details should be visible (open) to the user
-    let ``open`` = setEmpty<IDetails> "open"
+    static member ``open`` = setEmpty<IDetailsElement> "open"
 
 
 
-module Dfn =
-    type IDfn = inherit IClosedElement
-    let empty = tag "dfn" : HtmlTag<IDfn>
+type IDfnElement = inherit IClosedElement
+
+type Dfn() =
+    static member empty = tag "dfn" : HtmlTag<IDfnElement>
 
 
 
-module Dialog =
-    type IDialog = inherit IClosedElement
-    let empty = tag "dialog" : HtmlTag<IDialog>
+type IDialogElement = inherit IClosedElement
+
+type Dialog() =
+    static member empty = tag "dialog" : HtmlTag<IDialogElement>
 
     /// Specifies that the dialog element is active and that the user can  interact with it
-    let ``open`` = setEmpty<IDialog> "open"
+    static member ``open`` = setEmpty<IDialogElement> "open"
 
 
 
-module Dir =
-    type IDir = inherit IClosedElement
-    let empty = tag "dir" : HtmlTag<IDir>
+type IDirElement = inherit IClosedElement
+
+type Dir() =
+    static member empty = tag "dir" : HtmlTag<IDirElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<IDir> "class"
+    static member ``class`` = set<IDirElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<IDir> "dir" x.Value
+    static member dir (x : DirType) = set<IDirElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IDir> "id"
+    static member id = set<IDirElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IDir> "lang"
+    static member lang = set<IDirElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IDir> "style"
+    static member style = set<IDirElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IDir> "title"
+    static member title = set<IDirElement> "title"
 
 
 
-module Div =
-    type IDiv = inherit IClosedElement
-    let empty = tag "div" : HtmlTag<IDiv>
+type IDivElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IDiv>) =
+type Div() =
+    static member empty = tag "div" : HtmlTag<IDivElement>
+
+    static member appendSetUp f (x : HtmlTag<IDivElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDivElement> el)) x
 
 
 
-module Dl =
-    type IDl = inherit IClosedElement
-    let empty = tag "dl" : HtmlTag<IDl>
+type IDlElement = inherit IClosedElement
+
+type Dl() =
+    static member empty = tag "dl" : HtmlTag<IDlElement>
 
 
 
-module Dt =
-    type IDt = inherit IClosedElement
-    let empty = tag "dt" : HtmlTag<IDt>
+type IDtElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IDt>) =
+type Dt() =
+    static member empty = tag "dt" : HtmlTag<IDtElement>
+
+    static member appendSetUp f (x : HtmlTag<IDtElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDTElement> el)) x
 
 
 
-module Em =
-    type IEm = inherit IClosedElement
-    let empty = tag "em" : HtmlTag<IEm>
+type IEmElement = inherit IClosedElement
+
+type Em() =
+    static member empty = tag "em" : HtmlTag<IEmElement>
 
 
 
-module Embed =
-    type IEmbed = inherit IUnclosedElement
-    let empty = unclosedTag "embed" : HtmlTag<IEmbed>
+type IEmbedElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IEmbed>) =
+type Embed() =
+    static member empty = unclosedTag "embed" : HtmlTag<IEmbedElement>
+
+    static member appendSetUp f (x : HtmlTag<IEmbedElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLEmbedElement> el)) x
 
     /// Specifies the height of the embedded content
-    let height (x : int) = set<IEmbed> "height" (x.ToString())
+    static member height (x : int) = set<IEmbedElement> "height" (x.ToString())
 
     ///   Specifies the address of the external file to embed
-    let src = set<IEmbed> "src"
+    static member src = set<IEmbedElement> "src"
 
     /// Specifies the MIME type of the embedded content
-    let ``type`` = set<IEmbed> "type"
+    static member ``type`` = set<IEmbedElement> "type"
 
     /// Specifies the width of the embedded content
-    let width (x : int) = set<IEmbed> "width" (x.ToString())
+    static member width (x : int) = set<IEmbedElement> "width" (x.ToString())
 
 
 
-module Fieldset =
-    type IFieldset = inherit IClosedElement
-    let empty = tag "fieldset" : HtmlTag<IFieldset>
+type IFieldsetElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IFieldset>) =
+type Fieldset() =
+    static member empty = tag "fieldset" : HtmlTag<IFieldsetElement>
+
+    static member appendSetUp f (x : HtmlTag<IFieldsetElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFieldSetElement> el)) x
 
     /// Specifies that a group of related form elements should be disabled
-    let disabled = setEmpty<IFieldset> "disabled"
+    static member disabled = setEmpty<IFieldsetElement> "disabled"
 
     /// Specifies one or more forms the fieldset belongs to
-    let form = set<IFieldset> "form"
+    static member form = set<IFieldsetElement> "form"
 
     /// Specifies a name for the fieldset
-    let name = set<IFieldset> "name"
+    static member name = set<IFieldsetElement> "name"
 
 
 
-module Figcaption =
-    type IFigcaption = inherit IClosedElement
-    let empty = tag "figcaption" : HtmlTag<IFigcaption>
+type IFigcaptionElement = inherit IClosedElement
+
+type Figcaption() =
+    static member empty = tag "figcaption" : HtmlTag<IFigcaptionElement>
 
 
 
-module Figure =
-    type IFigure = inherit IClosedElement
-    let empty = tag "figure" : HtmlTag<IFigure>
+type IFigureElement = inherit IClosedElement
+
+type Figure() =
+    static member empty = tag "figure" : HtmlTag<IFigureElement>
 
 
 
-module Font =
-    type IFont = inherit IClosedElement
-    let empty = tag "font" : HtmlTag<IFont>
+type IFontElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IFont>) =
+type Font() =
+    static member empty = tag "font" : HtmlTag<IFontElement>
+
+    static member appendSetUp f (x : HtmlTag<IFontElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFontElement> el)) x
 
     /// Specifies a classname for an element
-    let ``class`` = set<IFont> "class"
+    static member ``class`` = set<IFontElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<IFont> "dir" x.Value
+    static member dir (x : DirType) = set<IFontElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IFont> "id"
+    static member id = set<IFontElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IFont> "lang"
+    static member lang = set<IFontElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IFont> "style"
+    static member style = set<IFontElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IFont> "title"
+    static member title = set<IFontElement> "title"
 
 
 
-module Footer =
-    type IFooter = inherit IClosedElement
-    let empty = tag "footer" : HtmlTag<IFooter>
+type IFooterElement = inherit IClosedElement
+
+type Footer() =
+    static member empty = tag "footer" : HtmlTag<IFooterElement>
 
 
 
@@ -1089,7 +1134,7 @@ type Autocomplete =
         | On -> "on"
         | Off -> "off"
 
-type IFormTarget =
+type IFormElementTarget =
     | Blank
     | Self
     | Parent
@@ -1101,120 +1146,128 @@ type IFormTarget =
         | Parent -> "_parent"
         | Top -> "_top"
 
-module Form =
-    type IForm = inherit IClosedElement
-    let empty = tag "form" : HtmlTag<IForm>
+type IFormElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IForm>) =
+type Form() =
+    static member empty = tag "form" : HtmlTag<IFormElement>
+
+    static member appendSetUp f (x : HtmlTag<IFormElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFormElement> el)) x
 
     /// Specifies the character encodings that are to be used for the form  submission
-    let accept_charset = set<IForm> "accept-charset"
+    static member accept_charset = set<IFormElement> "accept-charset"
 
     /// Specifies where to send the form-data when a form is submitted
-    let action = set<IForm> "action"
+    static member action = set<IFormElement> "action"
 
     /// Specifies whether a form should have autocomplete on or off
-    let autocomplete (x : Autocomplete) = set<IForm> "autocomplete" x.Value
+    static member autocomplete (x : Autocomplete) = set<IFormElement> "autocomplete" x.Value
 
     /// Specifies how the form-data should be encoded when submitting it to the  server (only for method="post")
-    let enctype (x : Formenctype) = set<IForm> "enctype" x.Value
+    static member enctype (x : Formenctype) = set<IFormElement> "enctype" x.Value
 
     /// Specifies the HTTP method to use when sending form-data
-    let ``method`` (x : Formmethod) = set<IForm> "method" x.Value
+    static member ``method`` (x : Formmethod) = set<IFormElement> "method" x.Value
 
     /// Specifies the name of a form
-    let name = set<IForm> "name"
+    static member name = set<IFormElement> "name"
 
     /// Specifies that the form should not be validated when submitted
-    let novalidate = setEmpty<IForm> "novalidate"
+    static member novalidate = setEmpty<IFormElement> "novalidate"
 
     /// Specifies where to display the response that is received after submitting the form
-    let target (x : IFormTarget) = set<IForm> "target" x.Value
+    static member target (x : IFormElementTarget) = set<IFormElement> "target" x.Value
 
 
 
-module Frame =
-    type IFrame = inherit IUnclosedElement
-    let empty = unclosedTag "frame" : HtmlTag<IFrame>
+type IFrameElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IFrame>) =
+type Frame() =
+    static member empty = unclosedTag "frame" : HtmlTag<IFrameElement>
+
+    static member appendSetUp f (x : HtmlTag<IFrameElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFrameElement> el)) x
 
     /// Specifies a classname for an element
-    let ``class`` = set<IFrame> "class"
+    static member ``class`` = set<IFrameElement> "class"
 
     /// Specifies a unique id for an element
-    let id = set<IFrame> "id"
+    static member id = set<IFrameElement> "id"
 
     /// Specifies an inline style for an element
-    let style = set<IFrame> "style"
+    static member style = set<IFrameElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IFrame> "title"
+    static member title = set<IFrameElement> "title"
 
 
 
-module Frameset =
-    type IFrameset = inherit IClosedElement
-    let empty = tag "frameset" : HtmlTag<IFrameset>
+type IFramesetElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IFrameset>) =
+type Frameset() =
+    static member empty = tag "frameset" : HtmlTag<IFramesetElement>
+
+    static member appendSetUp f (x : HtmlTag<IFramesetElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFrameSetElement> el)) x
 
     /// Specifies a classname for an element
-    let ``class`` = set<IFrameset> "class"
+    static member ``class`` = set<IFramesetElement> "class"
 
     /// Specifies a unique id for an element
-    let id = set<IFrameset> "id"
+    static member id = set<IFramesetElement> "id"
 
     /// Specifies an inline style for an element
-    let style = set<IFrameset> "style"
+    static member style = set<IFramesetElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IFrameset> "title"
+    static member title = set<IFramesetElement> "title"
 
 
 
-module Head =
-    type IHead = inherit IClosedElement
-    let empty = tag "head" : HtmlTag<IHead>
+type IHeadElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IHead>) =
+type Head() =
+    static member empty = tag "head" : HtmlTag<IHeadElement>
+
+    static member appendSetUp f (x : HtmlTag<IHeadElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHeadElement> el)) x
 
 
 
-module Header =
-    type IHeader = inherit IClosedElement
-    let empty = tag "header" : HtmlTag<IHeader>
+type IHeaderElement = inherit IClosedElement
+
+type Header() =
+    static member empty = tag "header" : HtmlTag<IHeaderElement>
 
 
 
-module Hr =
-    type IHr = inherit IUnclosedElement
-    let empty = unclosedTag "hr" : HtmlTag<IHr>
+type IHrElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IHr>) =
+type Hr() =
+    static member empty = unclosedTag "hr" : HtmlTag<IHrElement>
+
+    static member appendSetUp f (x : HtmlTag<IHrElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHRElement> el)) x
 
 
 
-module Html =
-    type IHtml = inherit IClosedElement
-    let empty = tag "html" : HtmlTag<IHtml>
+type IHtmlElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IHtml>) =
+type Html() =
+    static member empty = tag "html" : HtmlTag<IHtmlElement>
+
+    static member appendSetUp f (x : HtmlTag<IHtmlElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHtmlElement> el)) x
 
     /// Specifies the address of the document's cache manifest (for offline browsing)
-    let manifest = set<IHtml> "manifest"
+    static member manifest = set<IHtmlElement> "manifest"
 
 
 
-module I =
-    type II = inherit IClosedElement
-    let empty = tag "i" : HtmlTag<II>
+type IIElement = inherit IClosedElement
+
+type I() =
+    static member empty = tag "i" : HtmlTag<IIElement>
 
 
 
@@ -1232,33 +1285,34 @@ type Sandbox =
         | Allow_scripts -> "allow-scripts"
         | Allow_top_navigation -> "allow-top-navigation"
 
-module Iframe =
-    type IIframe = inherit IClosedElement
-    let empty = tag "iframe" : HtmlTag<IIframe>
+type IIframeElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IIframe>) =
+type Iframe() =
+    static member empty = tag "iframe" : HtmlTag<IIframeElement>
+
+    static member appendSetUp f (x : HtmlTag<IIframeElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLIFrameElement> el)) x
 
     /// Specifies the height of an <iframe>
-    let height (x : int) = set<IIframe> "height" (x.ToString())
+    static member height (x : int) = set<IIframeElement> "height" (x.ToString())
 
     /// Specifies the name of an <iframe>
-    let name = set<IIframe> "name"
+    static member name = set<IIframeElement> "name"
 
     /// Enables a set of extra restrictions for the content in the <iframe>
-    let sandbox (x : Sandbox) = set<IIframe> "sandbox" x.Value
+    static member sandbox (x : Sandbox) = set<IIframeElement> "sandbox" x.Value
 
     /// Specifies that the <iframe> should look like it is a part of the containing document
-    let seamless = setEmpty<IIframe> "seamless"
+    static member seamless = setEmpty<IIframeElement> "seamless"
 
     /// Specifies the address of the document to embed in the <iframe>
-    let src = set<IIframe> "src"
+    static member src = set<IIframeElement> "src"
 
     /// Specifies the HTML content of the page to show in the <iframe>
-    let srcdoc = set<IIframe> "srcdoc"
+    static member srcdoc = set<IIframeElement> "srcdoc"
 
     /// Specifies the width of an <iframe>
-    let width (x : int) = set<IIframe> "width" (x.ToString())
+    static member width (x : int) = set<IIframeElement> "width" (x.ToString())
 
 
 
@@ -1270,30 +1324,31 @@ type Crossorigin =
         | Anonymous -> "anonymous"
         | Use_credentials -> "use-credentials"
 
-module Img =
-    type IImg = inherit IUnclosedElement
-    let empty = unclosedTag "img" : HtmlTag<IImg>
+type IImgElement = inherit IUnclosedElement
+
+type Img() =
+    static member empty = unclosedTag "img" : HtmlTag<IImgElement>
 
     /// Specifies an alternate text for an image
-    let alt = set<IImg> "alt"
+    static member alt = set<IImgElement> "alt"
 
     /// Allow images from third-party sites that allow cross-origin access to be  used with canvas
-    let crossorigin (x : Crossorigin) = set<IImg> "crossorigin" x.Value
+    static member crossorigin (x : Crossorigin) = set<IImgElement> "crossorigin" x.Value
 
     /// Specifies the height of an image
-    let height (x : int) = set<IImg> "height" (x.ToString())
+    static member height (x : int) = set<IImgElement> "height" (x.ToString())
 
     /// Specifies an image as a server-side image-map
-    let ismap = setEmpty<IImg> "ismap"
+    static member ismap = setEmpty<IImgElement> "ismap"
 
     /// Specifies the URL of an image
-    let src = set<IImg> "src"
+    static member src = set<IImgElement> "src"
 
     /// Specifies an image as a client-side image-map
-    let usemap = set<IImg> "usemap"
+    static member usemap = set<IImgElement> "usemap"
 
     /// Specifies the width of an image
-    let width (x : int) = set<IImg> "width" (x.ToString())
+    static member width (x : int) = set<IImgElement> "width" (x.ToString())
 
 
 
@@ -1317,7 +1372,7 @@ type Max =
         | Number number -> number
         | Date -> "date"
 
-type IInputType =
+type IInputElementType =
     | Button
     | Checkbox
     | Color
@@ -1367,117 +1422,120 @@ type IInputType =
         | Url -> "url"
         | Week -> "week"
 
-module Input =
-    type IInput = inherit IUnclosedElement
-    let empty = unclosedTag "input" : HtmlTag<IInput>
+type IInputElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IInput>) =
+type Input() =
+    static member empty = unclosedTag "input" : HtmlTag<IInputElement>
+
+    static member appendSetUp f (x : HtmlTag<IInputElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLInputElement> el)) x
 
     /// Specifies the types of files that the server accepts  (only for type="file")
-    let accept (x : Accept) = set<IInput> "accept" x.Value
+    static member accept (x : Accept) = set<IInputElement> "accept" x.Value
 
     /// Specifies an alternate text for images (only for type="image")
-    let alt = set<IInput> "alt"
+    static member alt = set<IInputElement> "alt"
 
     /// Specifies whether an <input> element should have autocomplete  enabled
-    let autocomplete (x : Autocomplete) = set<IInput> "autocomplete" x.Value
+    static member autocomplete (x : Autocomplete) = set<IInputElement> "autocomplete" x.Value
 
     /// Specifies that an <input> element should automatically get focus when the page  loads
-    let autofocus = setEmpty<IInput> "autofocus"
+    static member autofocus = setEmpty<IInputElement> "autofocus"
 
     /// Specifies that an <input> element should be pre-selected when the page  loads (for type="checkbox" or type="radio")
-    let ``checked`` = setEmpty<IInput> "checked"
+    static member ``checked`` = setEmpty<IInputElement> "checked"
 
     /// Specifies that an <input> element should be disabled
-    let disabled = setEmpty<IInput> "disabled"
+    static member disabled = setEmpty<IInputElement> "disabled"
 
     /// Specifies one or more forms the <input> element belongs to
-    let form = set<IInput> "form"
+    static member form = set<IInputElement> "form"
 
     /// Specifies the URL of the file that will process the input control when  the form is submitted (for type="submit" and type="image")
-    let formaction = set<IInput> "formaction"
+    static member formaction = set<IInputElement> "formaction"
 
     /// Specifies how the form-data should be encoded when submitting it to the  server (for type="submit" and type="image")
-    let formenctype (x : Formenctype) = set<IInput> "formenctype" x.Value
+    static member formenctype (x : Formenctype) = set<IInputElement> "formenctype" x.Value
 
     /// Defines the HTTP  method for sending data to the action URL (for type="submit" and type="image")
-    let formmethod (x : Formmethod) = set<IInput> "formmethod" x.Value
+    static member formmethod (x : Formmethod) = set<IInputElement> "formmethod" x.Value
 
     /// Defines that form elements should not be validated when submitted
-    let formnovalidate = setEmpty<IInput> "formnovalidate"
+    static member formnovalidate = setEmpty<IInputElement> "formnovalidate"
 
     /// Specifies where to display the response that is received after submitting  the form (for type="submit" and type="image")
-    let formtarget (x : Target) = set<IInput> "formtarget" x.Value
+    static member formtarget (x : Target) = set<IInputElement> "formtarget" x.Value
 
     /// Specifies the height of an <input> element (only for type="image")
-    let height (x : int) = set<IInput> "height" (x.ToString())
+    static member height (x : int) = set<IInputElement> "height" (x.ToString())
 
     /// Refers to a <datalist> element that contains pre-defined options for an  <input> element
-    let list = set<IInput> "list"
+    static member list = set<IInputElement> "list"
 
     /// Specifies the maximum value for an <input> element
-    let max (x : Max) = set<IInput> "max" x.Value
+    static member max (x : Max) = set<IInputElement> "max" x.Value
 
     /// Specifies the maximum number of characters allowed in an <input> element
-    let maxlength = set<IInput> "maxlength"
+    static member maxlength = set<IInputElement> "maxlength"
 
     /// Specifies a minimum value for an <input> element
-    let min (x : Max) = set<IInput> "min" x.Value
+    static member min (x : Max) = set<IInputElement> "min" x.Value
 
     /// Specifies that a user can enter more than one value in an <input>  element
-    let multiple = setEmpty<IInput> "multiple"
+    static member multiple = setEmpty<IInputElement> "multiple"
 
     /// Specifies the name of an <input> element
-    let name = set<IInput> "name"
+    static member name = set<IInputElement> "name"
 
     /// Specifies a regular expression that an <input> element's value is  checked against
-    let pattern = set<IInput> "pattern"
+    static member pattern = set<IInputElement> "pattern"
 
     /// Specifies a short hint that describes the expected value of an <input>  element
-    let placeholder = set<IInput> "placeholder"
+    static member placeholder = set<IInputElement> "placeholder"
 
     /// Specifies that an input field is read-only
-    let ``readonly`` = setEmpty<IInput> "readonly"
+    static member ``readonly`` = setEmpty<IInputElement> "readonly"
 
     /// Specifies that an input field must be filled out before submitting the  form
-    let required = setEmpty<IInput> "required"
+    static member required = setEmpty<IInputElement> "required"
 
     /// Specifies the width, in characters, of an <input> element
-    let size = set<IInput> "size"
+    static member size = set<IInputElement> "size"
 
     /// Specifies the URL of the image to use as a submit button (only for  type="image")
-    let src = set<IInput> "src"
+    static member src = set<IInputElement> "src"
 
     /// Specifies the legal number intervals for an input field
-    let step = set<IInput> "step"
+    static member step = set<IInputElement> "step"
 
     /// Specifies the type <input> element to display
-    let ``type`` (x : IInputType) = set<IInput> "type" x.Value
+    static member ``type`` (x : IInputElementType) = set<IInputElement> "type" x.Value
 
     /// Specifies the value of an <input> element   
-    let value = set<IInput> "value"
+    static member value = set<IInputElement> "value"
 
     /// Specifies the width of an <input> element (only for type="image")
-    let width (x : int) = set<IInput> "width" (x.ToString())
+    static member width (x : int) = set<IInputElement> "width" (x.ToString())
 
 
 
-module Ins =
-    type IIns = inherit IClosedElement
-    let empty = tag "ins" : HtmlTag<IIns>
+type IInsElement = inherit IClosedElement
+
+type Ins() =
+    static member empty = tag "ins" : HtmlTag<IInsElement>
 
     /// Specifies a URL to a document that explains the reason why the text was  inserted/changed
-    let cite = set<IIns> "cite"
+    static member cite = set<IInsElement> "cite"
 
     /// Specifies the date and time when the text was inserted/changed
-    let datetime = set<IIns> "datetime"
+    static member datetime = set<IInsElement> "datetime"
 
 
 
-module Kbd =
-    type IKbd = inherit IClosedElement
-    let empty = tag "kbd" : HtmlTag<IKbd>
+type IKbdElement = inherit IClosedElement
+
+type Kbd() =
+    static member empty = tag "kbd" : HtmlTag<IKbdElement>
 
 
 
@@ -1491,67 +1549,71 @@ type Keytype =
         | Dsa -> "dsa"
         | Ec -> "ec"
 
-module Keygen =
-    type IKeygen = inherit IUnclosedElement
-    let empty = unclosedTag "keygen" : HtmlTag<IKeygen>
+type IKeygenElement = inherit IUnclosedElement
+
+type Keygen() =
+    static member empty = unclosedTag "keygen" : HtmlTag<IKeygenElement>
 
     /// Specifies that a <keygen> element should automatically get focus when the page loads
-    let autofocus = setEmpty<IKeygen> "autofocus"
+    static member autofocus = setEmpty<IKeygenElement> "autofocus"
 
     /// Specifies that the value of the <keygen> element should be challenged when submitted
-    let challenge = setEmpty<IKeygen> "challenge"
+    static member challenge = setEmpty<IKeygenElement> "challenge"
 
     /// Specifies that a <keygen> element should be disabled
-    let disabled = setEmpty<IKeygen> "disabled"
+    static member disabled = setEmpty<IKeygenElement> "disabled"
 
     /// Specifies one or more forms the <keygen> element belongs to
-    let form = set<IKeygen> "form"
+    static member form = set<IKeygenElement> "form"
 
     /// Specifies the security algorithm of the key
-    let keytype (x : Keytype) = set<IKeygen> "keytype" x.Value
+    static member keytype (x : Keytype) = set<IKeygenElement> "keytype" x.Value
 
     /// Defines a name for the <keygen> element
-    let name = set<IKeygen> "name"
+    static member name = set<IKeygenElement> "name"
 
 
 
-module Label =
-    type ILabel = inherit IClosedElement
-    let empty = tag "label" : HtmlTag<ILabel>
+type ILabelElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ILabel>) =
+type Label() =
+    static member empty = tag "label" : HtmlTag<ILabelElement>
+
+    static member appendSetUp f (x : HtmlTag<ILabelElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLabelElement> el)) x
 
     /// Specifies which form element a label is bound to
-    let ``for`` = set<ILabel> "for"
+    static member ``for`` = set<ILabelElement> "for"
 
     /// Specifies one or more forms the label belongs to
-    let form = set<ILabel> "form"
+    static member form = set<ILabelElement> "form"
 
 
 
-module Legend =
-    type ILegend = inherit IClosedElement
-    let empty = tag "legend" : HtmlTag<ILegend>
+type ILegendElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ILegend>) =
+type Legend() =
+    static member empty = tag "legend" : HtmlTag<ILegendElement>
+
+    static member appendSetUp f (x : HtmlTag<ILegendElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLegendElement> el)) x
 
 
 
-module Li =
-    type ILi = inherit IClosedElement
-    let empty = tag "li" : HtmlTag<ILi>
+type ILiElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ILi>) =
+type Li() =
+    static member empty = tag "li" : HtmlTag<ILiElement>
+
+    static member appendSetUp f (x : HtmlTag<ILiElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLIElement> el)) x
 
     /// Specifies the value of a list item. The following list items will increment  from that number (only for <ol> lists)
-    let value = set<ILi> "value"
+    static member value = set<ILiElement> "value"
 
 
 
-type ILinkRel =
+type ILinkElementRel =
     | Alternate
     | Archives
     | Author
@@ -1605,52 +1667,55 @@ type Sizes =
         | HeightxWidth heightxWidth -> heightxWidth
         | Any -> "any"
 
-module Link =
-    type ILink = inherit IUnclosedElement
-    let empty = unclosedTag "link" : HtmlTag<ILink>
+type ILinkElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<ILink>) =
+type Link() =
+    static member empty = unclosedTag "link" : HtmlTag<ILinkElement>
+
+    static member appendSetUp f (x : HtmlTag<ILinkElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLinkElement> el)) x
 
     /// Specifies the location of the linked document
-    let href = set<ILink> "href"
+    static member href = set<ILinkElement> "href"
 
     /// Specifies the language of the text in the linked document
-    let hreflang = set<ILink> "hreflang"
+    static member hreflang = set<ILinkElement> "hreflang"
 
     /// Specifies on what device the linked document will be displayed
-    let media = set<ILink> "media"
+    static member media = set<ILinkElement> "media"
 
     /// Required. Specifies the relationship between the current document and the linked  document
-    let rel (x : ILinkRel) = set<ILink> "rel" x.Value
+    static member rel (x : ILinkElementRel) = set<ILinkElement> "rel" x.Value
 
     /// Specifies the size of the linked resource. Only for rel="icon"
-    let sizes (x : Sizes) = set<ILink> "sizes" x.Value
+    static member sizes (x : Sizes) = set<ILinkElement> "sizes" x.Value
 
     /// Specifies the MIME type of the linked document
-    let ``type`` = set<ILink> "type"
+    static member ``type`` = set<ILinkElement> "type"
 
 
 
-module MapElement =
-    type IMapElement = inherit IClosedElement
-    let empty = tag "map" : HtmlTag<IMapElement>
+type IMapElementElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IMapElement>) =
+type MapElement() =
+    static member empty = tag "map" : HtmlTag<IMapElementElement>
+
+    static member appendSetUp f (x : HtmlTag<IMapElementElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMapElement> el)) x
 
     /// Required. Specifies the name of an image-map
-    let name = set<IMapElement> "name"
+    static member name = set<IMapElementElement> "name"
 
 
 
-module Mark =
-    type IMark = inherit IClosedElement
-    let empty = tag "mark" : HtmlTag<IMark>
+type IMarkElement = inherit IClosedElement
+
+type Mark() =
+    static member empty = tag "mark" : HtmlTag<IMarkElement>
 
 
 
-type IMenuType =
+type IMenuElementType =
     | Context
     | Toolbar
     | List
@@ -1660,18 +1725,19 @@ type IMenuType =
         | Toolbar -> "toolbar"
         | List -> "list"
 
-module Menu =
-    type IMenu = inherit IClosedElement
-    let empty = tag "menu" : HtmlTag<IMenu>
+type IMenuElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IMenu>) =
+type Menu() =
+    static member empty = tag "menu" : HtmlTag<IMenuElement>
+
+    static member appendSetUp f (x : HtmlTag<IMenuElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMenuElement> el)) x
 
     /// Specifies a visible label for the menu
-    let label = set<IMenu> "label"
+    static member label = set<IMenuElement> "label"
 
     /// Specifies which type of menu to display. Default value is "list"
-    let ``type`` (x : IMenuType) = set<IMenu> "type" x.Value
+    static member ``type`` (x : IMenuElementType) = set<IMenuElement> "type" x.Value
 
 
 
@@ -1699,124 +1765,130 @@ type Name =
         | Generator generator -> generator
         | Keywords -> "keywords"
 
-module Meta =
-    type IMeta = inherit IUnclosedElement
-    let empty = unclosedTag "meta" : HtmlTag<IMeta>
+type IMetaElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IMeta>) =
+type Meta() =
+    static member empty = unclosedTag "meta" : HtmlTag<IMetaElement>
+
+    static member appendSetUp f (x : HtmlTag<IMetaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMetaElement> el)) x
 
     /// Specifies the character encoding for the HTML document
-    let charset = set<IMeta> "charset"
+    static member charset = set<IMetaElement> "charset"
 
     /// Gives the value associated with the http-equiv or name attribute
-    let content = set<IMeta> "content"
+    static member content = set<IMetaElement> "content"
 
     /// Provides an HTTP header for the information/value of the content  attribute
-    let http_equiv (x : Http_equiv) = set<IMeta> "http-equiv" x.Value
+    static member http_equiv (x : Http_equiv) = set<IMetaElement> "http-equiv" x.Value
 
     /// Specifies a name for the metadata
-    let name (x : Name) = set<IMeta> "name" x.Value
+    static member name (x : Name) = set<IMetaElement> "name" x.Value
 
 
 
-module Meter =
-    type IMeter = inherit IClosedElement
-    let empty = tag "meter" : HtmlTag<IMeter>
+type IMeterElement = inherit IClosedElement
+
+type Meter() =
+    static member empty = tag "meter" : HtmlTag<IMeterElement>
 
     /// Specifies one or more forms the <meter> element belongs to
-    let form = set<IMeter> "form"
+    static member form = set<IMeterElement> "form"
 
     /// Specifies the range that is considered to be a high value
-    let high = set<IMeter> "high"
+    static member high = set<IMeterElement> "high"
 
     /// Specifies the range that is considered to be a low value
-    let low = set<IMeter> "low"
+    static member low = set<IMeterElement> "low"
 
     /// Specifies the maximum value of the range
-    let max = set<IMeter> "max"
+    static member max = set<IMeterElement> "max"
 
     /// Specifies the minimum value of the range
-    let min = set<IMeter> "min"
+    static member min = set<IMeterElement> "min"
 
     /// Specifies what value is the optimal value for the gauge
-    let optimum = set<IMeter> "optimum"
+    static member optimum = set<IMeterElement> "optimum"
 
     /// Required. Specifies the current value of the gauge
-    let value = set<IMeter> "value"
+    static member value = set<IMeterElement> "value"
 
 
 
-module Nav =
-    type INav = inherit IClosedElement
-    let empty = tag "nav" : HtmlTag<INav>
+type INavElement = inherit IClosedElement
+
+type Nav() =
+    static member empty = tag "nav" : HtmlTag<INavElement>
 
 
 
-module Noframes =
-    type INoframes = inherit IClosedElement
-    let empty = tag "noframes" : HtmlTag<INoframes>
+type INoframesElement = inherit IClosedElement
+
+type Noframes() =
+    static member empty = tag "noframes" : HtmlTag<INoframesElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<INoframes> "class"
+    static member ``class`` = set<INoframesElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<INoframes> "dir" x.Value
+    static member dir (x : DirType) = set<INoframesElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<INoframes> "id"
+    static member id = set<INoframesElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<INoframes> "lang"
+    static member lang = set<INoframesElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<INoframes> "style"
+    static member style = set<INoframesElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<INoframes> "title"
+    static member title = set<INoframesElement> "title"
 
     /// Specifies a language code for the content in an element, in  XHTML documents
-    let xml_lang = set<INoframes> "xml:lang"
+    static member xml_lang = set<INoframesElement> "xml:lang"
 
 
 
-module Noscript =
-    type INoscript = inherit IClosedElement
-    let empty = tag "noscript" : HtmlTag<INoscript>
+type INoscriptElement = inherit IClosedElement
+
+type Noscript() =
+    static member empty = tag "noscript" : HtmlTag<INoscriptElement>
 
 
 
-module Object =
-    type IObject = inherit IClosedElement
-    let empty = tag "object" : HtmlTag<IObject>
+type IObjectElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IObject>) =
+type Object() =
+    static member empty = tag "object" : HtmlTag<IObjectElement>
+
+    static member appendSetUp f (x : HtmlTag<IObjectElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLObjectElement> el)) x
 
     /// Specifies the URL of the resource to be used by the object
-    let data = set<IObject> "data"
+    static member data = set<IObjectElement> "data"
 
     /// Specifies one or more forms the object belongs to
-    let form = set<IObject> "form"
+    static member form = set<IObjectElement> "form"
 
     /// Specifies the height of the object
-    let height (x : int) = set<IObject> "height" (x.ToString())
+    static member height (x : int) = set<IObjectElement> "height" (x.ToString())
 
     /// Specifies a name for the object
-    let name = set<IObject> "name"
+    static member name = set<IObjectElement> "name"
 
     /// Specifies the MIME type of data specified in the data attribute
-    let ``type`` = set<IObject> "type"
+    static member ``type`` = set<IObjectElement> "type"
 
     /// Specifies the name of a client-side image map to be used with the object
-    let usemap = set<IObject> "usemap"
+    static member usemap = set<IObjectElement> "usemap"
 
     /// Specifies the width of the object
-    let width (x : int) = set<IObject> "width" (x.ToString())
+    static member width (x : int) = set<IObjectElement> "width" (x.ToString())
 
 
 
-type IOlType =
+type IOlElementType =
     | Number of float
     | A
     | A1
@@ -1830,318 +1902,344 @@ type IOlType =
         | I -> "I"
         | I1 -> "i"
 
-module Ol =
-    type IOl = inherit IClosedElement
-    let empty = tag "ol" : HtmlTag<IOl>
+type IOlElement = inherit IClosedElement
+
+type Ol() =
+    static member empty = tag "ol" : HtmlTag<IOlElement>
 
     /// Specifies that the list order should be descending (9,8,7...)
-    let reversed = setEmpty<IOl> "reversed"
+    static member reversed = setEmpty<IOlElement> "reversed"
 
     /// Specifies the start value of an ordered list
-    let start = set<IOl> "start"
+    static member start = set<IOlElement> "start"
 
     /// Specifies the kind of marker to use in the list
-    let ``type`` (x : IOlType) = set<IOl> "type" x.Value
+    static member ``type`` (x : IOlElementType) = set<IOlElement> "type" x.Value
 
 
 
-module Optgroup =
-    type IOptgroup = inherit IClosedElement
-    let empty = tag "optgroup" : HtmlTag<IOptgroup>
+type IOptgroupElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IOptgroup>) =
+type Optgroup() =
+    static member empty = tag "optgroup" : HtmlTag<IOptgroupElement>
+
+    static member appendSetUp f (x : HtmlTag<IOptgroupElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLOptGroupElement> el)) x
 
     /// Specifies that an option-group should be disabled
-    let disabled = setEmpty<IOptgroup> "disabled"
+    static member disabled = setEmpty<IOptgroupElement> "disabled"
 
     /// Specifies a label for an option-group
-    let label = set<IOptgroup> "label"
+    static member label = set<IOptgroupElement> "label"
 
 
 
-module Option =
-    type IOption = inherit IClosedElement
-    let empty = tag "option" : HtmlTag<IOption>
+type IOptionElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IOption>) =
+type Option() =
+    static member empty = tag "option" : HtmlTag<IOptionElement>
+
+    static member appendSetUp f (x : HtmlTag<IOptionElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLOptionElement> el)) x
 
     /// Specifies that an option should be disabled
-    let disabled = setEmpty<IOption> "disabled"
+    static member disabled = setEmpty<IOptionElement> "disabled"
 
     /// Specifies a shorter label for an option
-    let label = set<IOption> "label"
+    static member label = set<IOptionElement> "label"
 
     /// Specifies that an option should be pre-selected when the page loads
-    let selected = setEmpty<IOption> "selected"
+    static member selected = setEmpty<IOptionElement> "selected"
 
     /// Specifies the value to be sent to a server
-    let value = set<IOption> "value"
+    static member value = set<IOptionElement> "value"
 
 
 
-module Output =
-    type IOutput = inherit IClosedElement
-    let empty = tag "output" : HtmlTag<IOutput>
+type IOutputElement = inherit IClosedElement
+
+type Output() =
+    static member empty = tag "output" : HtmlTag<IOutputElement>
 
     /// Specifies the relationship between the result of the calculation, and the elements used in the calculation
-    let ``for`` = set<IOutput> "for"
+    static member ``for`` = set<IOutputElement> "for"
 
     /// Specifies one or more forms the output element belongs to
-    let form = set<IOutput> "form"
+    static member form = set<IOutputElement> "form"
 
     /// Specifies a name for the output element
-    let name = set<IOutput> "name"
+    static member name = set<IOutputElement> "name"
 
 
 
-module P =
-    type IP = inherit IClosedElement
-    let empty = tag "p" : HtmlTag<IP>
+type IPElement = inherit IClosedElement
+
+type P() =
+    static member empty = tag "p" : HtmlTag<IPElement>
 
 
 
-module Param =
-    type IParam = inherit IUnclosedElement
-    let empty = unclosedTag "param" : HtmlTag<IParam>
+type IParamElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<IParam>) =
+type Param() =
+    static member empty = unclosedTag "param" : HtmlTag<IParamElement>
+
+    static member appendSetUp f (x : HtmlTag<IParamElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLParamElement> el)) x
 
     /// Specifies the name of a parameter
-    let name = set<IParam> "name"
+    static member name = set<IParamElement> "name"
 
     /// Specifies the value of the parameter
-    let value = set<IParam> "value"
+    static member value = set<IParamElement> "value"
 
 
 
-module Pre =
-    type IPre = inherit IClosedElement
-    let empty = tag "pre" : HtmlTag<IPre>
+type IPreElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IPre>) =
+type Pre() =
+    static member empty = tag "pre" : HtmlTag<IPreElement>
+
+    static member appendSetUp f (x : HtmlTag<IPreElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLPreElement> el)) x
 
 
 
-module Progress =
-    type IProgress = inherit IClosedElement
-    let empty = tag "progress" : HtmlTag<IProgress>
+type IProgressElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IProgress>) =
+type Progress() =
+    static member empty = tag "progress" : HtmlTag<IProgressElement>
+
+    static member appendSetUp f (x : HtmlTag<IProgressElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLProgressElement> el)) x
 
     /// Specifies how much work the task requires in total
-    let max = set<IProgress> "max"
+    static member max = set<IProgressElement> "max"
 
     /// Specifies how much of the task has been completed
-    let value = set<IProgress> "value"
+    static member value = set<IProgressElement> "value"
 
 
 
-module Q =
-    type IQ = inherit IClosedElement
-    let empty = tag "q" : HtmlTag<IQ>
+type IQElement = inherit IClosedElement
+
+type Q() =
+    static member empty = tag "q" : HtmlTag<IQElement>
 
     /// Specifies the source URL of the quote
-    let cite = set<IQ> "cite"
+    static member cite = set<IQElement> "cite"
 
 
 
-module Rp =
-    type IRp = inherit IClosedElement
-    let empty = tag "rp" : HtmlTag<IRp>
+type IRpElement = inherit IClosedElement
+
+type Rp() =
+    static member empty = tag "rp" : HtmlTag<IRpElement>
 
 
 
-module Rt =
-    type IRt = inherit IClosedElement
-    let empty = tag "rt" : HtmlTag<IRt>
+type IRtElement = inherit IClosedElement
+
+type Rt() =
+    static member empty = tag "rt" : HtmlTag<IRtElement>
 
 
 
-module Ruby =
-    type IRuby = inherit IClosedElement
-    let empty = tag "ruby" : HtmlTag<IRuby>
+type IRubyElement = inherit IClosedElement
+
+type Ruby() =
+    static member empty = tag "ruby" : HtmlTag<IRubyElement>
 
 
 
-module S =
-    type IS = inherit IClosedElement
-    let empty = tag "s" : HtmlTag<IS>
+type ISElement = inherit IClosedElement
+
+type S() =
+    static member empty = tag "s" : HtmlTag<ISElement>
 
 
 
-module Samp =
-    type ISamp = inherit IClosedElement
-    let empty = tag "samp" : HtmlTag<ISamp>
+type ISampElement = inherit IClosedElement
+
+type Samp() =
+    static member empty = tag "samp" : HtmlTag<ISampElement>
 
 
 
-module Script =
-    type IScript = inherit IClosedElement
-    let empty = tag "script" : HtmlTag<IScript>
+type IScriptElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IScript>) =
+type Script() =
+    static member empty = tag "script" : HtmlTag<IScriptElement>
+
+    static member appendSetUp f (x : HtmlTag<IScriptElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLScriptElement> el)) x
 
     /// Specifies that the script is executed asynchronously (only for external scripts)
-    let ``async`` = setEmpty<IScript> "async"
+    static member ``async`` = setEmpty<IScriptElement> "async"
 
     /// Specifies the character encoding used in an external script  file
-    let charset = set<IScript> "charset"
+    static member charset = set<IScriptElement> "charset"
 
     /// Specifies that the script is executed when the page has finished parsing  (only for external scripts)
-    let defer = setEmpty<IScript> "defer"
+    static member defer = setEmpty<IScriptElement> "defer"
 
     /// Specifies the URL of an external script file
-    let src = set<IScript> "src"
+    static member src = set<IScriptElement> "src"
 
     /// Specifies the MIME type of the script
-    let ``type`` = set<IScript> "type"
+    static member ``type`` = set<IScriptElement> "type"
 
 
 
-module Section =
-    type ISection = inherit IClosedElement
-    let empty = tag "section" : HtmlTag<ISection>
+type ISectionElement = inherit IClosedElement
+
+type Section() =
+    static member empty = tag "section" : HtmlTag<ISectionElement>
 
 
 
-module Select =
-    type ISelect = inherit IClosedElement
-    let empty = tag "select" : HtmlTag<ISelect>
+type ISelectElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ISelect>) =
+type Select() =
+    static member empty = tag "select" : HtmlTag<ISelectElement>
+
+    static member appendSetUp f (x : HtmlTag<ISelectElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSelectElement> el)) x
 
     /// Specifies that the drop-down list should automatically get focus when  the page loads
-    let autofocus = setEmpty<ISelect> "autofocus"
+    static member autofocus = setEmpty<ISelectElement> "autofocus"
 
     /// Specifies that a drop-down list should be disabled
-    let disabled = setEmpty<ISelect> "disabled"
+    static member disabled = setEmpty<ISelectElement> "disabled"
 
     /// Defines one or more forms the select field belongs to
-    let form = set<ISelect> "form"
+    static member form = set<ISelectElement> "form"
 
     /// Specifies that multiple options can be selected at once
-    let multiple = setEmpty<ISelect> "multiple"
+    static member multiple = setEmpty<ISelectElement> "multiple"
 
     /// Defines a name for the drop-down list
-    let name = set<ISelect> "name"
+    static member name = set<ISelectElement> "name"
 
     /// Specifies that the user is required to select a value before submitting  the form
-    let required = setEmpty<ISelect> "required"
+    static member required = setEmpty<ISelectElement> "required"
 
     /// Defines the number of visible options in a drop-down list
-    let size = set<ISelect> "size"
+    static member size = set<ISelectElement> "size"
 
 
 
-module Small =
-    type ISmall = inherit IClosedElement
-    let empty = tag "small" : HtmlTag<ISmall>
+type ISmallElement = inherit IClosedElement
+
+type Small() =
+    static member empty = tag "small" : HtmlTag<ISmallElement>
 
 
 
-module Source =
-    type ISource = inherit IUnclosedElement
-    let empty = unclosedTag "source" : HtmlTag<ISource>
+type ISourceElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<ISource>) =
+type Source() =
+    static member empty = unclosedTag "source" : HtmlTag<ISourceElement>
+
+    static member appendSetUp f (x : HtmlTag<ISourceElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSourceElement> el)) x
 
     /// Specifies the type of media resource
-    let media = set<ISource> "media"
+    static member media = set<ISourceElement> "media"
 
     /// Specifies the URL of the media file
-    let src = set<ISource> "src"
+    static member src = set<ISourceElement> "src"
 
     /// Specifies the MIME type of the media resource
-    let ``type`` = set<ISource> "type"
+    static member ``type`` = set<ISourceElement> "type"
 
 
 
-module Span =
-    type ISpan = inherit IClosedElement
-    let empty = tag "span" : HtmlTag<ISpan>
+type ISpanElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ISpan>) =
+type Span() =
+    static member empty = tag "span" : HtmlTag<ISpanElement>
+
+    static member appendSetUp f (x : HtmlTag<ISpanElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSpanElement> el)) x
 
 
 
-module Strike =
-    type IStrike = inherit IClosedElement
-    let empty = tag "strike" : HtmlTag<IStrike>
+type IStrikeElement = inherit IClosedElement
+
+type Strike() =
+    static member empty = tag "strike" : HtmlTag<IStrikeElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<IStrike> "class"
+    static member ``class`` = set<IStrikeElement> "class"
 
     /// Specifies the text direction  for the content in an element
-    let dir (x : DirType) = set<IStrike> "dir" x.Value
+    static member dir (x : DirType) = set<IStrikeElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<IStrike> "id"
+    static member id = set<IStrikeElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<IStrike> "lang"
+    static member lang = set<IStrikeElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<IStrike> "style"
+    static member style = set<IStrikeElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<IStrike> "title"
+    static member title = set<IStrikeElement> "title"
 
 
 
-module Strong =
-    type IStrong = inherit IClosedElement
-    let empty = tag "strong" : HtmlTag<IStrong>
+type IStrongElement = inherit IClosedElement
+
+type Strong() =
+    static member empty = tag "strong" : HtmlTag<IStrongElement>
 
 
 
-type IStyleType =
+type IStyleElementType =
     | Text_css
     member x.Value =
         match x with
         | Text_css -> "text/css"
 
-module Style =
-    type IStyle = inherit IClosedElement
-    let empty = tag "style" : HtmlTag<IStyle>
+type IStyleElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IStyle>) =
+type Style() =
+    static member empty = tag "style" : HtmlTag<IStyleElement>
+
+    static member appendSetUp f (x : HtmlTag<IStyleElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLStyleElement> el)) x
 
     /// Specifies what media/device the media resource is optimized for
-    let media = set<IStyle> "media"
+    static member media = set<IStyleElement> "media"
 
     /// Specifies that the styles only apply to this element's parent element  and that element's child elements
-    let scoped = setEmpty<IStyle> "scoped"
+    static member scoped = setEmpty<IStyleElement> "scoped"
 
     /// Specifies the MIME type of the style sheet
-    let ``type`` (x : IStyleType) = set<IStyle> "type" x.Value
+    static member ``type`` (x : IStyleElementType) = set<IStyleElement> "type" x.Value
 
 
 
-module Sub =
-    type ISub = inherit IClosedElement
-    let empty = tag "sub" : HtmlTag<ISub>
+type ISubElement = inherit IClosedElement
+
+type Sub() =
+    static member empty = tag "sub" : HtmlTag<ISubElement>
 
 
 
-module Summary =
-    type ISummary = inherit IClosedElement
-    let empty = tag "summary" : HtmlTag<ISummary>
+type ISummaryElement = inherit IClosedElement
+
+type Summary() =
+    static member empty = tag "summary" : HtmlTag<ISummaryElement>
 
 
 
-module Sup =
-    type ISup = inherit IClosedElement
-    let empty = tag "sup" : HtmlTag<ISup>
+type ISupElement = inherit IClosedElement
+
+type Sup() =
+    static member empty = tag "sup" : HtmlTag<ISupElement>
 
 
 
@@ -2153,36 +2251,39 @@ type Border =
         | Number number -> number.ToString()
         | Empty -> ""
 
-module Table =
-    type ITable = inherit IClosedElement
-    let empty = tag "table" : HtmlTag<ITable>
+type ITableElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ITable>) =
+type Table() =
+    static member empty = tag "table" : HtmlTag<ITableElement>
+
+    static member appendSetUp f (x : HtmlTag<ITableElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTableElement> el)) x
 
     /// Specifies whether the table cells should have borders or not
-    let border (x : Border) = set<ITable> "border" x.Value
+    static member border (x : Border) = set<ITableElement> "border" x.Value
 
 
 
-module Tbody =
-    type ITbody = inherit IClosedElement
-    let empty = tag "tbody" : HtmlTag<ITbody>
+type ITbodyElement = inherit IClosedElement
+
+type Tbody() =
+    static member empty = tag "tbody" : HtmlTag<ITbodyElement>
 
 
 
-module Td =
-    type ITd = inherit IClosedElement
-    let empty = tag "td" : HtmlTag<ITd>
+type ITdElement = inherit IClosedElement
+
+type Td() =
+    static member empty = tag "td" : HtmlTag<ITdElement>
 
     /// Specifies the number of columns a cell should span
-    let colspan = set<ITd> "colspan"
+    static member colspan = set<ITdElement> "colspan"
 
     /// Specifies one or more header cells a cell is related to
-    let headers = set<ITd> "headers"
+    static member headers = set<ITdElement> "headers"
 
     /// Sets the number of rows a cell should span
-    let rowspan = set<ITd> "rowspan"
+    static member rowspan = set<ITdElement> "rowspan"
 
 
 
@@ -2194,51 +2295,53 @@ type Wrap =
         | Hard -> "hard"
         | Soft -> "soft"
 
-module Textarea =
-    type ITextarea = inherit IUnclosedElement
-    let empty = unclosedTag "textarea" : HtmlTag<ITextarea>
+type ITextareaElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<ITextarea>) =
+type Textarea() =
+    static member empty = unclosedTag "textarea" : HtmlTag<ITextareaElement>
+
+    static member appendSetUp f (x : HtmlTag<ITextareaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTextAreaElement> el)) x
 
     /// Specifies that a text area should automatically get focus when the page  loads
-    let autofocus = setEmpty<ITextarea> "autofocus"
+    static member autofocus = setEmpty<ITextareaElement> "autofocus"
 
     /// Specifies the visible width of a text area
-    let cols = set<ITextarea> "cols"
+    static member cols = set<ITextareaElement> "cols"
 
     /// Specifies that a text area should be disabled
-    let disabled = setEmpty<ITextarea> "disabled"
+    static member disabled = setEmpty<ITextareaElement> "disabled"
 
     /// Specifies one or more forms the text area belongs to
-    let form = set<ITextarea> "form"
+    static member form = set<ITextareaElement> "form"
 
     /// Specifies the maximum number of characters allowed in the text area
-    let maxlength = set<ITextarea> "maxlength"
+    static member maxlength = set<ITextareaElement> "maxlength"
 
     /// Specifies a name for a text area
-    let name = set<ITextarea> "name"
+    static member name = set<ITextareaElement> "name"
 
     /// Specifies a short hint that describes the expected value of a text area
-    let placeholder = set<ITextarea> "placeholder"
+    static member placeholder = set<ITextareaElement> "placeholder"
 
     /// Specifies that a text area should be read-only
-    let ``readonly`` = setEmpty<ITextarea> "readonly"
+    static member ``readonly`` = setEmpty<ITextareaElement> "readonly"
 
     /// Specifies that a text area is required/must be filled out
-    let required = setEmpty<ITextarea> "required"
+    static member required = setEmpty<ITextareaElement> "required"
 
     /// Specifies the visible number of lines in a text area
-    let rows = set<ITextarea> "rows"
+    static member rows = set<ITextareaElement> "rows"
 
     /// Specifies how the text in a text area is to be wrapped when submitted in a form
-    let wrap (x : Wrap) = set<ITextarea> "wrap" x.Value
+    static member wrap (x : Wrap) = set<ITextareaElement> "wrap" x.Value
 
 
 
-module Tfoot =
-    type ITfoot = inherit IClosedElement
-    let empty = tag "tfoot" : HtmlTag<ITfoot>
+type ITfootElement = inherit IClosedElement
+
+type Tfoot() =
+    static member empty = tag "tfoot" : HtmlTag<ITfootElement>
 
 
 
@@ -2254,51 +2357,56 @@ type Scope =
         | Row -> "row"
         | Rowgroup -> "rowgroup"
 
-module Th =
-    type ITh = inherit IClosedElement
-    let empty = tag "th" : HtmlTag<ITh>
+type IThElement = inherit IClosedElement
+
+type Th() =
+    static member empty = tag "th" : HtmlTag<IThElement>
 
     /// Specifies the number of columns a header cell should span
-    let colspan = set<ITh> "colspan"
+    static member colspan = set<IThElement> "colspan"
 
     /// Specifies one or more header cells a cell is related to
-    let headers = set<ITh> "headers"
+    static member headers = set<IThElement> "headers"
 
     /// Specifies the number of rows a header cell should span
-    let rowspan = set<ITh> "rowspan"
+    static member rowspan = set<IThElement> "rowspan"
 
     /// Specifies whether a header cell is a header for a column, row, or group  of columns or rows
-    let scope (x : Scope) = set<ITh> "scope" x.Value
+    static member scope (x : Scope) = set<IThElement> "scope" x.Value
 
 
 
-module Thead =
-    type IThead = inherit IClosedElement
-    let empty = tag "thead" : HtmlTag<IThead>
+type ITheadElement = inherit IClosedElement
+
+type Thead() =
+    static member empty = tag "thead" : HtmlTag<ITheadElement>
 
 
 
-module Time =
-    type ITime = inherit IClosedElement
-    let empty = tag "time" : HtmlTag<ITime>
+type ITimeElement = inherit IClosedElement
+
+type Time() =
+    static member empty = tag "time" : HtmlTag<ITimeElement>
 
     /// Gives the date/time being specified. Otherwise, the date/time is given  by the element's contents
-    let datetime = set<ITime> "datetime"
+    static member datetime = set<ITimeElement> "datetime"
 
 
 
-module Title =
-    type ITitle = inherit IClosedElement
-    let empty = tag "title" : HtmlTag<ITitle>
+type ITitleElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<ITitle>) =
+type Title() =
+    static member empty = tag "title" : HtmlTag<ITitleElement>
+
+    static member appendSetUp f (x : HtmlTag<ITitleElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTitleElement> el)) x
 
 
 
-module Tr =
-    type ITr = inherit IClosedElement
-    let empty = tag "tr" : HtmlTag<ITr>
+type ITrElement = inherit IClosedElement
+
+type Tr() =
+    static member empty = tag "tr" : HtmlTag<ITrElement>
 
 
 
@@ -2316,111 +2424,118 @@ type Kind =
         | Metadata -> "metadata"
         | Subtitles -> "subtitles"
 
-module Track =
-    type ITrack = inherit IUnclosedElement
-    let empty = unclosedTag "track" : HtmlTag<ITrack>
+type ITrackElement = inherit IUnclosedElement
 
-    let appendSetUp f (x : HtmlTag<ITrack>) =
+type Track() =
+    static member empty = unclosedTag "track" : HtmlTag<ITrackElement>
+
+    static member appendSetUp f (x : HtmlTag<ITrackElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTrackElement> el)) x
 
     /// Specifies that the track is to be enabled if the user's preferences do  not indicate that another track would be more appropriate
-    let ``default`` = setEmpty<ITrack> "default"
+    static member ``default`` = setEmpty<ITrackElement> "default"
 
     /// Specifies the kind of text track
-    let kind (x : Kind) = set<ITrack> "kind" x.Value
+    static member kind (x : Kind) = set<ITrackElement> "kind" x.Value
 
     /// Specifies the title of the text track
-    let label = set<ITrack> "label"
+    static member label = set<ITrackElement> "label"
 
     /// Required. Specifies the URL of the track file
-    let src = set<ITrack> "src"
+    static member src = set<ITrackElement> "src"
 
     /// Specifies the language of the track text data (required if kind="subtitles")
-    let srclang = set<ITrack> "srclang"
+    static member srclang = set<ITrackElement> "srclang"
 
 
 
-module Tt =
-    type ITt = inherit IClosedElement
-    let empty = tag "tt" : HtmlTag<ITt>
+type ITtElement = inherit IClosedElement
+
+type Tt() =
+    static member empty = tag "tt" : HtmlTag<ITtElement>
 
     /// Specifies a classname for an element
-    let ``class`` = set<ITt> "class"
+    static member ``class`` = set<ITtElement> "class"
 
     /// Specifies the text direction for the content in an element
-    let dir (x : DirType) = set<ITt> "dir" x.Value
+    static member dir (x : DirType) = set<ITtElement> "dir" x.Value
 
     /// Specifies a unique id for an element
-    let id = set<ITt> "id"
+    static member id = set<ITtElement> "id"
 
     /// Specifies a language code for the content in an element
-    let lang = set<ITt> "lang"
+    static member lang = set<ITtElement> "lang"
 
     /// Specifies an inline style for an element
-    let style = set<ITt> "style"
+    static member style = set<ITtElement> "style"
 
     /// Specifies extra information about an element
-    let title = set<ITt> "title"
+    static member title = set<ITtElement> "title"
 
     /// Specifies a language code for the content in an element, in  XHTML documents
-    let xml_lang = set<ITt> "xml:lang"
+    static member xml_lang = set<ITtElement> "xml:lang"
 
 
 
-module U =
-    type IU = inherit IClosedElement
-    let empty = tag "u" : HtmlTag<IU>
+type IUElement = inherit IClosedElement
+
+type U() =
+    static member empty = tag "u" : HtmlTag<IUElement>
 
 
 
-module Ul =
-    type IUl = inherit IClosedElement
-    let empty = tag "ul" : HtmlTag<IUl>
+type IUlElement = inherit IClosedElement
+
+type Ul() =
+    static member empty = tag "ul" : HtmlTag<IUlElement>
 
 
 
-module Var =
-    type IVar = inherit IClosedElement
-    let empty = tag "var" : HtmlTag<IVar>
+type IVarElement = inherit IClosedElement
+
+type Var() =
+    static member empty = tag "var" : HtmlTag<IVarElement>
 
 
 
-module Video =
-    type IVideo = inherit IClosedElement
-    let empty = tag "video" : HtmlTag<IVideo>
+type IVideoElement = inherit IClosedElement
 
-    let appendSetUp f (x : HtmlTag<IVideo>) =
+type Video() =
+    static member empty = tag "video" : HtmlTag<IVideoElement>
+
+    static member appendSetUp f (x : HtmlTag<IVideoElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLVideoElement> el)) x
 
     /// Specifies that the video will start playing as soon as it is ready
-    let autoplay = setEmpty<IVideo> "autoplay"
+    static member autoplay = setEmpty<IVideoElement> "autoplay"
 
     /// Specifies that video controls should be displayed (such as a play/pause button etc).
-    let controls = setEmpty<IVideo> "controls"
+    static member controls = setEmpty<IVideoElement> "controls"
 
     /// Sets the height of the video player
-    let height (x : int) = set<IVideo> "height" (x.ToString())
+    static member height (x : int) = set<IVideoElement> "height" (x.ToString())
 
     /// Specifies that the video will start over again, every time it is finished
-    let loop = setEmpty<IVideo> "loop"
+    static member loop = setEmpty<IVideoElement> "loop"
 
     /// Specifies that the audio output of the video should be muted
-    let muted = setEmpty<IVideo> "muted"
+    static member muted = setEmpty<IVideoElement> "muted"
 
     /// Specifies an image to be shown while the video is downloading, or until the user hits the play button
-    let poster = set<IVideo> "poster"
+    static member poster = set<IVideoElement> "poster"
 
     /// Specifies if and how the author thinks the video should be loaded when the page loads
-    let preload (x : Preload) = set<IVideo> "preload" x.Value
+    static member preload (x : Preload) = set<IVideoElement> "preload" x.Value
 
     /// Specifies the URL of the video file
-    let src = set<IVideo> "src"
+    static member src = set<IVideoElement> "src"
 
     /// Sets the width of the video player
-    let width (x : int) = set<IVideo> "width" (x.ToString())
+    static member width (x : int) = set<IVideoElement> "width" (x.ToString())
 
 
 
-module Wbr =
-    type IWbr = inherit IUnclosedElement
-    let empty = unclosedTag "wbr" : HtmlTag<IWbr>
+type IWbrElement = inherit IUnclosedElement
+
+type Wbr() =
+    static member empty = unclosedTag "wbr" : HtmlTag<IWbrElement>
