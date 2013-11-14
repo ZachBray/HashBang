@@ -285,24 +285,24 @@ module Element =
 
 type IH1Element = inherit IClosedElement
 type H1() =
-    static member empty = tag "div" : HtmlTag<IH1Element>
+    static member empty = tag "h1" : HtmlTag<IH1Element>
 
 type IH2Element = inherit IClosedElement
 type H2() =
-    static member empty = tag "div" : HtmlTag<IH2Element>
+    static member empty = tag "h2" : HtmlTag<IH2Element>
 
 type IH3Element = inherit IClosedElement
 type H3() =
-    static member empty = tag "div" : HtmlTag<IH3Element>
+    static member empty = tag "h3" : HtmlTag<IH3Element>
 
 type IH4Element = inherit IClosedElement
 type H4() =
-    static member empty = tag "div" : HtmlTag<IH4Element>
+    static member empty = tag "h4" : HtmlTag<IH4Element>
 
 type IH5Element = inherit IClosedElement
 type H5() =
-    static member empty = tag "div" : HtmlTag<IH5Element>
+    static member empty = tag "h5" : HtmlTag<IH5Element>
 
 type IH6Element = inherit IClosedElement
 type H6() =
-    static member empty = tag "div" : HtmlTag<IH6Element>
+    static member empty = tag "h6" : HtmlTag<IH6Element>

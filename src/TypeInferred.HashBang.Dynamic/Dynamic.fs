@@ -3,6 +3,7 @@
 open System.Net
 open Microsoft.FSharp.Linq
 open Microsoft.FSharp.Quotations
+open Yahoo.Yui.Compressor
 
 open TypeInferred.HashBang.Html
 
@@ -48,6 +49,7 @@ type DynamicWebsite =
         Prefix : string
         HeadTemplate : HtmlTag<IHeadElement>
         BodyTemplate : HtmlTag<IBodyElement>
+        CanCompressCode : bool
         ErrorBody : IHtmlTag Expr
         Sections : Map<ElementId, DynamicWebsiteHandler list> Expr
     }
@@ -84,6 +86,7 @@ type DynamicWebsite =
             Prefix = address 
             HeadTemplate = Head.empty
             BodyTemplate = Body.empty
+            CanCompressCode = false
             ErrorBody = <@ Body.empty |> Element.appendText ["Error!"] :> IHtmlTag @>
             Sections = <@ Map.empty @>
         }
@@ -100,8 +103,17 @@ type DynamicWebsite =
     static member WithErrorBody body site =
         { site with ErrorBody = body }
 
+    static member WithCompressedCode site =
+        { site with CanCompressCode = true }
+
     static member Start(site : DynamicWebsite) =
-        let code = FunScript.Compiler.Compiler.Compile(site.Main, components = Helpers.funScriptComponents, noReturn = true)
+        let code = 
+            let raw = FunScript.Compiler.Compiler.Compile(site.Main, components = Helpers.funScriptComponents, noReturn = true)
+            if site.CanCompressCode then
+                let compressor = JavaScriptCompressor()
+                compressor.Compress raw
+            else raw
+
         let page =
             Html.empty
             |> Element.appendTags [

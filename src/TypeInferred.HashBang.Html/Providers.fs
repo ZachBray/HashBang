@@ -104,23 +104,27 @@ type ResourceProviderImpl(config : TypeProviderConfig) as this =
 
     let generateTypeGraph requestedName schemaUrl =
         let root = ProvidedTypeDefinition(ass, nspace, requestedName, None)
+
+        let textContents = File.ReadAllTextRelativeAbsoluteOrHttp(config.ResolutionFolder, schemaUrl)
+        ProvidedProperty("RawTextContents", typeof<string>, IsStatic = true, GetterCode = fun _ -> <@@ textContents @@>)
+        |> root.AddMember
+
+        let contents = File.ReadAllBytesRelativeAbsoluteOrHttp(config.ResolutionFolder, schemaUrl)
+        let base64 = Convert.ToBase64String contents
+
+        ProvidedMethod("RawDataUriWithMime", 
+            [ProvidedParameter("mime", typeof<string>)], 
+            typeof<string>, IsStaticMethod = true,
+            InvokeCode = fun args -> <@@ "data:" + (%%args.[0] : string) + ";base64," + base64 @@>)
+        |> root.AddMember
+
         let ext = Path.GetExtension schemaUrl
-        let imageMime = 
-            Runtime.ContentTypes.fromExtension ext
-            |> Option.bind (fun t ->
-                if t.Mime.StartsWith "image" then Some t.Mime
-                else None)
-        match imageMime with
-        | None ->
-            let contents = File.ReadAllTextRelativeAbsoluteOrHttp(config.ResolutionFolder, schemaUrl)
-            ProvidedProperty("RawTextContents", typeof<string>, IsStatic = true, GetterCode = fun _ -> <@@ contents @@>)
-            |> root.AddMember
-        | Some mime ->
-            let contents = File.ReadAllBytesRelativeAbsoluteOrHttp(config.ResolutionFolder, schemaUrl)
-            let base64 = Convert.ToBase64String contents
-            let data = sprintf "data:%s;base64,%s" mime base64
-            ProvidedProperty("RawImageData", typeof<string>, IsStatic = true, GetterCode = fun _ -> <@@ data @@>)
-            |> root.AddMember
+        let contentType = Runtime.ContentTypes.fromExtension ext
+        contentType |> Option.iter (fun t ->
+            let data = sprintf "data:%s;base64,%s" t.Mime base64
+            ProvidedProperty("RawDataUri", typeof<string>, IsStatic = true, GetterCode = fun _ -> <@@ data @@>)
+            |> root.AddMember)
+
         root
     do
         this.RegisterRuntimeAssemblyLocationAsProbingFolder config

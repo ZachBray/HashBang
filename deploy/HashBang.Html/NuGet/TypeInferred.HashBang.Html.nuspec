@@ -3,7 +3,7 @@
   <metadata>
     <id>TypeInferred.HashBang.Html</id>
     <authors>Zach Bray</authors>
-    <version>0.1.37</version>
+    <version>0.1.42</version>
     <projectUrl>http://www.funscript.info</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An extension library for building dynamic websites with F# and FunScript that are capable of SEO.</description>
@@ -14,6 +14,8 @@
         <dependency id="TypeInferred.HashBang" version="0.1.15" />
         <dependency id="FunScript.TypeScript.Binding.lib" version="1.1.0.13" />
         <dependency id="FunScript.TypeScript.Binding.jquery" version="1.1.0.13" />
+        <dependency id="DotNetZip" version="1.9.1.8" />
+        <dependency id="YUICompressor.NET" version="2.3.0.0" />
     </dependencies>
   </metadata>
 </package>

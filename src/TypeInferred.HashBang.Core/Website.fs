@@ -4,7 +4,8 @@ module TypeInferred.HashBang.Core
 open System
 open System.Net
 open System.IO
-open System.IO.Compression
+open Ionic.Zlib
+//open System.IO.Compression
 open System.Text
 open TypeInferred.HashBang.Runtime
 
@@ -81,7 +82,7 @@ type Website =
         | Some(level : CompressionLevel) ->
             rawResp.AddHeader("Content-Encoding", "gzip")
             use memoryStream = new MemoryStream()
-            use compressor = new GZipStream(memoryStream, level, false)
+            use compressor = new GZipStream(memoryStream, CompressionMode.Compress, level, false)
             compressor.Write(uncompressed, 0, uncompressed.Length)
             compressor.Flush()
             compressor.Close()
@@ -137,8 +138,8 @@ type Website =
                             | Some(contentType, uncompressed) ->
                                 let compressionLevel =
                                     if acceptsGZip then
-                                        if metadata.CanCacheResponse then Some CompressionLevel.Optimal
-                                        else Some CompressionLevel.Fastest
+                                        if metadata.CanCacheResponse then Some CompressionLevel.BestCompression
+                                        else Some CompressionLevel.BestSpeed
                                     else None
                                 let payload = Website.GetResponseBytes(rawResp, uncompressed, compressionLevel)
                                 do! Website.SendBytes(rawResp, payload, contentType)
