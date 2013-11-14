@@ -110,7 +110,7 @@ let contentHandlers =
                         yield H1.empty |> Element.appendText ["Page #" + ps.id.ToString()] :> IHtmlTag
                         // We can use the Routes type for type-safe url hash creation.
                         
-                        yield Img.empty |> Img.src AllTheThings.RawImageData :> _
+                        yield Img.empty |> Img.src AllTheThings.RawDataUri :> _
 
                         if ps.id > 1 then
                             yield A.empty
