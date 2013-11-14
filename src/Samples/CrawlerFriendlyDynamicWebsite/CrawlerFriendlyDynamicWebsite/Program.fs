@@ -47,7 +47,7 @@ let headTemplate =
                       BootstrapTheme.RawStyleSheet
                       Application.RawStyleSheet] 
             do
-            yield Style.empty |> Style.``type`` IStyleType.Text_css
+            yield Style.empty |> Style.``type`` IStyleElementType.Text_css
                   |> Element.appendText [ sheet ] :> _
     ]
     |> Element.appendText [
