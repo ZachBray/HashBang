@@ -97,7 +97,7 @@ type Website =
             rawResp.ContentType <- contentType.Mime
             use stream = rawResp.OutputStream
             do! stream.AsyncWrite payload
-            let! _ = Async.AwaitIAsyncResult(stream.FlushAsync())
+            stream.Flush()
             stream.Close()
         }
 

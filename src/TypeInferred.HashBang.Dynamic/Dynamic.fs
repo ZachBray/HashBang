@@ -108,11 +108,11 @@ type DynamicWebsite =
 
     static member Start(site : DynamicWebsite) =
         let code = 
-            let raw = FunScript.Compiler.Compiler.Compile(site.Main, components = Helpers.funScriptComponents, noReturn = true)
             if site.CanCompressCode then
+                let raw = FunScript.Compiler.Compiler.Compile(site.Main, components = Helpers.funScriptComponents, noReturn = true, shouldCompress = true)
                 let compressor = JavaScriptCompressor()
                 compressor.Compress raw
-            else raw
+            else FunScript.Compiler.Compiler.Compile(site.Main, components = Helpers.funScriptComponents, noReturn = true)
 
         let page =
             Html.empty

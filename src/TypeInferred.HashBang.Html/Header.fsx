@@ -190,6 +190,14 @@ module Element =
     /// Specifies whether the content of an element should be be translated or not
     let translate v = set "translate" v
 
+    /// Finds the element in the document by its identifier
+    let getById (x : IHtmlTag) =
+        Globals.document.getElementById x.Id
+
+    /// Finds the element in the document by its identifier using JQuery
+    let getByJQuery (x : IHtmlTag) =
+        Globals.Dollar.Invoke("#" + x.Id)
+
     /// Adds code that is run when the element is attached to the screen
     let appendSetUpById f x =
         { x with Initialize = fun id -> f id; x.Initialize id }

@@ -313,6 +313,9 @@ let generateTagCode (tag, hasClosingTag, attributes) =
             yield ""
             yield sprintf "    static member appendSetUp f (x : HtmlTag<%s>) =" t
             yield sprintf "        Element.appendSetUp (fun el -> f(unbox<%s> el)) x" specialization
+            yield ""
+            yield sprintf "    static member getById (x : HtmlTag<%s>) =" t
+            yield sprintf "        unbox<%s> (Globals.document.getElementById x.Id)" specialization
         for name, values, desc in attributes do
             
             yield ""

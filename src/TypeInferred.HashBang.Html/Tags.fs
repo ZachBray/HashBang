@@ -190,6 +190,14 @@ module Element =
     /// Specifies whether the content of an element should be be translated or not
     let translate v = set "translate" v
 
+    /// Finds the element in the document by its identifier
+    let getById (x : IHtmlTag) =
+        Globals.document.getElementById x.Id
+
+    /// Finds the element in the document by its identifier using JQuery
+    let getByJQuery (x : IHtmlTag) =
+        Globals.Dollar.Invoke("#" + x.Id)
+
     /// Adds code that is run when the element is attached to the screen
     let appendSetUpById f x =
         { x with Initialize = fun id -> f id; x.Initialize id }
@@ -452,6 +460,9 @@ type Applet() =
     static member appendSetUp f (x : HtmlTag<IAppletElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAppletElement> el)) x
 
+    static member getById (x : HtmlTag<IAppletElement>) =
+        unbox<HTMLAppletElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the file name of a Java applet
     static member code = set<IAppletElement> "code"
 
@@ -519,6 +530,9 @@ type Area() =
     static member appendSetUp f (x : HtmlTag<IAreaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAreaElement> el)) x
 
+    static member getById (x : HtmlTag<IAreaElement>) =
+        unbox<HTMLAreaElement> (Globals.document.getElementById x.Id)
+
     /// Specifies an alternate text for the area. Required if the href attribute is present
     static member alt = set<IAreaElement> "alt"
 
@@ -583,6 +597,9 @@ type Audio() =
     static member appendSetUp f (x : HtmlTag<IAudioElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLAudioElement> el)) x
 
+    static member getById (x : HtmlTag<IAudioElement>) =
+        unbox<HTMLAudioElement> (Globals.document.getElementById x.Id)
+
     /// Specifies that the audio will start playing as soon as it is ready
     static member autoplay = setEmpty<IAudioElement> "autoplay"
 
@@ -618,6 +635,9 @@ type Base() =
     static member appendSetUp f (x : HtmlTag<IBaseElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBaseElement> el)) x
 
+    static member getById (x : HtmlTag<IBaseElement>) =
+        unbox<HTMLBaseElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the base URL for all relative URLs in the page
     static member href = set<IBaseElement> "href"
 
@@ -633,6 +653,9 @@ type Basefont() =
 
     static member appendSetUp f (x : HtmlTag<IBasefontElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBaseFontElement> el)) x
+
+    static member getById (x : HtmlTag<IBasefontElement>) =
+        unbox<HTMLBaseFontElement> (Globals.document.getElementById x.Id)
 
     /// Specifies a classname for an element
     static member ``class`` = set<IBasefontElement> "class"
@@ -717,6 +740,9 @@ type Body() =
     static member appendSetUp f (x : HtmlTag<IBodyElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBodyElement> el)) x
 
+    static member getById (x : HtmlTag<IBodyElement>) =
+        unbox<HTMLBodyElement> (Globals.document.getElementById x.Id)
+
 
 
 type IBrElement = inherit IUnclosedElement
@@ -726,6 +752,9 @@ type Br() =
 
     static member appendSetUp f (x : HtmlTag<IBrElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLBRElement> el)) x
+
+    static member getById (x : HtmlTag<IBrElement>) =
+        unbox<HTMLBRElement> (Globals.document.getElementById x.Id)
 
 
 
@@ -764,6 +793,9 @@ type Button() =
 
     static member appendSetUp f (x : HtmlTag<IButtonElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLButtonElement> el)) x
+
+    static member getById (x : HtmlTag<IButtonElement>) =
+        unbox<HTMLButtonElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that a button should automatically get focus when the page loads
     static member autofocus = setEmpty<IButtonElement> "autofocus"
@@ -807,6 +839,9 @@ type Canvas() =
 
     static member appendSetUp f (x : HtmlTag<ICanvasElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLCanvasElement> el)) x
+
+    static member getById (x : HtmlTag<ICanvasElement>) =
+        unbox<HTMLCanvasElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the height of the canvas
     static member height (x : int) = set<ICanvasElement> "height" (x.ToString())
@@ -925,6 +960,9 @@ type Datalist() =
     static member appendSetUp f (x : HtmlTag<IDatalistElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDataListElement> el)) x
 
+    static member getById (x : HtmlTag<IDatalistElement>) =
+        unbox<HTMLDataListElement> (Globals.document.getElementById x.Id)
+
 
 
 type IDdElement = inherit IClosedElement
@@ -934,6 +972,9 @@ type Dd() =
 
     static member appendSetUp f (x : HtmlTag<IDdElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDDElement> el)) x
+
+    static member getById (x : HtmlTag<IDdElement>) =
+        unbox<HTMLDDElement> (Globals.document.getElementById x.Id)
 
 
 
@@ -1010,6 +1051,9 @@ type Div() =
     static member appendSetUp f (x : HtmlTag<IDivElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDivElement> el)) x
 
+    static member getById (x : HtmlTag<IDivElement>) =
+        unbox<HTMLDivElement> (Globals.document.getElementById x.Id)
+
 
 
 type IDlElement = inherit IClosedElement
@@ -1027,6 +1071,9 @@ type Dt() =
     static member appendSetUp f (x : HtmlTag<IDtElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLDTElement> el)) x
 
+    static member getById (x : HtmlTag<IDtElement>) =
+        unbox<HTMLDTElement> (Globals.document.getElementById x.Id)
+
 
 
 type IEmElement = inherit IClosedElement
@@ -1043,6 +1090,9 @@ type Embed() =
 
     static member appendSetUp f (x : HtmlTag<IEmbedElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLEmbedElement> el)) x
+
+    static member getById (x : HtmlTag<IEmbedElement>) =
+        unbox<HTMLEmbedElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the height of the embedded content
     static member height (x : int) = set<IEmbedElement> "height" (x.ToString())
@@ -1065,6 +1115,9 @@ type Fieldset() =
 
     static member appendSetUp f (x : HtmlTag<IFieldsetElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFieldSetElement> el)) x
+
+    static member getById (x : HtmlTag<IFieldsetElement>) =
+        unbox<HTMLFieldSetElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that a group of related form elements should be disabled
     static member disabled = setEmpty<IFieldsetElement> "disabled"
@@ -1098,6 +1151,9 @@ type Font() =
 
     static member appendSetUp f (x : HtmlTag<IFontElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFontElement> el)) x
+
+    static member getById (x : HtmlTag<IFontElement>) =
+        unbox<HTMLFontElement> (Globals.document.getElementById x.Id)
 
     /// Specifies a classname for an element
     static member ``class`` = set<IFontElement> "class"
@@ -1154,6 +1210,9 @@ type Form() =
     static member appendSetUp f (x : HtmlTag<IFormElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFormElement> el)) x
 
+    static member getById (x : HtmlTag<IFormElement>) =
+        unbox<HTMLFormElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the character encodings that are to be used for the form  submission
     static member accept_charset = set<IFormElement> "accept-charset"
 
@@ -1188,6 +1247,9 @@ type Frame() =
     static member appendSetUp f (x : HtmlTag<IFrameElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFrameElement> el)) x
 
+    static member getById (x : HtmlTag<IFrameElement>) =
+        unbox<HTMLFrameElement> (Globals.document.getElementById x.Id)
+
     /// Specifies a classname for an element
     static member ``class`` = set<IFrameElement> "class"
 
@@ -1209,6 +1271,9 @@ type Frameset() =
 
     static member appendSetUp f (x : HtmlTag<IFramesetElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLFrameSetElement> el)) x
+
+    static member getById (x : HtmlTag<IFramesetElement>) =
+        unbox<HTMLFrameSetElement> (Globals.document.getElementById x.Id)
 
     /// Specifies a classname for an element
     static member ``class`` = set<IFramesetElement> "class"
@@ -1232,6 +1297,9 @@ type Head() =
     static member appendSetUp f (x : HtmlTag<IHeadElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHeadElement> el)) x
 
+    static member getById (x : HtmlTag<IHeadElement>) =
+        unbox<HTMLHeadElement> (Globals.document.getElementById x.Id)
+
 
 
 type IHeaderElement = inherit IClosedElement
@@ -1249,6 +1317,9 @@ type Hr() =
     static member appendSetUp f (x : HtmlTag<IHrElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHRElement> el)) x
 
+    static member getById (x : HtmlTag<IHrElement>) =
+        unbox<HTMLHRElement> (Globals.document.getElementById x.Id)
+
 
 
 type IHtmlElement = inherit IClosedElement
@@ -1258,6 +1329,9 @@ type Html() =
 
     static member appendSetUp f (x : HtmlTag<IHtmlElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLHtmlElement> el)) x
+
+    static member getById (x : HtmlTag<IHtmlElement>) =
+        unbox<HTMLHtmlElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the address of the document's cache manifest (for offline browsing)
     static member manifest = set<IHtmlElement> "manifest"
@@ -1292,6 +1366,9 @@ type Iframe() =
 
     static member appendSetUp f (x : HtmlTag<IIframeElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLIFrameElement> el)) x
+
+    static member getById (x : HtmlTag<IIframeElement>) =
+        unbox<HTMLIFrameElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the height of an <iframe>
     static member height (x : int) = set<IIframeElement> "height" (x.ToString())
@@ -1429,6 +1506,9 @@ type Input() =
 
     static member appendSetUp f (x : HtmlTag<IInputElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLInputElement> el)) x
+
+    static member getById (x : HtmlTag<IInputElement>) =
+        unbox<HTMLInputElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the types of files that the server accepts  (only for type="file")
     static member accept (x : Accept) = set<IInputElement> "accept" x.Value
@@ -1582,6 +1662,9 @@ type Label() =
     static member appendSetUp f (x : HtmlTag<ILabelElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLabelElement> el)) x
 
+    static member getById (x : HtmlTag<ILabelElement>) =
+        unbox<HTMLLabelElement> (Globals.document.getElementById x.Id)
+
     /// Specifies which form element a label is bound to
     static member ``for`` = set<ILabelElement> "for"
 
@@ -1598,6 +1681,9 @@ type Legend() =
     static member appendSetUp f (x : HtmlTag<ILegendElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLegendElement> el)) x
 
+    static member getById (x : HtmlTag<ILegendElement>) =
+        unbox<HTMLLegendElement> (Globals.document.getElementById x.Id)
+
 
 
 type ILiElement = inherit IClosedElement
@@ -1607,6 +1693,9 @@ type Li() =
 
     static member appendSetUp f (x : HtmlTag<ILiElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLIElement> el)) x
+
+    static member getById (x : HtmlTag<ILiElement>) =
+        unbox<HTMLLIElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the value of a list item. The following list items will increment  from that number (only for <ol> lists)
     static member value = set<ILiElement> "value"
@@ -1675,6 +1764,9 @@ type Link() =
     static member appendSetUp f (x : HtmlTag<ILinkElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLLinkElement> el)) x
 
+    static member getById (x : HtmlTag<ILinkElement>) =
+        unbox<HTMLLinkElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the location of the linked document
     static member href = set<ILinkElement> "href"
 
@@ -1702,6 +1794,9 @@ type MapElement() =
 
     static member appendSetUp f (x : HtmlTag<IMapElementElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMapElement> el)) x
+
+    static member getById (x : HtmlTag<IMapElementElement>) =
+        unbox<HTMLMapElement> (Globals.document.getElementById x.Id)
 
     /// Required. Specifies the name of an image-map
     static member name = set<IMapElementElement> "name"
@@ -1732,6 +1827,9 @@ type Menu() =
 
     static member appendSetUp f (x : HtmlTag<IMenuElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMenuElement> el)) x
+
+    static member getById (x : HtmlTag<IMenuElement>) =
+        unbox<HTMLMenuElement> (Globals.document.getElementById x.Id)
 
     /// Specifies a visible label for the menu
     static member label = set<IMenuElement> "label"
@@ -1772,6 +1870,9 @@ type Meta() =
 
     static member appendSetUp f (x : HtmlTag<IMetaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLMetaElement> el)) x
+
+    static member getById (x : HtmlTag<IMetaElement>) =
+        unbox<HTMLMetaElement> (Globals.document.getElementById x.Id)
 
     /// Specifies the character encoding for the HTML document
     static member charset = set<IMetaElement> "charset"
@@ -1865,6 +1966,9 @@ type Object() =
     static member appendSetUp f (x : HtmlTag<IObjectElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLObjectElement> el)) x
 
+    static member getById (x : HtmlTag<IObjectElement>) =
+        unbox<HTMLObjectElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the URL of the resource to be used by the object
     static member data = set<IObjectElement> "data"
 
@@ -1926,6 +2030,9 @@ type Optgroup() =
     static member appendSetUp f (x : HtmlTag<IOptgroupElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLOptGroupElement> el)) x
 
+    static member getById (x : HtmlTag<IOptgroupElement>) =
+        unbox<HTMLOptGroupElement> (Globals.document.getElementById x.Id)
+
     /// Specifies that an option-group should be disabled
     static member disabled = setEmpty<IOptgroupElement> "disabled"
 
@@ -1941,6 +2048,9 @@ type Option() =
 
     static member appendSetUp f (x : HtmlTag<IOptionElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLOptionElement> el)) x
+
+    static member getById (x : HtmlTag<IOptionElement>) =
+        unbox<HTMLOptionElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that an option should be disabled
     static member disabled = setEmpty<IOptionElement> "disabled"
@@ -1987,6 +2097,9 @@ type Param() =
     static member appendSetUp f (x : HtmlTag<IParamElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLParamElement> el)) x
 
+    static member getById (x : HtmlTag<IParamElement>) =
+        unbox<HTMLParamElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the name of a parameter
     static member name = set<IParamElement> "name"
 
@@ -2003,6 +2116,9 @@ type Pre() =
     static member appendSetUp f (x : HtmlTag<IPreElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLPreElement> el)) x
 
+    static member getById (x : HtmlTag<IPreElement>) =
+        unbox<HTMLPreElement> (Globals.document.getElementById x.Id)
+
 
 
 type IProgressElement = inherit IClosedElement
@@ -2012,6 +2128,9 @@ type Progress() =
 
     static member appendSetUp f (x : HtmlTag<IProgressElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLProgressElement> el)) x
+
+    static member getById (x : HtmlTag<IProgressElement>) =
+        unbox<HTMLProgressElement> (Globals.document.getElementById x.Id)
 
     /// Specifies how much work the task requires in total
     static member max = set<IProgressElement> "max"
@@ -2074,6 +2193,9 @@ type Script() =
     static member appendSetUp f (x : HtmlTag<IScriptElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLScriptElement> el)) x
 
+    static member getById (x : HtmlTag<IScriptElement>) =
+        unbox<HTMLScriptElement> (Globals.document.getElementById x.Id)
+
     /// Specifies that the script is executed asynchronously (only for external scripts)
     static member ``async`` = setEmpty<IScriptElement> "async"
 
@@ -2105,6 +2227,9 @@ type Select() =
 
     static member appendSetUp f (x : HtmlTag<ISelectElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSelectElement> el)) x
+
+    static member getById (x : HtmlTag<ISelectElement>) =
+        unbox<HTMLSelectElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that the drop-down list should automatically get focus when  the page loads
     static member autofocus = setEmpty<ISelectElement> "autofocus"
@@ -2144,6 +2269,9 @@ type Source() =
     static member appendSetUp f (x : HtmlTag<ISourceElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSourceElement> el)) x
 
+    static member getById (x : HtmlTag<ISourceElement>) =
+        unbox<HTMLSourceElement> (Globals.document.getElementById x.Id)
+
     /// Specifies the type of media resource
     static member media = set<ISourceElement> "media"
 
@@ -2162,6 +2290,9 @@ type Span() =
 
     static member appendSetUp f (x : HtmlTag<ISpanElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLSpanElement> el)) x
+
+    static member getById (x : HtmlTag<ISpanElement>) =
+        unbox<HTMLSpanElement> (Globals.document.getElementById x.Id)
 
 
 
@@ -2211,6 +2342,9 @@ type Style() =
     static member appendSetUp f (x : HtmlTag<IStyleElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLStyleElement> el)) x
 
+    static member getById (x : HtmlTag<IStyleElement>) =
+        unbox<HTMLStyleElement> (Globals.document.getElementById x.Id)
+
     /// Specifies what media/device the media resource is optimized for
     static member media = set<IStyleElement> "media"
 
@@ -2259,6 +2393,9 @@ type Table() =
     static member appendSetUp f (x : HtmlTag<ITableElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTableElement> el)) x
 
+    static member getById (x : HtmlTag<ITableElement>) =
+        unbox<HTMLTableElement> (Globals.document.getElementById x.Id)
+
     /// Specifies whether the table cells should have borders or not
     static member border (x : Border) = set<ITableElement> "border" x.Value
 
@@ -2302,6 +2439,9 @@ type Textarea() =
 
     static member appendSetUp f (x : HtmlTag<ITextareaElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTextAreaElement> el)) x
+
+    static member getById (x : HtmlTag<ITextareaElement>) =
+        unbox<HTMLTextAreaElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that a text area should automatically get focus when the page  loads
     static member autofocus = setEmpty<ITextareaElement> "autofocus"
@@ -2401,6 +2541,9 @@ type Title() =
     static member appendSetUp f (x : HtmlTag<ITitleElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTitleElement> el)) x
 
+    static member getById (x : HtmlTag<ITitleElement>) =
+        unbox<HTMLTitleElement> (Globals.document.getElementById x.Id)
+
 
 
 type ITrElement = inherit IClosedElement
@@ -2431,6 +2574,9 @@ type Track() =
 
     static member appendSetUp f (x : HtmlTag<ITrackElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLTrackElement> el)) x
+
+    static member getById (x : HtmlTag<ITrackElement>) =
+        unbox<HTMLTrackElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that the track is to be enabled if the user's preferences do  not indicate that another track would be more appropriate
     static member ``default`` = setEmpty<ITrackElement> "default"
@@ -2505,6 +2651,9 @@ type Video() =
 
     static member appendSetUp f (x : HtmlTag<IVideoElement>) =
         Element.appendSetUp (fun el -> f(unbox<HTMLVideoElement> el)) x
+
+    static member getById (x : HtmlTag<IVideoElement>) =
+        unbox<HTMLVideoElement> (Globals.document.getElementById x.Id)
 
     /// Specifies that the video will start playing as soon as it is ready
     static member autoplay = setEmpty<IVideoElement> "autoplay"
