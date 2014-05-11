@@ -6,6 +6,7 @@ open FunScript
 open FSharp.Data
 open System.IO
 open TypeInferred.HashBang
+open FunScript.TypeScript
 open ChatExample.Shared
 
 // Here we create some helpers for jQuery interop.
@@ -78,7 +79,7 @@ let sendMessage() =
 // JavaScript at root level.
 let main () =
     // First, we set up the "send" button to send a message.
-    (jq?submit).click(fun _ -> sendMessage()) |> ignore
+    (jq?submit).click(fun _ -> sendMessage(); null) |> ignore
     // Second, we set up the enter key to send a message.
     (jq?content).keydown(fun (keyArgs : JQueryKeyEventObject) ->
         if int keyArgs.keyCode = 13 then sendMessage()

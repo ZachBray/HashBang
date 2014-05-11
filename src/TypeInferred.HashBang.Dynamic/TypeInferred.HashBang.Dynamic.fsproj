@@ -11,7 +11,7 @@
     <AssemblyName>TypeInferred.HashBang.Dynamic</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>TypeInferred.HashBang.Dynamic</Name>
-    <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
+    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -83,19 +83,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript">
-      <HintPath>..\packages\FunScript.1.1.0.30\lib\net40\FunScript.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.34\lib\net40\FunScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.BrowserAPI">
-      <HintPath>..\packages\FunScript.1.1.0.30\lib\net40\FunScript.BrowserAPI.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.34\lib\net40\FunScript.BrowserAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Data">
-      <HintPath>..\packages\FunScript.1.1.0.30\lib\net40\FunScript.Data.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.34\lib\net40\FunScript.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Interop">
-      <HintPath>..\packages\FunScript.1.1.0.30\lib\net40\FunScript.Interop.dll</HintPath>
+      <HintPath>..\packages\FunScript.1.1.0.34\lib\net40\FunScript.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">
