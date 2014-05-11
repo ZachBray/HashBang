@@ -1,6 +1,7 @@
 ﻿[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Extensions
 
+open FunScript.TypeScript
 open TypeInferred.HashBang.Html
 
 type JQuery with

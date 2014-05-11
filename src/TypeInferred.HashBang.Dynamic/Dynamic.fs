@@ -5,6 +5,7 @@ open Microsoft.FSharp.Linq
 open Microsoft.FSharp.Quotations
 open Yahoo.Yui.Compressor
 
+open FunScript.TypeScript
 open TypeInferred.HashBang.Html
 
 type ElementId = string

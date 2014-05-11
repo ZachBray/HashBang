@@ -8,6 +8,7 @@ module TypeInferred.HashBang.Html.Tags
 #endif
 
 open FunScript
+open FunScript.TypeScript
 
 type Map<'k,'v when 'k : comparison> = Microsoft.FSharp.Collections.Map<'k,'v>
 

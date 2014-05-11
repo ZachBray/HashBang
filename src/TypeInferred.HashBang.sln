@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.Utilities", "TypeInferred.Utilities\TypeInferred.Utilities.fsproj", "{2C4CDEF2-2613-4514-87EF-029E18A6D033}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Core", "TypeInferred.HashBang.Core\TypeInferred.HashBang.Core.fsproj", "{43EC7D0C-04AE-48BD-B1C3-BE3F2B8EC4A3}"
