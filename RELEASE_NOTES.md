@@ -1,15 +1,16 @@
-#### 0.0.0-beta - October 19 2013
-* Initial release
+### 0.5.0
+* Added support for seamless IObservable<T> subscriptions across the client/server boundary over SignalR
+* Added support for seamless running Async<T> computations across the client/server boundary over SignalR
+* Added support for generics in seamless client/server integration
+* Added support for crawling dynamically/client generated pages through implementing Google's hash-bang (#!) standard (https://developers.google.com/webmasters/ajax-crawling/)
+* Added support for constructing HTML in F#
+* Added support for type-safe access to CSS classes through a type provider
+* Added page compression
+* Added compression FunScript's generated JavaScript
+* Added support for type-safe url-redirection between pages through a type provider
+* Added support for easy resource embedding through a type provider interface
 
-#### 0.0.1-beta - October 24 2013
-* Changed name from fsharp-project-scaffold to FSharp.ProjectScaffold
-
-#### 0.5.0-beta - October 29 2013
-* Improved quality of solution-wide README.md files
-
-#### 0.5.1-beta - November 6 2013
-* Improved quality of solution-wide README.md files
-
-### 1.0 - Unreleased
-* More awesome stuff comming
-* Added SourceLink for Source Indexing PDB
+### 0.6.0 - Unreleased
+* Will add support for service interfaces
+* Will add support for injection of services into views
+* Will add support for automatic view registration
