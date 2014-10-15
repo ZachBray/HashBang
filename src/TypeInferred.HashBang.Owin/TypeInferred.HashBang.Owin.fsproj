@@ -67,19 +67,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript">
-      <HintPath>..\..\packages\FunScript.1.1.63\lib\net40\FunScript.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.1.1.70\lib\net40\FunScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Interop">
-      <HintPath>..\..\packages\FunScript.1.1.63\lib\net40\FunScript.Interop.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.1.1.70\lib\net40\FunScript.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">
-      <HintPath>..\..\packages\TypeInferred.HashBang.Html.0.2.1\lib\net40\FunScript.TypeScript.Binding.jquery.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.jquery.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.lib">
-      <HintPath>..\..\packages\TypeInferred.HashBang.Html.0.2.1\lib\net40\FunScript.TypeScript.Binding.lib.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.TypeScript.Binding.lib.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.lib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip">
@@ -101,22 +101,27 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="TypeInferred.HashBang.Html">
-      <HintPath>..\..\packages\TypeInferred.HashBang.Html.0.2.4\lib\net40\TypeInferred.HashBang.Html.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TypeInferred.HashBang.MimeType">
-      <HintPath>..\..\packages\TypeInferred.HashBang.MimeType.0.2.2\lib\net40\TypeInferred.HashBang.MimeType.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TypeInferred.HashBang.Routing">
-      <HintPath>..\..\packages\TypeInferred.HashBang.Routing.0.2.2\lib\net40\TypeInferred.HashBang.Routing.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Yahoo.Yui.Compressor">
       <HintPath>..\..\packages\YUICompressor.NET.2.4.0.0\lib\NET20\Yahoo.Yui.Compressor.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeInferred.HashBang.Html\TypeInferred.HashBang.Html.fsproj">
+      <Name>TypeInferred.HashBang.Html</Name>
+      <Project>{ff0b1036-f743-4cda-8d5d-73ec6d68dbd3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeInferred.HashBang.MimeType\TypeInferred.HashBang.MimeType.fsproj">
+      <Name>TypeInferred.HashBang.MimeType</Name>
+      <Project>{bac458b7-9c41-41d6-a9dd-9bf696aed18c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj">
+      <Name>TypeInferred.HashBang.Routing</Name>
+      <Project>{38e98985-e4e9-4e54-8a60-8a75c58768da}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -67,11 +67,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript">
-      <HintPath>..\..\packages\FunScript.1.1.47\lib\net40\FunScript.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.1.1.70\lib\net40\FunScript.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.Interop">
-      <HintPath>..\..\packages\FunScript.1.1.47\lib\net40\FunScript.Interop.dll</HintPath>
+      <HintPath>..\..\packages\FunScript.1.1.70\lib\net40\FunScript.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FunScript.TypeScript.Binding.jquery">
@@ -86,10 +86,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="TypeInferred.HashBang.MimeType">
-      <HintPath>..\..\packages\TypeInferred.HashBang.MimeType.0.2.2\lib\net40\TypeInferred.HashBang.MimeType.dll</HintPath>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TypeInferred.HashBang.MimeType\TypeInferred.HashBang.MimeType.fsproj">
+      <Name>TypeInferred.HashBang.MimeType</Name>
+      <Project>{bac458b7-9c41-41d6-a9dd-9bf696aed18c}</Project>
       <Private>True</Private>
-    </Reference>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
