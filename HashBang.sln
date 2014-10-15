@@ -1,12 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
- ProjectSection(SolutionItems) = preProject
+	ProjectSection(SolutionItems) = preProject
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
 	EndProjectSection
-EndProject
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}"
 EndProject
@@ -36,6 +36,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "HashBang.Tests", "tests\HashBang.Tests\HashBang.Tests.fsproj", "{E789C72A-5CFD-436B-8EF1-61AA2852A89F}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Html", "src\TypeInferred.HashBang.Html\TypeInferred.HashBang.Html.fsproj", "{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.MimeType", "src\TypeInferred.HashBang.MimeType\TypeInferred.HashBang.MimeType.fsproj", "{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Owin", "src\TypeInferred.HashBang.Owin\TypeInferred.HashBang.Owin.fsproj", "{7A68E5FB-1677-4C14-A093-34427918EFC2}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Routing", "src\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj", "{38E98985-E4E9-4E54-8A60-8A75C58768DA}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.SignalR", "src\TypeInferred.HashBang.SignalR\TypeInferred.HashBang.SignalR.fsproj", "{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +60,26 @@ Global
 		{E789C72A-5CFD-436B-8EF1-61AA2852A89F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E789C72A-5CFD-436B-8EF1-61AA2852A89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E789C72A-5CFD-436B-8EF1-61AA2852A89F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A68E5FB-1677-4C14-A093-34427918EFC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A68E5FB-1677-4C14-A093-34427918EFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A68E5FB-1677-4C14-A093-34427918EFC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A68E5FB-1677-4C14-A093-34427918EFC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38E98985-E4E9-4E54-8A60-8A75C58768DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38E98985-E4E9-4E54-8A60-8A75C58768DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38E98985-E4E9-4E54-8A60-8A75C58768DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38E98985-E4E9-4E54-8A60-8A75C58768DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
