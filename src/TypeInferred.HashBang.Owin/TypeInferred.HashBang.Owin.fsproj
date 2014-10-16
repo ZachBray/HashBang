@@ -54,8 +54,8 @@
     <Compile Include="Linq.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="FunScriptInterop.fs" />
-    <Compile Include="ClientSide.fs" />
     <Compile Include="HashBangOptions.fs" />
+    <Compile Include="ClientSide.fs" />
     <Compile Include="HashBangMiddleware.fs" />
     <Compile Include="CompressionMiddleware.fs" />
     <Compile Include="CachingMiddleware.fs" />
@@ -88,6 +88,11 @@
     <ProjectReference Include="..\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj">
       <Name>TypeInferred.HashBang.Routing</Name>
       <Project>{38e98985-e4e9-4e54-8a60-8a75c58768da}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeInferred.HashBang.SignalR\TypeInferred.HashBang.SignalR.fsproj">
+      <Name>TypeInferred.HashBang.SignalR</Name>
+      <Project>{6bf7ebe9-d504-4d4b-b8b1-9ca588a325b9}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

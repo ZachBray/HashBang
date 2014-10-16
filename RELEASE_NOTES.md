@@ -1,3 +1,7 @@
+### 0.3.2-alpha
+* Added support for using seamless service interfaces
+* Added better support for using IoC containers by introducing IPage
+
 ### 0.3.1-alpha
 * Fixed documentation build
 

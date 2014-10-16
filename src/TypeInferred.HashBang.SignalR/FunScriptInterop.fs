@@ -5,6 +5,7 @@ open System.Reflection
 open System.Collections.Generic
 open Microsoft.FSharp.Quotations
 open FunScript
+open TypeInferred.HashBang
 open TypeInferred.HashBang.SignalR.ServiceProtocol
 
 module Scripts =
@@ -317,7 +318,7 @@ module Interop =
         CompilerComponent.create (fun _ compiler returnStrategy expr ->
             match expr with
             | Patterns.Call(Some _, methodInfo, argExpressions) 
-              when methodInfo.DeclaringType.GetCustomAttribute<ServiceAttribute>() <> Unchecked.defaultof<_> ->
+              when ServiceEx.isAHashBangService methodInfo.DeclaringType ->
                 let callExpr = createServiceCall(methodInfo, 
                                                  methodInfo.ReturnType, 
                                                  methodInfo.GetGenericArguments(), 
@@ -326,7 +327,7 @@ module Interop =
                 | None -> []
                 | Some expr -> compiler.Compile returnStrategy expr
             | Patterns.PropertyGet(Some _, propInfo, argExpressions) 
-              when propInfo.DeclaringType.GetCustomAttribute<ServiceAttribute>() <> Unchecked.defaultof<_> ->
+              when ServiceEx.isAHashBangService propInfo.DeclaringType ->
                 let callExpr = createServiceCall(propInfo, 
                                                  propInfo.PropertyType, 
                                                  [||], 

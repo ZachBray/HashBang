@@ -44,6 +44,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Routi
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.SignalR", "src\TypeInferred.HashBang.SignalR\TypeInferred.HashBang.SignalR.fsproj", "{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8EC1C1F7-F3AE-450C-ADCF-A5BA3E205629}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Chat", "samples\Chat\Chat.fsproj", "{28E6E68F-9EB9-464B-B269-0075A7AA892B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,10 @@ Global
 		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28E6E68F-9EB9-464B-B269-0075A7AA892B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28E6E68F-9EB9-464B-B269-0075A7AA892B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28E6E68F-9EB9-464B-B269-0075A7AA892B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28E6E68F-9EB9-464B-B269-0075A7AA892B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,5 +90,6 @@ Global
 		{83F16175-43B1-4C90-A1EE-8E351C33435D} = {A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}
 		{8E6D5255-776D-4B61-85F9-73C37AA1FB9A} = {A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}
 		{E789C72A-5CFD-436B-8EF1-61AA2852A89F} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
+		{28E6E68F-9EB9-464B-B269-0075A7AA892B} = {8EC1C1F7-F3AE-450C-ADCF-A5BA3E205629}
 	EndGlobalSection
 EndGlobal
