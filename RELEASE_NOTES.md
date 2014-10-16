@@ -1,4 +1,4 @@
-### 0.5.0
+### 0.2.0
 * Added support for seamless IObservable<T> subscriptions across the client/server boundary over SignalR
 * Added support for seamless running Async<T> computations across the client/server boundary over SignalR
 * Added support for generics in seamless client/server integration
@@ -9,8 +9,3 @@
 * Added compression FunScript's generated JavaScript
 * Added support for type-safe url-redirection between pages through a type provider
 * Added support for easy resource embedding through a type provider interface
-
-### 0.6.0 - Unreleased
-* Will add support for service interfaces
-* Will add support for injection of services into views
-* Will add support for automatic view registration
