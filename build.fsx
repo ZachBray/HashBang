@@ -169,7 +169,16 @@ Target "NuGet" (fun _ ->
             OutputPath = "bin"
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey"
-            Dependencies = [] })
+            Dependencies = 
+            [
+                "FunScript", ""
+                "FunScript.TypeScript.Binding.lib", ""
+                "FunScript.TypeScript.Binding.jquery", ""
+                "Microsoft.Owin", "[2.1.0]"
+                "Microsoft.AspNet.SignalR.Core", "[2.0.3]"
+                "YUICompressor.NET", "[2.4.0.0]"
+                "DotNetZip", "[1.9.2]"
+            ] })
         ("nuget/" + project + ".nuspec")
 )
 
