@@ -1,10 +1,21 @@
 source https://nuget.org/api/v2
 
 nuget FSharp.Formatting
-nuget NUnit 
+nuget NUnit
 nuget NUnit.Runners
 nuget Nuget.CommandLine
 nuget FAKE
 nuget SourceLink.Fake
+nuget DotNetZip 1.9.2
+nuget EcmaScript.Net 1.0.1.0
+nuget FunScript 1.1.70
+nuget FunScript.TypeScript.Binding.jquery 1.1.0.37
+nuget FunScript.TypeScript.Binding.lib 1.1.0.37
+nuget Microsoft.AspNet.SignalR.Core 2.0.3
+nuget Microsoft.Owin 2.1.0
+nuget Microsoft.Owin.Security 2.1.0
+nuget Newtonsoft.Json 5.0.8
+nuget Owin 1.0
+nuget YUICompressor.NET 2.4.0.0
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
