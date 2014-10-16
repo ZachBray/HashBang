@@ -187,6 +187,31 @@
         </When>
         <Otherwise>
           <ItemGroup>
+            <Reference Include="FunScript.TypeScript.Binding.lib">
+              <HintPath>..\..\packages\FunScript.TypeScript.Binding.lib\lib\net40\FunScript.TypeScript.Binding.lib.dll</HintPath>
+              <Private>True</Private>
+              <Paket>True</Paket>
+            </Reference>
+          </ItemGroup>
+        </Otherwise>
+      </Choose>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
+      <Choose>
+        <When Condition="$(TargetFrameworkVersion) == 'v1.0'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v1.1'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v2.0'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v3.5'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v4.0' And $(TargetFrameworkProfile) == 'Client'">
+        </When>
+        <Otherwise>
+          <ItemGroup>
             <Reference Include="FSharp.Control.Reactive">
               <HintPath>..\..\packages\FSharp.Control.Reactive\lib\net40\FSharp.Control.Reactive.dll</HintPath>
               <Private>True</Private>
