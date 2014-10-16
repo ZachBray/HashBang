@@ -216,6 +216,14 @@ Target "ReleaseDocs" (fun _ ->
 #load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit
 
+let createClientByToken accessToken =
+    // Not sure why this is Async...
+    async {
+        let github = new GitHubClient(new ProductHeaderValue("FAKE"))
+        github.Credentials <- Credentials(accessToken)
+        return github
+    }
+
 Target "Release" (fun _ ->
     StageAll ""
     Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
@@ -225,7 +233,7 @@ Target "Release" (fun _ ->
     Branches.pushTag "" "origin" release.NugetVersion
     
     // release on github
-    createClient (getBuildParamOrDefault "github-user" "") (getBuildParamOrDefault "github-pw" "")
+    createClientByToken (getBuildParamOrDefault "github-token" "")
     |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
     // TODO: |>uploadFile "PATH_TO_FILE"    
     |> releaseDraft
