@@ -51,7 +51,6 @@
   <ItemGroup>
     <None Include="paket.references" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Linq.fs" />
     <Compile Include="Utilities.fs" />
     <Compile Include="FunScriptInterop.fs" />
     <Compile Include="HashBangOptions.fs" />

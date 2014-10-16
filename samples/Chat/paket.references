@@ -1,0 +1,10 @@
+﻿FunScript
+FunScript.TypeScript.Binding.lib
+FunScript.TypeScript.Binding.jquery
+FSharp.Control.Reactive
+SimpleInjector
+Microsoft.Owin
+Microsoft.Owin.Security
+Microsoft.Owin.Hosting
+Microsoft.Owin.Diagnostics
+Microsoft.Owin.Host.HttpListener
