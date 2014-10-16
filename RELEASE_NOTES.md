@@ -1,4 +1,7 @@
-### 0.2.0
+### 0.3.1-alpha
+* Fixed documentation build
+
+### 0.3.0-alpha
 * Added support for seamless IObservable<T> subscriptions across the client/server boundary over SignalR
 * Added support for seamless running Async<T> computations across the client/server boundary over SignalR
 * Added support for generics in seamless client/server integration
