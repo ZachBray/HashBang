@@ -11,8 +11,11 @@ let private container =
         let authentication = Lifestyle.Singleton.CreateRegistration<AuthenticationService>(container)
         container.AddRegistration(typeof<IAuthenticationService>, authentication)
         container.RegisterAll(typeof<IService>, authentication)
-        let logInPage = Lifestyle.Singleton.CreateRegistration<LogInPage>(container)
-        container.RegisterAll(typeof<IPage>, logInPage)
+        container.RegisterAll(typeof<IPage>, 
+            [|
+                Lifestyle.Singleton.CreateRegistration<LogInPage>(container)
+                Lifestyle.Singleton.CreateRegistration<SignUpPage>(container)
+            |])
         container.Verify()
         container
 

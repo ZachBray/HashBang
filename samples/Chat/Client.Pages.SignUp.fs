@@ -6,20 +6,20 @@ open Chat.Client
 open Chat.Client.Stylesheets
 
 [<FunScript.JS>]
-type LogInPage() =
+type SignUpPage() =
     
-    let currentUri = Routes.Session.LogIn.CreateUri() 
-
+    let currentUri = Routes.Session.SignUp.CreateUri() 
+    
     let createPage() =
-        Templates.insideNavBar
+        Templates.insideNavBar 
             currentUri
-            "Log In" 
-            "Please fill in your email address and password or sign-up for a new account." [
+            "Sign Up" 
+            "Please fill in your details." [
             P.empty --> "TODO: ADD CONTENT"
         ]
 
     interface IPage with
         member __.TryHandle request = 
-            Routes.Session.LogIn.CreateHandler (fun ps -> 
+            Routes.Session.SignUp.CreateHandler (fun ps -> 
                 async { return Some(createPage()) }
             ) request.Path request.QueryParams

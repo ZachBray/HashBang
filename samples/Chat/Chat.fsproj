@@ -57,6 +57,7 @@
     <Compile Include="Client.Routes.fs" />
     <Compile Include="Client.Templates.fs" />
     <Compile Include="Client.Pages.LogIn.fs" />
+    <Compile Include="Client.Pages.SignUp.fs" />
     <Compile Include="Container.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />

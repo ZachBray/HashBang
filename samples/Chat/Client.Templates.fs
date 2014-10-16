@@ -39,7 +39,12 @@ let errorTemplate(error:string) =
         P.empty --> error
     ]
 
-let insideNavBar title blurb children =
+let navLink description uri currentUri =
+    Li.empty +. [if uri = currentUri then yield Bootstrap.active] ==> [
+        (A.empty |> A.href uri ) --> description
+    ]
+
+let insideNavBar currentBaseUri title blurb children =
     Body.empty ==> [
         !![Application.site_wrapper] ==> [
             !![Application.site_wrapper_inner] ==> [
@@ -49,15 +54,10 @@ let insideNavBar title blurb children =
                         !![Application.inner] ==> [
                             H3.empty +. [Application.masthead_brand] --> "Chat"
                             !![Bootstrap.nav; Application.masthead_nav] ==> [
-                                // TODO: Add active class here appropriately
-                                Li.empty ==> [
-                                    // Here we use a type-safe uri builder to that ensures our link is correct
-                                    // wherever we reference it.
-                                    (A.empty |> A.href(Routes.Session.LogIn.CreateUri())) --> "Log In"
-                                ]
-                                Li.empty ==> [
-                                    (A.empty |> A.href(Routes.Session.SignUp.CreateUri())) --> "Sign Up"
-                                ]
+                                // Here we use a type-safe uri builder to that ensures our link is correct
+                                // wherever we reference it.
+                                navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
+                                navLink "Sign Up" (Routes.Session.SignUp.CreateUri()) currentBaseUri
                             ]
                         ]
                     ]
