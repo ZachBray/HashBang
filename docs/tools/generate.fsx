@@ -4,7 +4,14 @@
 // --------------------------------------------------------------------------------------
 
 // Binaries that have XML documentation (in a corresponding generated XML file)
-let referenceBinaries = [ "HashBang.dll" ]
+let referenceBinaries = [ 
+    "TypeInferred.HashBang.Html.dll" 
+    "TypeInferred.HashBang.MimeType.dll"
+    "TypeInferred.HashBang.Owin.dll"
+    "TypeInferred.HashBang.Routing.dll"
+    "TypeInferred.HashBang.SignalR.dll"
+]
+
 // Web site location for the generated documentation
 let website = "/HashBang"
 
