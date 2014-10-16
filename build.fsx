@@ -203,6 +203,7 @@ Target "ReleaseDocs" (fun _ ->
 )
 
 
+#I "paket-files/fsharp/FAKE/modules/Octokit/"
 #load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit
 
