@@ -19,17 +19,22 @@
   <files>
     <file src="..\bin\TypeInferred.HashBang.Html.dll" target="lib/net40" />
     <file src="..\bin\TypeInferred.HashBang.Html.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Html.xml" target="lib/net40" />
 
     <file src="..\bin\TypeInferred.HashBang.MimeType.dll" target="lib/net40" />
     <file src="..\bin\TypeInferred.HashBang.MimeType.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.MimeType.xml" target="lib/net40" />
 
     <file src="..\bin\TypeInferred.HashBang.Owin.dll" target="lib/net40" />
     <file src="..\bin\TypeInferred.HashBang.Owin.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Owin.xml" target="lib/net40" />
 
     <file src="..\bin\TypeInferred.HashBang.Routing.dll" target="lib/net40" />
     <file src="..\bin\TypeInferred.HashBang.Routing.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Routing.xml" target="lib/net40" />
 
     <file src="..\bin\TypeInferred.HashBang.SignalR.dll" target="lib/net40" />
     <file src="..\bin\TypeInferred.HashBang.SignalR.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.SignalR.xml" target="lib/net40" />
   </files>
 </package>

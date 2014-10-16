@@ -55,6 +55,7 @@ let root = "file://" + (__SOURCE_DIRECTORY__ @@ "../output")
 
 // Paths with template/source/output locations
 let bin        = __SOURCE_DIRECTORY__ @@ "../../bin"
+let fsCoreData        = __SOURCE_DIRECTORY__ @@ "../../lib/FSharp.Core"
 let content    = __SOURCE_DIRECTORY__ @@ "../content"
 let output     = __SOURCE_DIRECTORY__ @@ "../output"
 let files      = __SOURCE_DIRECTORY__ @@ "../files"
@@ -69,6 +70,8 @@ let layoutRoots =
 
 // Copy static files and CSS + JS from F# Formatting
 let copyFiles () =
+  // HACK: See issue: https://github.com/fsharp/FSharp.Compiler.Service/issues/196
+  CopyRecursive fsCoreData bin true |> Log "Copying file: " 
   CopyRecursive files output true |> Log "Copying file: "
   ensureDirectory (output @@ "content")
   CopyRecursive (formatting @@ "styles") (output @@ "content") true 
@@ -85,7 +88,7 @@ let buildReference () =
       parameters = ("root", root)::info,
       sourceRepo = githubLink @@ "tree/master",
       sourceFolder = __SOURCE_DIRECTORY__ @@ ".." @@ "..",
-      publicOnly = true, libDirs = [bin] )
+      publicOnly = true, libDirs = [bin])
 
 // Build documentation from `fsx` and `md` files in `docs/content`
 let buildDocumentation () =
