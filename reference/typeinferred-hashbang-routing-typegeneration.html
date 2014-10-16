@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>TypeGeneration - HashBang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Zach Bray"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/HashBang/content/style.css" />
+    <script type="text/javascript" src="/HashBang/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ZachBray/HashBang">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/HashBang/index.html">HashBang</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>TypeGeneration</h1>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '866', 866)" onmouseover="showTip(event, '866', 866)">
+            buildCheckAccess t element
+          </code>
+          <div class="tip" id="866">
+            <strong>Signature:</strong> t:PrimitiveType -&gt; element:Expr&lt;string&gt; -&gt; Expr&lt;bool&gt; * Expr option<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L45-45" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '867', 867)" onmouseover="showTip(event, '867', 867)">
+            buildConstructRouteMethod (...)
+          </code>
+          <div class="tip" id="867">
+            <strong>Signature:</strong> urlParts:(UrlPart * Expr) [] -&gt; queryParams:Map&lt;&#39;?10739,(ParameterMetadata * &#39;?10740)&gt; -&gt; ProvidedMethod<br />
+                          <strong>Type parameters:</strong> '?10739, '?10740          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L235-235" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '868', 868)" onmouseover="showTip(event, '868', 868)">
+            buildConstructRouteMethodParams (...)
+          </code>
+          <div class="tip" id="868">
+            <strong>Signature:</strong> urlParts:(UrlPart * &#39;?10732) [] -&gt; queryParams:Map&lt;&#39;?10733,(ParameterMetadata * &#39;?10734)&gt; -&gt; (ProvidedParameter * (Expr&lt;RouteUriBuilder&gt; -&gt; &#39;?10735 -&gt; Expr&lt;unit&gt;)) list<br />
+                          <strong>Type parameters:</strong> '?10732, '?10733, '?10734, '?10735          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L219-219" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '869', 869)" onmouseover="showTip(event, '869', 869)">
+            buildParseBody (...)
+          </code>
+          <div class="tip" id="869">
+            <strong>Signature:</strong> urlParts:seq&lt;UrlPart * &#39;?10718&gt; -&gt; queryParams:seq&lt;KeyValuePair&lt;&#39;?10719,(ParameterMetadata * &#39;?10720)&gt;&gt; -&gt; erasedType:Type -&gt; parameterFactory:(Expr list -&gt; &#39;?10721) -&gt; segs:Expr -&gt; qs:Expr -&gt; Expr<br />
+                          <strong>Type parameters:</strong> '?10718, '?10719, '?10720, '?10721          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L126-126" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '870', 870)" onmouseover="showTip(event, '870', 870)">
+            buildParseRequestExpr (...)
+          </code>
+          <div class="tip" id="870">
+            <strong>Signature:</strong> erasedType:Type -&gt; parameterFactory:(Expr list -&gt; &#39;?10723) -&gt; urlParts:seq&lt;UrlPart * &#39;?10724&gt; -&gt; queryParams:seq&lt;KeyValuePair&lt;&#39;?10725,(ParameterMetadata * &#39;?10726)&gt;&gt; -&gt; Expr<br />
+                          <strong>Type parameters:</strong> '?10723, '?10724, '?10725, '?10726          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L183-183" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '871', 871)" onmouseover="showTip(event, '871', 871)">
+            buildTryConvert t element
+          </code>
+          <div class="tip" id="871">
+            <strong>Signature:</strong> t:PrimitiveType -&gt; element:Expr&lt;string option&gt; -&gt; Expr<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L69-69" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '872', 872)" onmouseover="showTip(event, '872', 872)">
+            buildUrlPartsExpr urlParts
+          </code>
+          <div class="tip" id="872">
+            <strong>Signature:</strong> urlParts:(&#39;?10737 * Expr) [] -&gt; Expr<br />
+                          <strong>Type parameters:</strong> '?10737          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L231-231" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '873', 873)" onmouseover="showTip(event, '873', 873)">
+            clientConstructorFactory (...)
+          </code>
+          <div class="tip" id="873">
+            <strong>Signature:</strong> route:Route -&gt; parameterType:Type -&gt; erasedType:Type -&gt; parseRequestExpr:Expr -&gt; Type * Expr<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L259-259" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '874', 874)" onmouseover="showTip(event, '874', 874)">
+            generateMetadata route
+          </code>
+          <div class="tip" id="874">
+            <strong>Signature:</strong> route:Route -&gt; (UrlPart * Expr) [] * Map&lt;string,(ParameterMetadata * Expr)&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L30-30" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '875', 875)" onmouseover="showTip(event, '875', 875)">
+            generateRouteProperty route
+          </code>
+          <div class="tip" id="875">
+            <strong>Signature:</strong> route:Route -&gt; seq&lt;MemberInfo&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L268-268" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '876', 876)" onmouseover="showTip(event, '876', 876)">
+            generateRoutes routesFormat
+          </code>
+          <div class="tip" id="876">
+            <strong>Signature:</strong> routesFormat:string -&gt; ProvidedTypeDefinition []<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L288-288" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '877', 877)" onmouseover="showTip(event, '877', 877)">
+            generateTypeAndFactory (...)
+          </code>
+          <div class="tip" id="877">
+            <strong>Signature:</strong> route:Route -&gt; urlParts:seq&lt;UrlPart * &#39;?10714&gt; -&gt; queryParams:Map&lt;&#39;?10715,(ParameterMetadata * &#39;?10716)&gt; -&gt; Type * ProvidedTypeDefinition * (Expr list -&gt; Expr)<br />
+                          <strong>Type parameters:</strong> '?10714, '?10715, '?10716          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L87-87" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '878', 878)" onmouseover="showTip(event, '878', 878)">
+            genericNullableDef 
+          </code>
+          <div class="tip" id="878">
+            <strong>Signature:</strong> Type<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L85-85" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '879', 879)" onmouseover="showTip(event, '879', 879)">
+            parseClientRoute routeFormat
+          </code>
+          <div class="tip" id="879">
+            <strong>Signature:</strong> routeFormat:string -&gt; Route<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Routing/TypeGeneration.fs#L11-11" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/HashBang/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">HashBang</li>
+            <li><a href="/HashBang/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/HashBang">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/LICENSE.txt">License</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/RELEASE_NOTES.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/HashBang/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/HashBang/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ZachBray/HashBang"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

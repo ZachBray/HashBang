@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Element - HashBang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Zach Bray"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/HashBang/content/style.css" />
+    <script type="text/javascript" src="/HashBang/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ZachBray/HashBang">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/HashBang/index.html">HashBang</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Element</h1>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '701', 701)" onmouseover="showTip(event, '701', 701)">
+            accesskey v
+          </code>
+          <div class="tip" id="701">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7014&gt; -&gt; HtmlTag&lt;&#39;?7014&gt;<br />
+                          <strong>Type parameters:</strong> '?7014          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L169-169" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies a shortcut key to activate/focus an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '702', 702)" onmouseover="showTip(event, '702', 702)">
+            append xs x
+          </code>
+          <div class="tip" id="702">
+            <strong>Signature:</strong> xs:TagChild list -&gt; x:HtmlTag&lt;&#39;a&gt; -&gt; HtmlTag&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L157-157" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Appends text|tag children to the element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '703', 703)" onmouseover="showTip(event, '703', 703)">
+            appendSetUp f x
+          </code>
+          <div class="tip" id="703">
+            <strong>Signature:</strong> f:(HTMLElement -&gt; &#39;?7049) -&gt; x:HtmlTag&lt;&#39;?7050&gt; -&gt; HtmlTag&lt;&#39;?7050&gt;<br />
+                          <strong>Type parameters:</strong> '?7049, '?7050          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L226-226" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Adds code that is run when the element is attached to the screen</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '704', 704)" onmouseover="showTip(event, '704', 704)">
+            appendSetUpById f x
+          </code>
+          <div class="tip" id="704">
+            <strong>Signature:</strong> f:(string -&gt; &#39;?7046) -&gt; x:HtmlTag&lt;&#39;?7047&gt; -&gt; HtmlTag&lt;&#39;?7047&gt;<br />
+                          <strong>Type parameters:</strong> '?7046, '?7047          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L222-222" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Adds code that is run when the element is attached to the screen</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '705', 705)" onmouseover="showTip(event, '705', 705)">
+            appendSetUpByJQuery f x
+          </code>
+          <div class="tip" id="705">
+            <strong>Signature:</strong> f:(JQuery -&gt; &#39;?7052) -&gt; x:HtmlTag&lt;&#39;?7053&gt; -&gt; HtmlTag&lt;&#39;?7053&gt;<br />
+                          <strong>Type parameters:</strong> '?7052, '?7053          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L230-230" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Adds code that is run when the element is attached to the screen</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '706', 706)" onmouseover="showTip(event, '706', 706)">
+            appendTags xs x
+          </code>
+          <div class="tip" id="706">
+            <strong>Signature:</strong> xs:IHtmlTag list -&gt; x:HtmlTag&lt;&#39;a&gt; -&gt; HtmlTag&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L161-161" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Appends tag children to the element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '707', 707)" onmouseover="showTip(event, '707', 707)">
+            appendText xs x
+          </code>
+          <div class="tip" id="707">
+            <strong>Signature:</strong> xs:string list -&gt; x:HtmlTag&lt;&#39;a&gt; -&gt; HtmlTag&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L165-165" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Appends text children to the element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '708', 708)" onmouseover="showTip(event, '708', 708)">
+            class v
+          </code>
+          <div class="tip" id="708">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7016&gt; -&gt; HtmlTag&lt;&#39;?7016&gt;<br />
+                          <strong>Type parameters:</strong> '?7016          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L172-172" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies one or more classnames for an element (refers to a class in a style sheet)</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '709', 709)" onmouseover="showTip(event, '709', 709)">
+            classes vs
+          </code>
+          <div class="tip" id="709">
+            <strong>Signature:</strong> vs:seq&lt;string&gt; -&gt; HtmlTag&lt;&#39;?7018&gt; -&gt; HtmlTag&lt;&#39;?7018&gt;<br />
+                          <strong>Type parameters:</strong> '?7018          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L175-175" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies one or more classnames for an element (refers to a class in a style sheet)</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '710', 710)" onmouseover="showTip(event, '710', 710)">
+            contenteditable v
+          </code>
+          <div class="tip" id="710">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7020&gt; -&gt; HtmlTag&lt;&#39;?7020&gt;<br />
+                          <strong>Type parameters:</strong> '?7020          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L178-178" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies whether the content of an element is editable or not</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '711', 711)" onmouseover="showTip(event, '711', 711)">
+            dir x
+          </code>
+          <div class="tip" id="711">
+            <strong>Signature:</strong> x:ElementDir -&gt; HtmlTag&lt;&#39;?7022&gt; -&gt; HtmlTag&lt;&#39;?7022&gt;<br />
+                          <strong>Type parameters:</strong> '?7022          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L181-181" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies the text direction for the content in an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '712', 712)" onmouseover="showTip(event, '712', 712)">
+            draggable x
+          </code>
+          <div class="tip" id="712">
+            <strong>Signature:</strong> x:ElementDraggable -&gt; HtmlTag&lt;&#39;?7024&gt; -&gt; HtmlTag&lt;&#39;?7024&gt;<br />
+                          <strong>Type parameters:</strong> '?7024          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L184-184" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies whether an element is draggable or not</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '713', 713)" onmouseover="showTip(event, '713', 713)">
+            dropzone x
+          </code>
+          <div class="tip" id="713">
+            <strong>Signature:</strong> x:ElementDropZone -&gt; HtmlTag&lt;&#39;?7026&gt; -&gt; HtmlTag&lt;&#39;?7026&gt;<br />
+                          <strong>Type parameters:</strong> '?7026          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L187-187" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies whether the dragged data is copied, moved, or linked, when dropped</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '714', 714)" onmouseover="showTip(event, '714', 714)">
+            getById x
+          </code>
+          <div class="tip" id="714">
+            <strong>Signature:</strong> x:IHtmlTag -&gt; HTMLElement<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L214-214" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Finds the element in the document by its identifier</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '715', 715)" onmouseover="showTip(event, '715', 715)">
+            getByJQuery x
+          </code>
+          <div class="tip" id="715">
+            <strong>Signature:</strong> x:IHtmlTag -&gt; JQuery<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L218-218" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Finds the element in the document by its identifier using JQuery</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '716', 716)" onmouseover="showTip(event, '716', 716)">
+            hidden x
+          </code>
+          <div class="tip" id="716">
+            <strong>Signature:</strong> x:HtmlTag&lt;&#39;?7028&gt; -&gt; HtmlTag&lt;&#39;?7028&gt;<br />
+                          <strong>Type parameters:</strong> '?7028          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L190-190" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies that an element is not yet, or is no longer, relevant</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '717', 717)" onmouseover="showTip(event, '717', 717)">
+            id v x
+          </code>
+          <div class="tip" id="717">
+            <strong>Signature:</strong> v:string -&gt; x:HtmlTag&lt;&#39;?7030&gt; -&gt; HtmlTag&lt;&#39;?7030&gt;<br />
+                          <strong>Type parameters:</strong> '?7030          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L193-193" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies a unique id for an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '718', 718)" onmouseover="showTip(event, '718', 718)">
+            lang v
+          </code>
+          <div class="tip" id="718">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7032&gt; -&gt; HtmlTag&lt;&#39;?7032&gt;<br />
+                          <strong>Type parameters:</strong> '?7032          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L196-196" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies the language of the element's content</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '719', 719)" onmouseover="showTip(event, '719', 719)">
+            onclick f
+          </code>
+          <div class="tip" id="719">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7055&gt; -&gt; HtmlTag&lt;&#39;?7055&gt;<br />
+                          <strong>Type parameters:</strong> '?7055          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L234-234" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires on a mouse click on the element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '720', 720)" onmouseover="showTip(event, '720', 720)">
+            ondblclick f
+          </code>
+          <div class="tip" id="720">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7057&gt; -&gt; HtmlTag&lt;&#39;?7057&gt;<br />
+                          <strong>Type parameters:</strong> '?7057          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L240-240" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires on a mouse double-click on the element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '721', 721)" onmouseover="showTip(event, '721', 721)">
+            ondrag f
+          </code>
+          <div class="tip" id="721">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7059&gt; -&gt; HtmlTag&lt;&#39;?7059&gt;<br />
+                          <strong>Type parameters:</strong> '?7059          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L246-246" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when an element is dragged</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '722', 722)" onmouseover="showTip(event, '722', 722)">
+            ondragend f
+          </code>
+          <div class="tip" id="722">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7061&gt; -&gt; HtmlTag&lt;&#39;?7061&gt;<br />
+                          <strong>Type parameters:</strong> '?7061          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L252-252" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run at the end of a drag operation</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '723', 723)" onmouseover="showTip(event, '723', 723)">
+            ondragenter f
+          </code>
+          <div class="tip" id="723">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7063&gt; -&gt; HtmlTag&lt;&#39;?7063&gt;<br />
+                          <strong>Type parameters:</strong> '?7063          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L258-258" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when an element has been dragged to a valid drop target</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '724', 724)" onmouseover="showTip(event, '724', 724)">
+            ondragleave f
+          </code>
+          <div class="tip" id="724">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7065&gt; -&gt; HtmlTag&lt;&#39;?7065&gt;<br />
+                          <strong>Type parameters:</strong> '?7065          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L264-264" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when an element leaves a valid drop target</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '725', 725)" onmouseover="showTip(event, '725', 725)">
+            ondragover f
+          </code>
+          <div class="tip" id="725">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7067&gt; -&gt; HtmlTag&lt;&#39;?7067&gt;<br />
+                          <strong>Type parameters:</strong> '?7067          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L270-270" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when an element is being dragged over a valid drop target</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '726', 726)" onmouseover="showTip(event, '726', 726)">
+            ondragstart f
+          </code>
+          <div class="tip" id="726">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7069&gt; -&gt; HtmlTag&lt;&#39;?7069&gt;<br />
+                          <strong>Type parameters:</strong> '?7069          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L276-276" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run at the start of a drag operation</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '727', 727)" onmouseover="showTip(event, '727', 727)">
+            ondrop f
+          </code>
+          <div class="tip" id="727">
+            <strong>Signature:</strong> f:(DragEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7071&gt; -&gt; HtmlTag&lt;&#39;?7071&gt;<br />
+                          <strong>Type parameters:</strong> '?7071          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L282-282" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when dragged element is being dropped</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '728', 728)" onmouseover="showTip(event, '728', 728)">
+            onmousedown f
+          </code>
+          <div class="tip" id="728">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7073&gt; -&gt; HtmlTag&lt;&#39;?7073&gt;<br />
+                          <strong>Type parameters:</strong> '?7073          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L288-288" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires when a mouse button is pressed down on an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '729', 729)" onmouseover="showTip(event, '729', 729)">
+            onmousemove f
+          </code>
+          <div class="tip" id="729">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7075&gt; -&gt; HtmlTag&lt;&#39;?7075&gt;<br />
+                          <strong>Type parameters:</strong> '?7075          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L294-294" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires when the mouse pointer moves over an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '730', 730)" onmouseover="showTip(event, '730', 730)">
+            onmouseout f
+          </code>
+          <div class="tip" id="730">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7077&gt; -&gt; HtmlTag&lt;&#39;?7077&gt;<br />
+                          <strong>Type parameters:</strong> '?7077          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L300-300" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires when the mouse pointer moves out of an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '731', 731)" onmouseover="showTip(event, '731', 731)">
+            onmouseover f
+          </code>
+          <div class="tip" id="731">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7079&gt; -&gt; HtmlTag&lt;&#39;?7079&gt;<br />
+                          <strong>Type parameters:</strong> '?7079          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L306-306" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires when the mouse pointer moves over an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '732', 732)" onmouseover="showTip(event, '732', 732)">
+            onmouseup f
+          </code>
+          <div class="tip" id="732">
+            <strong>Signature:</strong> f:(MouseEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7081&gt; -&gt; HtmlTag&lt;&#39;?7081&gt;<br />
+                          <strong>Type parameters:</strong> '?7081          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L312-312" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Fires when a mouse button is released over an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '733', 733)" onmouseover="showTip(event, '733', 733)">
+            onmousewheel f
+          </code>
+          <div class="tip" id="733">
+            <strong>Signature:</strong> f:(MouseWheelEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7083&gt; -&gt; HtmlTag&lt;&#39;?7083&gt;<br />
+                          <strong>Type parameters:</strong> '?7083          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L318-318" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when the mouse wheel is being rotated</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '734', 734)" onmouseover="showTip(event, '734', 734)">
+            onscroll f
+          </code>
+          <div class="tip" id="734">
+            <strong>Signature:</strong> f:(UIEvent -&gt; unit) -&gt; HtmlTag&lt;&#39;?7085&gt; -&gt; HtmlTag&lt;&#39;?7085&gt;<br />
+                          <strong>Type parameters:</strong> '?7085          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L324-324" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Script to be run when an element's scrollbar is being scrolled</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '735', 735)" onmouseover="showTip(event, '735', 735)">
+            spellcheck v
+          </code>
+          <div class="tip" id="735">
+            <strong>Signature:</strong> v:bool -&gt; HtmlTag&lt;&#39;?7034&gt; -&gt; HtmlTag&lt;&#39;?7034&gt;<br />
+                          <strong>Type parameters:</strong> '?7034          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L199-199" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies whether the element is to have its spelling and grammar checked or not</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '736', 736)" onmouseover="showTip(event, '736', 736)">
+            style v
+          </code>
+          <div class="tip" id="736">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7036&gt; -&gt; HtmlTag&lt;&#39;?7036&gt;<br />
+                          <strong>Type parameters:</strong> '?7036          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L202-202" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies an inline CSS style for an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '737', 737)" onmouseover="showTip(event, '737', 737)">
+            tabindex v
+          </code>
+          <div class="tip" id="737">
+            <strong>Signature:</strong> v:int -&gt; HtmlTag&lt;&#39;?7038&gt; -&gt; HtmlTag&lt;&#39;?7038&gt;<br />
+                          <strong>Type parameters:</strong> '?7038          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L205-205" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies the tabbing order of an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '738', 738)" onmouseover="showTip(event, '738', 738)">
+            title v
+          </code>
+          <div class="tip" id="738">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7040&gt; -&gt; HtmlTag&lt;&#39;?7040&gt;<br />
+                          <strong>Type parameters:</strong> '?7040          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L208-208" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies extra information about an element</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '739', 739)" onmouseover="showTip(event, '739', 739)">
+            translate v
+          </code>
+          <div class="tip" id="739">
+            <strong>Signature:</strong> v:string -&gt; HtmlTag&lt;&#39;?7042&gt; -&gt; HtmlTag&lt;&#39;?7042&gt;<br />
+                          <strong>Type parameters:</strong> '?7042          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/Tags.fs#L211-211" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies whether the content of an element should be be translated or not</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/HashBang/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">HashBang</li>
+            <li><a href="/HashBang/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/HashBang">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/LICENSE.txt">License</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/RELEASE_NOTES.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/HashBang/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/HashBang/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ZachBray/HashBang"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>

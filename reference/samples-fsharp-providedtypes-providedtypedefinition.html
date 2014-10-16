@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ProvidedTypeDefinition - HashBang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Zach Bray"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/HashBang/content/style.css" />
+    <script type="text/javascript" src="/HashBang/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/ZachBray/HashBang">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/HashBang/index.html">HashBang</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>ProvidedTypeDefinition</h1>
+<div class="xmldoc">
+<p>Represents a provided type definition.</p>
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '989', 989)" onmouseover="showTip(event, '989', 989)">
+            new(className, baseType)
+          </code>
+          <div class="tip" id="989">
+            <strong>Signature:</strong> (className:string * baseType:Type option) -&gt; ProvidedTypeDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1046-1046" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a new provided type definition, to be located as a nested type in some type definition.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '990', 990)" onmouseover="showTip(event, '990', 990)">
+            new(...)
+          </code>
+          <div class="tip" id="990">
+            <strong>Signature:</strong> (assembly:Assembly * namespaceName:string * className:string * baseType:Type option) -&gt; ProvidedTypeDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1045-1045" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a new provided type definition in a namespace.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '991', 991)" onmouseover="showTip(event, '991', 991)">
+            AddAssemblyTypesAsNestedTypesDelayed(...)
+          </code>
+          <div class="tip" id="991">
+            <strong>Signature:</strong> (assemblyFunction:(unit -&gt; Assembly)) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1061-1061" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add the types of the generated assembly as generative types, where types in namespaces get hierarchically positioned as nested types.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '992', 992)" onmouseover="showTip(event, '992', 992)">
+            AddDefinitionLocation(...)
+          </code>
+          <div class="tip" id="992">
+            <strong>Signature:</strong> (line:int * column:int * filePath:string) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1035-1035" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add definition location information to the provided type definition.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '993', 993)" onmouseover="showTip(event, '993', 993)">
+            AddInterfaceImplementation(...)
+          </code>
+          <div class="tip" id="993">
+            <strong>Signature:</strong> interfaceType:Type -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1170-1170" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add the given type as an implemented interface.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '994', 994)" onmouseover="showTip(event, '994', 994)">
+            AddInterfaceImplementationsDelayed(...)
+          </code>
+          <div class="tip" id="994">
+            <strong>Signature:</strong> (interfacesFunction:(unit -&gt; Type list)) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1171-1171" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add the given function as a set of on-demand computed interfaces.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '995', 995)" onmouseover="showTip(event, '995', 995)">
+            AddMember(memberInfo)
+          </code>
+          <div class="tip" id="995">
+            <strong>Signature:</strong> memberInfo:MemberInfo -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1058-1058" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a method, property, nested type or other member to a ProvidedTypeDefinition</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '996', 996)" onmouseover="showTip(event, '996', 996)">
+            AddMemberDelayed(memberFunction)
+          </code>
+          <div class="tip" id="996">
+            <strong>Signature:</strong> (memberFunction:(unit -&gt; &#39;?7489)) -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7489          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1059-1059" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a member to a ProvidedTypeDefinition, delaying computation of the members until required by the compilation context.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '997', 997)" onmouseover="showTip(event, '997', 997)">
+            AddMembers(memberInfos)
+          </code>
+          <div class="tip" id="997">
+            <strong>Signature:</strong> (memberInfos:&#39;?7487 list) -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7487          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1055-1055" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a set of members to a ProvidedTypeDefinition</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '998', 998)" onmouseover="showTip(event, '998', 998)">
+            AddMembersDelayed(arg1)
+          </code>
+          <div class="tip" id="998">
+            <strong>Signature:</strong> ((unit -&gt; &#39;?7491 list)) -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7491          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1053-1053" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a set of members to a ProvidedTypeDefinition, delaying computation of the members until required by the compilation context.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '999', 999)" onmouseover="showTip(event, '999', 999)">
+            AddObsoleteAttribute(message, isError)
+          </code>
+          <div class="tip" id="999">
+            <strong>Signature:</strong> (message:string * isError:bool option) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1034-1034" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add a 'System.Obsolete' attribute to this provided type definition</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1000', 1000)" onmouseover="showTip(event, '1000', 1000)">
+            AddXmlDoc(xmlDoc)
+          </code>
+          <div class="tip" id="1000">
+            <strong>Signature:</strong> xmlDoc:string -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1033-1033" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add XML documentation information to this provided constructor</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1001', 1001)" onmouseover="showTip(event, '1001', 1001)">
+            AddXmlDocComputed(xmlDocFunction)
+          </code>
+          <div class="tip" id="1001">
+            <strong>Signature:</strong> (xmlDocFunction:(unit -&gt; string)) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1031-1031" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+The documentation is re-computed  every time it is required.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1002', 1002)" onmouseover="showTip(event, '1002', 1002)">
+            AddXmlDocDelayed(xmlDocFunction)
+          </code>
+          <div class="tip" id="1002">
+            <strong>Signature:</strong> (xmlDocFunction:(unit -&gt; string)) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1032-1032" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary.
+The documentation is only computed once.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1003', 1003)" onmouseover="showTip(event, '1003', 1003)">
+            DefineMethodOverride(...)
+          </code>
+          <div class="tip" id="1003">
+            <strong>Signature:</strong> (methodInfoBody:ProvidedMethod * methodInfoDeclaration:MethodInfo) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1174-1174" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Specifies that the given method body implements the given method declaration.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1004', 1004)" onmouseover="showTip(event, '1004', 1004)">
+            DefineStaticParameters(...)
+          </code>
+          <div class="tip" id="1004">
+            <strong>Signature:</strong> (parameters:ProvidedStaticParameter list * instantiationFunction:(string -&gt; obj [] -&gt; ProvidedTypeDefinition)) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1099-1099" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1005', 1005)" onmouseover="showTip(event, '1005', 1005)">
+            HideObjectMethods()
+          </code>
+          <div class="tip" id="1005">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1036-1036" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Suppress System.Object entries in intellisense menus in instances of this provided type</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1006', 1006)" onmouseover="showTip(event, '1006', 1006)">
+            IsErased
+          </code>
+          <div class="tip" id="1006">
+            <strong>Signature:</strong> bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1291-1291" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Get or set a flag indicating if the ProvidedTypeDefinition is erased</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1007', 1007)" onmouseover="showTip(event, '1007', 1007)">
+            ResetEnclosingType(enclosingType)
+          </code>
+          <div class="tip" id="1007">
+            <strong>Signature:</strong> enclosingType:Type -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1043-1043" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Reset the enclosing type (for generated nested types)</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1008', 1008)" onmouseover="showTip(event, '1008', 1008)">
+            SetAttributes(arg1)
+          </code>
+          <div class="tip" id="1008">
+            <strong>Signature:</strong> TypeAttributes -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1051-1051" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Set the attributes on the provided type. This fully replaces the default TypeAttributes.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1009', 1009)" onmouseover="showTip(event, '1009', 1009)">
+            SetBaseType(arg1)
+          </code>
+          <div class="tip" id="1009">
+            <strong>Signature:</strong> Type -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1049-1049" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Set the base type</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1010', 1010)" onmouseover="showTip(event, '1010', 1010)">
+            SetBaseTypeDelayed(arg1)
+          </code>
+          <div class="tip" id="1010">
+            <strong>Signature:</strong> (Lazy&lt;Type option&gt;) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1050-1050" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Set the base type to a lazily evaluated value</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '1011', 1011)" onmouseover="showTip(event, '1011', 1011)">
+            SuppressRelocation
+          </code>
+          <div class="tip" id="1011">
+            <strong>Signature:</strong> bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/ZachBray/HashBang/tree/master/src/TypeInferred.HashBang.Html/ProvidedTypes-0.4.fs#L1297-1297" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Get or set a flag indicating if the ProvidedTypeDefinition has type-relocation suppressed</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/HashBang/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">HashBang</li>
+            <li><a href="/HashBang/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/HashBang">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/LICENSE.txt">License</a></li>
+            <li><a href="http://github.com/ZachBray/HashBang/blob/master/RELEASE_NOTES.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/HashBang/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/HashBang/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/ZachBray/HashBang"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
