@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>HashBang</id>
+    <version>0.3.1-alpha</version>
+    <authors>Zach Bray</authors>
+    <owners>Zach Bray</owners>
+    <licenseUrl>http://github.com/ZachBray/HashBang/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>http://ZachBray.github.com/HashBang</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/ZachBray/ProjectScaffold/master/docs/files/img/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>A collection of libraries for building web and mobile applications. Leverages FunScript for seamless full-stack development in F#. Adheres to Google's standard for ajax=crawling.</summary>
+    <description>A collection of libraries for building web and mobile applications. Leverages FunScript for seamless full-stack development in F#. Adheres to Google's standard for ajax=crawling.</description>
+    <releaseNotes>Fixed documentation build</releaseNotes>
+    <copyright>Copyright 2014 Type Inferred Ltd.</copyright>
+    <tags>F# FSharp Web Mobile FunScript Crawlable</tags>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="..\bin\TypeInferred.HashBang.Html.dll" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Html.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Html.xml" target="lib/net40" />
+
+    <file src="..\bin\TypeInferred.HashBang.MimeType.dll" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.MimeType.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.MimeType.xml" target="lib/net40" />
+
+    <file src="..\bin\TypeInferred.HashBang.Owin.dll" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Owin.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Owin.xml" target="lib/net40" />
+
+    <file src="..\bin\TypeInferred.HashBang.Routing.dll" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Routing.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.Routing.xml" target="lib/net40" />
+
+    <file src="..\bin\TypeInferred.HashBang.SignalR.dll" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.SignalR.pdb" target="lib/net40" />
+    <file src="..\bin\TypeInferred.HashBang.SignalR.xml" target="lib/net40" />
+  </files>
+</package>
