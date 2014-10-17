@@ -8,13 +8,12 @@ open TypeInferred.HashBang
 
 let settings =
     {
-        IsJavaScriptCompressionEnabled = true
         /// Note: this is only a template for the first rendering of the page.
         ServerServedPageTemplate = Client.Templates.headedPage
         ErrorPageTemplate = <@ Client.Templates.errorTemplate @>
         Pages = Container.createPages()
         Services = Container.createServices()
-        FunScriptComponentInjector = id
+        Advanced = AdvancedHashbangOptions.Default
     }
 
 [<EntryPoint>]

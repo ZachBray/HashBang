@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>28e6e68f-9eb9-464b-b269-0075a7aa892b</ProjectGuid>
+    <ProjectGuid>{28E6E68F-9EB9-464B-B269-0075A7AA892B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Chat</RootNamespace>
     <AssemblyName>Chat</AssemblyName>
@@ -39,12 +38,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain.Query.fs" />
@@ -66,28 +65,23 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\TypeInferred.HashBang.Html\TypeInferred.HashBang.Html.fsproj">
       <Name>TypeInferred.HashBang.Html</Name>
-      <Project>{ff0b1036-f743-4cda-8d5d-73ec6d68dbd3}</Project>
-      <Private>True</Private>
+      <Project>{FF0B1036-F743-4CDA-8D5D-73EC6D68DBD3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\TypeInferred.HashBang.MimeType\TypeInferred.HashBang.MimeType.fsproj">
       <Name>TypeInferred.HashBang.MimeType</Name>
-      <Project>{bac458b7-9c41-41d6-a9dd-9bf696aed18c}</Project>
-      <Private>True</Private>
+      <Project>{BAC458B7-9C41-41D6-A9DD-9BF696AED18C}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\TypeInferred.HashBang.Owin\TypeInferred.HashBang.Owin.fsproj">
       <Name>TypeInferred.HashBang.Owin</Name>
-      <Project>{7a68e5fb-1677-4c14-a093-34427918efc2}</Project>
-      <Private>True</Private>
+      <Project>{7A68E5FB-1677-4C14-A093-34427918EFC2}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\TypeInferred.HashBang.Routing\TypeInferred.HashBang.Routing.fsproj">
       <Name>TypeInferred.HashBang.Routing</Name>
-      <Project>{38e98985-e4e9-4e54-8a60-8a75c58768da}</Project>
-      <Private>True</Private>
+      <Project>{38E98985-E4E9-4E54-8A60-8A75C58768DA}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\TypeInferred.HashBang.SignalR\TypeInferred.HashBang.SignalR.fsproj">
       <Name>TypeInferred.HashBang.SignalR</Name>
-      <Project>{6bf7ebe9-d504-4d4b-b8b1-9ca588a325b9}</Project>
-      <Private>True</Private>
+      <Project>{6BF7EBE9-D504-4D4B-B8B1-9CA588A325B9}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

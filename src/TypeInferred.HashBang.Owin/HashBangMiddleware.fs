@@ -8,6 +8,7 @@ open Microsoft.Owin
 open Yahoo.Yui.Compressor
 open FunScript
 open TypeInferred.HashBang
+open TypeInferred.HashBang.Logging
 open TypeInferred.HashBang.SignalR
 open TypeInferred.HashBang.Routing
 open TypeInferred.HashBang.Html
@@ -19,17 +20,20 @@ type Continuation = Func<Environment, Task>
 
 type HashBangMiddleware(next, options:HashBangOptions) =
     inherit OwinMiddleware(next)
+
+    let logger = options.Advanced.CreateLogger()
+
+    do logger.Log(Info, fun () -> "Starting HashBangMiddleware.")
+
     let funScriptComponentInjector = fun existingComponents ->
-        options.FunScriptComponentInjector(existingComponents @ FunScriptInterop.components)
+        options.Advanced.FunScriptComponentInjector(existingComponents @ FunScriptInterop.components)
+    
+    let compressor = 
+        lazy 
+            logger.Log(Debug, fun () -> "Initializing JavaScriptCompressor.")
+            JavaScriptCompressor()
 
-    let compressor = lazy JavaScriptCompressor()
-
-    let compileScript script =
-        let isCompressionEnabled = options.IsJavaScriptCompressionEnabled
-        let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled)
-        if isCompressionEnabled then compressor.Value.Compress raw
-        else raw
-
+    do logger.Log(Debug, fun () -> "Verifying IPage constructors.")
     let pageTypes =
         options.Pages |> List.map (fun page ->
             let pageType = page.GetType()
@@ -39,16 +43,28 @@ type HashBangMiddleware(next, options:HashBangOptions) =
                     consInfo.GetParameters() |> Array.forall (fun parameter ->
                         ServiceEx.isAHashBangService parameter.ParameterType)
                 if not areAllParametersServices then 
+                    logger.Log(Error, fun () -> sprintf "Pages can only take service types as constructor parameters but found: %s" pageType.FullName)
                     failwithf "Pages can only take service types as constructor parameters but found: %s" pageType.FullName
                 else pageType 
-            | _ -> failwithf "Pages must have exactly one constructor."
+            | _ -> 
+                logger.Log(Error, fun () -> "Pages must have exactly one constructor.")  
+                failwithf "Pages must have exactly one constructor."
         )
+    do logger.Log(Debug, fun () -> "Completed verifification of IPage constructors.")
+
+
+    do logger.Log(Info, fun () -> "Compiling F#/FunScript in IPage types.")
+    let compiledScript =
+        let isCompressionEnabled = options.Advanced.IsJavaScriptCompressionEnabled
+        let script = ClientSide.createPageScript(pageTypes, options.ErrorPageTemplate)
+        let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled)
+        if isCompressionEnabled then compressor.Value.Compress raw
+        else raw
+    do logger.Log(Info, fun () -> "Completed compilation of F#/FunScript in IPage types.")
 
     let compilePage page =
-        let script = ClientSide.createPageScript(pageTypes, options.ErrorPageTemplate)
-        let compiledScript = compileScript script
         let hashBangScript = Script.empty |> Element.appendText [compiledScript]
-        options.ServerServedPageTemplate(page, hashBangScript) 
+        options.ServerServedPageTemplate(page, hashBangScript)
         |> Compiler.compilePage
 
     let findPage request =

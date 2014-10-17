@@ -18,11 +18,13 @@ type AppBuilderExtensions() =
         appBuilder.Use<CompressionMiddleware>() |> ignore
 
     [<Extension>]
-    static member UseHashBang<'Html>(appBuilder:IAppBuilder, hashBangOptions:HashBangOptions) =
+    static member UseHashBang<'Html>(appBuilder:IAppBuilder, options:HashBangOptions) =
         let hashBangOptions = 
-            { hashBangOptions with 
-                FunScriptComponentInjector = fun cs -> 
-                    TypeInferred.HashBang.SignalR.Interop.components 
-                    @ hashBangOptions.FunScriptComponentInjector cs  }
+            { options with
+                Advanced =
+                    { options.Advanced with
+                        FunScriptComponentInjector = fun cs -> 
+                            TypeInferred.HashBang.SignalR.Interop.components 
+                            @ options.Advanced.FunScriptComponentInjector cs  } }
         appBuilder.Use<HashBangMiddleware>(hashBangOptions) |> ignore
         AppBuilderEx.UseHashBangSignalR(appBuilder, hashBangOptions.Services)

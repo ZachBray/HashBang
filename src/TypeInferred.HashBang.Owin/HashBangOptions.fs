@@ -13,10 +13,33 @@ type Request = { Path: Path;  QueryParams: QueryParams }
 type IPage =
     abstract TryHandle : Request -> HtmlTag<IBodyElement> option Async
 
-type HashBangOptions =
+type AdvancedHashbangOptions =
     {
         /// If this is set the FunScript output will be minimized.
         IsJavaScriptCompressionEnabled : bool
+        /// This is a function that enables you to add components to the FunScript compiler.
+        /// E.g., Components to map the FSharp.Data or Apiary.io type providers.
+        FunScriptComponentInjector : InternalCompiler.CompilerComponent list -> InternalCompiler.CompilerComponent list
+        /// These are the appenders that will be used to log.
+        LogAppenders : Logging.ILogAppender list
+        /// This is the maxmimum detail level that will be logged.
+        MaxmimumLogDetailLevel : Logging.DetailLevel
+    }
+
+    /// These are the default advanced options. You only need to change
+    static member Default =
+        {
+            IsJavaScriptCompressionEnabled = true
+            FunScriptComponentInjector = id
+            LogAppenders = [Logging.ConsoleLogAppender()]
+            MaxmimumLogDetailLevel = Logging.Info
+        }
+
+    member internal options.CreateLogger() =
+        Logging.Logger(options.MaxmimumLogDetailLevel, options.LogAppenders)
+
+type HashBangOptions =
+    {
         /// This is the template that is used whenever the server serves a page. 
         /// The template provided should organise all JavaScript and stylesheet imports.
         /// DO NOT use this as a template for individual pages, as it will only be used on the initial
@@ -29,7 +52,7 @@ type HashBangOptions =
         /// This is the list of services that can be injected into the constructors of pages.
         /// When client-side rendering takes place proxies to these services will be injected instead.
         Services : IService list
-        /// This is a function that enables you to add components to the FunScript compiler.
-        /// E.g., Components to map the FSharp.Data or Apiary.io type providers.
-        FunScriptComponentInjector : InternalCompiler.CompilerComponent list -> InternalCompiler.CompilerComponent list
+        /// These are advanced options that you don't have to alter from the defaults to get started.
+        /// Initially you can just use `AdvancedHashbangOptions.Default`
+        Advanced : AdvancedHashbangOptions
     }
