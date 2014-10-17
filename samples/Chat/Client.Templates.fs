@@ -36,6 +36,7 @@ let headedPage(body:HtmlTag<IBodyElement>, script:HtmlTag<IScriptElement>) =
 
 let errorTemplate(error:string) =
     Body.empty ==> [
+        H1.empty --> "Error"
         P.empty --> error
     ]
 
