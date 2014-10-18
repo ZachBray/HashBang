@@ -13,48 +13,48 @@ let ie8MediaFix = """<!-- HTML5 shim and Respond.js IE8 support of HTML5 element
     <![endif]-->""" 
 
 let head =
-    Head.empty ==> [
-        yield upcast (Title.empty |> Element.appendText ["Chat Sample - HashBang"])
+    head [] [
+        yield upcast (title [] [] |> Element.appendText ["Chat Sample - HashBang"])
 
-        yield upcast (Meta.empty |> Meta.name (Name.Generator "viewport")
+        yield upcast (meta [] |> Meta.name (Name.Generator "viewport")
                       |> Meta.content "width=device-width, initial-scale=1.0")
 
         for sheet in Stylesheets.all do
-            yield Style.empty |> Style.``type`` IStyleElementType.Text_css
+            yield style [] [] |> Style.``type`` IStyleElementType.Text_css
                   |> Element.appendText [ sheet ] :> _
     ]
     |> Element.appendText [ie8MediaFix]
 
-let headedPage(body:HtmlTag<IBodyElement>, script:HtmlTag<IScriptElement>) =
-    Html.empty ==> [
+let headedPage(body:HtmlTag<IBodyElement, _>, funscript:HtmlTag<IScriptElement, _>) =
+    html [] [
         yield upcast head
         yield upcast body
         for s in Scripts.all do
-            yield upcast (Script.empty |> Element.appendText ["// <![CDATA[\n"; s; "\n// ]]>"] )
-        yield upcast script
+            yield upcast (script [] [] |> Element.appendText ["// <![CDATA[\n"; s; "\n// ]]>"] )
+        yield upcast funscript
     ]
 
 let errorTemplate(error:string) =
-    Body.empty ==> [
-        H1.empty --> "Error"
-        P.empty --> error
+    body [] [
+        h1 [] [] --> "Error"
+        p [] [] --> error
     ]
 
 let navLink description uri currentUri =
-    Li.empty +. [if uri = currentUri then yield Bootstrap.active] ==> [
-        (A.empty |> A.href uri ) --> description
+    li [if uri = currentUri then yield Bootstrap.active] [
+        a [] [] --> description |> A.href uri
     ]
 
 let insideNavBar currentBaseUri title blurb children =
-    Body.empty ==> [
-        !![Application.site_wrapper] ==> [
-            !![Application.site_wrapper_inner] ==> [
-                !![Application.cover_container] ==> [
+    body [] [
+        div [Application.site_wrapper] [
+            div [Application.site_wrapper_inner] [
+                div [Application.cover_container] [
 
-                    !![Application.masthead; Bootstrap.clearfix] ==> [
-                        !![Application.inner] ==> [
-                            H3.empty +. [Application.masthead_brand] --> "Chat"
-                            !![Bootstrap.nav; Application.masthead_nav] ==> [
+                    div [Application.masthead; Bootstrap.clearfix] [
+                        div [Application.inner] [
+                            h3 [Application.masthead_brand] [] --> "Chat"
+                            div [Bootstrap.nav; Application.masthead_nav] [
                                 // Here we use a type-safe uri builder to that ensures our link is correct
                                 // wherever we reference it.
                                 navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
@@ -66,17 +66,17 @@ let insideNavBar currentBaseUri title blurb children =
                     // Note: we took this template from: http://getbootstrap.com/examples/cover/#
                     //       and interestingly we found a "mistake" here using the type provider.
                     //       They reference a class cover-heading that isn't used.
-                    !![Application.inner; Application.cover] ==> [
-                        H1.empty --> title
+                    div [Application.inner; Application.cover] [
+                        h1 [] [] --> title
 
-                        P.empty +. [Bootstrap.lead] --> blurb
+                        p [Bootstrap.lead] [] --> blurb
 
-                        Div.empty ==> children
+                        div [] children
                     ]
                     
-                    !![Application.mastfoot] ==> [
-                        !![Application.inner] ==> [
-                            P.empty --> "Copyright 2014 Type Inferred Ltd."
+                    div [Application.mastfoot] [
+                        div [Application.inner] [
+                            p [] [] --> "Copyright 2014 Type Inferred Ltd."
                         ]
                     ]
                 ]

@@ -1,10 +1,10 @@
 ﻿[<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.dll"
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.Interop.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.lib.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.lib.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.Interop.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.lib\lib\net40\FunScript.TypeScript.Binding.lib.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.jquery\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 #endif
 
 open System
@@ -21,31 +21,33 @@ module Disposable =
     let empty = new DisposeAction(ignore) :> IDisposable
     
     let by f = new DisposeAction(f) :> IDisposable
-
+    
     let combine (xs:IDisposable[]) = 
         new DisposeAction(fun () -> xs |> Array.iter (fun x -> x.Dispose())) :> IDisposable
 
 type Map<'k,'v when 'k : comparison> = Microsoft.FSharp.Collections.Map<'k,'v>
 
+[<ReflectedDefinition>]
 type IHtmlTag =
     abstract Id : string
     abstract Name : string
     abstract Attributes : Map<string, string option>
     abstract Children : TagChild list
-    abstract CanClose : bool
+    abstract IsVoid : bool
     abstract Initialize : string -> IDisposable
 
-and TagChild =
+and [<ReflectedDefinition>] TagChild =
     | Text of string
     | Tag of IHtmlTag
 
-type HtmlTag<'a> =
+[<ReflectedDefinition>]
+type HtmlTag<'TElement, 'TTypeScriptElement> =
     {
         Id : string
         Name : string
         Attributes : Map<string, string option>
         Children : TagChild list
-        CanClose : bool
+        IsVoid : bool
         Initialize : string -> IDisposable
     }
 
@@ -54,9 +56,10 @@ type HtmlTag<'a> =
         member tag.Name = tag.Name
         member tag.Attributes = tag.Attributes
         member tag.Children = tag.Children
-        member tag.CanClose = tag.CanClose
+        member tag.IsVoid = tag.IsVoid
         member tag.Initialize v = tag.Initialize v
 
+[<ReflectedDefinition>]
 module HtmlTag =
     
     let rec replace id newTag root =
@@ -71,7 +74,7 @@ module HtmlTag =
                         node.Children |> List.map (function
                             | Text _ as x -> x
                             | Tag x -> Tag(replaceAux x))
-                    CanClose = node.CanClose
+                    IsVoid = node.IsVoid
                     Initialize = node.Initialize
                 } :> IHtmlTag
         replaceAux root
@@ -90,29 +93,32 @@ module Unchecked =
             alpha.[random alpha.Length].ToString())
         |> String.concat ""
 
-    let tag name =
+    let nonVoidTag name =
         {
             Id = randomId()
             Name = name
             Attributes = Map.empty
             Children = []
-            CanClose = true
+            IsVoid = false
             Initialize = fun _ -> Disposable.empty
         }
 
-    let unclosedTag name =
-        { tag name with CanClose = false }
+    let voidTag name =
+        { nonVoidTag name with IsVoid = true }
 
-    let set<'a> n v t = 
-        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'a>
+    let set<'TElement, 'TTypeScriptElement> n v t = 
+        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'TElement, 'TTypeScriptElement>
 
-    let setBool<'a> n v t = 
+    let setBool<'TElement, 'TTypeScriptElement> n v t = 
         let v = match v with false -> "false" | true -> "true"
-        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'a>
+        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'TElement, 'TTypeScriptElement>
 
-    let setEmpty<'a> n t =
-        { t with Attributes = t.Attributes |> Map.add n None } : HtmlTag<'a>
+    let setEmpty<'TElement, 'TTypeScriptElement> n t =
+        { t with Attributes = t.Attributes |> Map.add n None } : HtmlTag<'TElement, 'TTypeScriptElement>
 
+
+    [<JSEmitInline("{0}")>]
+    let unsafeUnbox<'T> (x:obj) : 'T = failwithf "JavaScript only"
 
 type ElementDir =
     | Rtl
@@ -145,21 +151,20 @@ type ElementDropZone =
         | Link -> "link"
 
 open Unchecked
-type IClosedElement = interface end
-type IUnclosedElement = interface end
+type INonVoidElement = interface end
+type IVoidElement = interface end
 
+[<ReflectedDefinition>]
 module Element =
     /// Appends text|tag children to the element
-    let append<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+    let append<'TElement, 'TTypeScriptElement when 'TElement :> INonVoidElement> xs (x : HtmlTag<'TElement, 'TTypeScriptElement>) =
         { x with Children = x.Children @ xs }
 
     /// Appends tag children to the element
-    let appendTags<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
-        { x with Children = x.Children @ (xs |> List.map Tag) }
+    let appendTags xs x = append (xs |> List.map Tag) x
 
     /// Appends text children to the element
-    let appendText<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
-        { x with Children = x.Children @ (xs |> List.map Text) }
+    let appendText xs x = append (xs |> List.map Text) x
 
     /// Specifies a shortcut key to activate/focus an element
     let accesskey v = set "accesskey" v
@@ -216,11 +221,11 @@ module Element =
 
     /// Adds code that is run when the element is attached to the screen
     let appendSetUpById f x =
-        { x with Initialize = fun id -> Disposable.combine[|x.Initialize id; f id|] }
+        { x with Initialize = fun id -> Disposable.combine [|x.Initialize id; f id|] }
 
     /// Adds code that is run when the element is attached to the screen
-    let appendSetUp f x =
-        appendSetUpById (fun id -> f (Globals.document.getElementById id)) x
+    let appendSetUp<'TElement, 'TTypeScriptElement when 'TTypeScriptElement :> FunScript.TypeScript.HTMLElement> f (x : HtmlTag<'TElement, 'TTypeScriptElement>) =
+        appendSetUpById (fun id -> f (unsafeUnbox<'TTypeScriptElement> (Globals.document.getElementById id))) x
 
     /// Adds code that is run when the element is attached to the screen
     let appendSetUpByJQuery f x =
@@ -321,28 +326,40 @@ module Element =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null
             Disposable.by (fun () -> el.onscroll <- null))
+            
 
-
-type IH1Element = inherit IClosedElement
+type IH1Element = inherit INonVoidElement
 type H1() =
-    static member empty = tag "h1" : HtmlTag<IH1Element>
+    static member empty = nonVoidTag "h1" : HtmlTag<IH1Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH2Element = inherit IClosedElement
+let h1 classes children = H1.empty |> Element.classes classes |> Element.appendTags children
+
+type IH2Element = inherit INonVoidElement
 type H2() =
-    static member empty = tag "h2" : HtmlTag<IH2Element>
+    static member empty = nonVoidTag "h2" : HtmlTag<IH2Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH3Element = inherit IClosedElement
+let h2 classes children = H2.empty |> Element.classes classes |> Element.appendTags children
+
+type IH3Element = inherit INonVoidElement
 type H3() =
-    static member empty = tag "h3" : HtmlTag<IH3Element>
+    static member empty = nonVoidTag "h3" : HtmlTag<IH3Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH4Element = inherit IClosedElement
+let h3 classes children = H3.empty |> Element.classes classes |> Element.appendTags children
+
+type IH4Element = inherit INonVoidElement
 type H4() =
-    static member empty = tag "h4" : HtmlTag<IH4Element>
+    static member empty = nonVoidTag "h4" : HtmlTag<IH4Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH5Element = inherit IClosedElement
+let h4 classes children = H4.empty |> Element.classes classes |> Element.appendTags children
+
+type IH5Element = inherit INonVoidElement
 type H5() =
-    static member empty = tag "h5" : HtmlTag<IH5Element>
+    static member empty = nonVoidTag "h5" : HtmlTag<IH5Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH6Element = inherit IClosedElement
+let h5 classes children = H5.empty |> Element.classes classes |> Element.appendTags children
+
+type IH6Element = inherit INonVoidElement
 type H6() =
-    static member empty = tag "h6" : HtmlTag<IH6Element>
+    static member empty = nonVoidTag "h6" : HtmlTag<IH6Element, FunScript.TypeScript.HTMLHeadingElement>
+
+let h6 classes children = H6.empty |> Element.classes classes |> Element.appendTags children

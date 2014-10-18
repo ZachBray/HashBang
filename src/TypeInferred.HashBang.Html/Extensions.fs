@@ -35,5 +35,3 @@ let (==>) x ys = x |> Element.appendTags ys
 let (-->) x y = x |> Element.appendText [y]
 
 let (+.) x ys = x |> Element.classes ys
-
-let (!!) xs = Div.empty +. xs

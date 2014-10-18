@@ -21,7 +21,7 @@ module Helpers =
 
     let rec compileTag (tag : IHtmlTag) =
         seq {
-            if not tag.CanClose then
+            if tag.IsVoid then
                 yield openTag tag
             else
                 yield openTag tag 
@@ -33,7 +33,7 @@ module Helpers =
         | Text str -> Seq.singleton str
         | Tag t -> compileTag t
 
-let compilePage (html : HtmlTag<IHtmlElement>) =
+let compilePage (html : HtmlTag<IHtmlElement,_>) =
     seq {
         yield "<!DOCTYPE html>"
         yield! Helpers.compileTag html

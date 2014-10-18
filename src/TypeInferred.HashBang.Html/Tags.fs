@@ -1,10 +1,10 @@
 [<AutoOpen; ReflectedDefinition>]
 module TypeInferred.HashBang.Html.Tags
 #if INTERACTIVE
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.dll"
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.Interop.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.lib.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.lib.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.Interop.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.lib\lib\net40\FunScript.TypeScript.Binding.lib.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.jquery\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 #endif
 
 open System
@@ -33,7 +33,7 @@ type IHtmlTag =
     abstract Name : string
     abstract Attributes : Map<string, string option>
     abstract Children : TagChild list
-    abstract CanClose : bool
+    abstract IsVoid : bool
     abstract Initialize : string -> IDisposable
 
 and [<ReflectedDefinition>] TagChild =
@@ -41,13 +41,13 @@ and [<ReflectedDefinition>] TagChild =
     | Tag of IHtmlTag
 
 [<ReflectedDefinition>]
-type HtmlTag<'a> =
+type HtmlTag<'TElement, 'TTypeScriptElement> =
     {
         Id : string
         Name : string
         Attributes : Map<string, string option>
         Children : TagChild list
-        CanClose : bool
+        IsVoid : bool
         Initialize : string -> IDisposable
     }
 
@@ -56,7 +56,7 @@ type HtmlTag<'a> =
         member tag.Name = tag.Name
         member tag.Attributes = tag.Attributes
         member tag.Children = tag.Children
-        member tag.CanClose = tag.CanClose
+        member tag.IsVoid = tag.IsVoid
         member tag.Initialize v = tag.Initialize v
 
 [<ReflectedDefinition>]
@@ -74,7 +74,7 @@ module HtmlTag =
                         node.Children |> List.map (function
                             | Text _ as x -> x
                             | Tag x -> Tag(replaceAux x))
-                    CanClose = node.CanClose
+                    IsVoid = node.IsVoid
                     Initialize = node.Initialize
                 } :> IHtmlTag
         replaceAux root
@@ -93,29 +93,32 @@ module Unchecked =
             alpha.[random alpha.Length].ToString())
         |> String.concat ""
 
-    let tag name =
+    let nonVoidTag name =
         {
             Id = randomId()
             Name = name
             Attributes = Map.empty
             Children = []
-            CanClose = true
+            IsVoid = false
             Initialize = fun _ -> Disposable.empty
         }
 
-    let unclosedTag name =
-        { tag name with CanClose = false }
+    let voidTag name =
+        { nonVoidTag name with IsVoid = true }
 
-    let set<'a> n v t = 
-        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'a>
+    let set<'TElement, 'TTypeScriptElement> n v t = 
+        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'TElement, 'TTypeScriptElement>
 
-    let setBool<'a> n v t = 
+    let setBool<'TElement, 'TTypeScriptElement> n v t = 
         let v = match v with false -> "false" | true -> "true"
-        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'a>
+        { t with Attributes = t.Attributes |> Map.add n (Some v) } : HtmlTag<'TElement, 'TTypeScriptElement>
 
-    let setEmpty<'a> n t =
-        { t with Attributes = t.Attributes |> Map.add n None } : HtmlTag<'a>
+    let setEmpty<'TElement, 'TTypeScriptElement> n t =
+        { t with Attributes = t.Attributes |> Map.add n None } : HtmlTag<'TElement, 'TTypeScriptElement>
 
+
+    [<JSEmitInline("{0}")>]
+    let unsafeUnbox<'T> (x:obj) : 'T = failwithf "JavaScript only"
 
 type ElementDir =
     | Rtl
@@ -148,22 +151,20 @@ type ElementDropZone =
         | Link -> "link"
 
 open Unchecked
-type IClosedElement = interface end
-type IUnclosedElement = interface end
+type INonVoidElement = interface end
+type IVoidElement = interface end
 
 [<ReflectedDefinition>]
 module Element =
     /// Appends text|tag children to the element
-    let append<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
+    let append<'TElement, 'TTypeScriptElement when 'TElement :> INonVoidElement> xs (x : HtmlTag<'TElement, 'TTypeScriptElement>) =
         { x with Children = x.Children @ xs }
 
     /// Appends tag children to the element
-    let appendTags<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
-        { x with Children = x.Children @ (xs |> List.map Tag) }
+    let appendTags xs x = append (xs |> List.map Tag) x
 
     /// Appends text children to the element
-    let appendText<'a when 'a :> IClosedElement> xs (x : HtmlTag<'a>) =
-        { x with Children = x.Children @ (xs |> List.map Text) }
+    let appendText xs x = append (xs |> List.map Text) x
 
     /// Specifies a shortcut key to activate/focus an element
     let accesskey v = set "accesskey" v
@@ -223,8 +224,8 @@ module Element =
         { x with Initialize = fun id -> Disposable.combine [|x.Initialize id; f id|] }
 
     /// Adds code that is run when the element is attached to the screen
-    let appendSetUp f x =
-        appendSetUpById (fun id -> f (Globals.document.getElementById id)) x
+    let appendSetUp<'TElement, 'TTypeScriptElement when 'TTypeScriptElement :> FunScript.TypeScript.HTMLElement> f (x : HtmlTag<'TElement, 'TTypeScriptElement>) =
+        appendSetUpById (fun id -> f (unsafeUnbox<'TTypeScriptElement> (Globals.document.getElementById id))) x
 
     /// Adds code that is run when the element is attached to the screen
     let appendSetUpByJQuery f x =
@@ -325,31 +326,43 @@ module Element =
         appendSetUp (fun el ->
             el.onscroll <- fun e -> f e; null
             Disposable.by (fun () -> el.onscroll <- null))
+            
 
-
-type IH1Element = inherit IClosedElement
+type IH1Element = inherit INonVoidElement
 type H1() =
-    static member empty = tag "h1" : HtmlTag<IH1Element>
+    static member empty = nonVoidTag "h1" : HtmlTag<IH1Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH2Element = inherit IClosedElement
+let h1 classes children = H1.empty |> Element.classes classes |> Element.appendTags children
+
+type IH2Element = inherit INonVoidElement
 type H2() =
-    static member empty = tag "h2" : HtmlTag<IH2Element>
+    static member empty = nonVoidTag "h2" : HtmlTag<IH2Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH3Element = inherit IClosedElement
+let h2 classes children = H2.empty |> Element.classes classes |> Element.appendTags children
+
+type IH3Element = inherit INonVoidElement
 type H3() =
-    static member empty = tag "h3" : HtmlTag<IH3Element>
+    static member empty = nonVoidTag "h3" : HtmlTag<IH3Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH4Element = inherit IClosedElement
+let h3 classes children = H3.empty |> Element.classes classes |> Element.appendTags children
+
+type IH4Element = inherit INonVoidElement
 type H4() =
-    static member empty = tag "h4" : HtmlTag<IH4Element>
+    static member empty = nonVoidTag "h4" : HtmlTag<IH4Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH5Element = inherit IClosedElement
+let h4 classes children = H4.empty |> Element.classes classes |> Element.appendTags children
+
+type IH5Element = inherit INonVoidElement
 type H5() =
-    static member empty = tag "h5" : HtmlTag<IH5Element>
+    static member empty = nonVoidTag "h5" : HtmlTag<IH5Element, FunScript.TypeScript.HTMLHeadingElement>
 
-type IH6Element = inherit IClosedElement
+let h5 classes children = H5.empty |> Element.classes classes |> Element.appendTags children
+
+type IH6Element = inherit INonVoidElement
 type H6() =
-    static member empty = tag "h6" : HtmlTag<IH6Element>
+    static member empty = nonVoidTag "h6" : HtmlTag<IH6Element, FunScript.TypeScript.HTMLHeadingElement>
+
+let h6 classes children = H6.empty |> Element.classes classes |> Element.appendTags children
 
 
 type Rel =
@@ -364,7 +377,7 @@ type Rel =
     | Prefetch
     | Prev
     | Search
-    | TagCase
+    | Tag_
     member x.Value =
         match x with
         | Alternate -> "alternate"
@@ -378,7 +391,7 @@ type Rel =
         | Prefetch -> "prefetch"
         | Prev -> "prev"
         | Search -> "search"
-        | TagCase -> "tag"
+        | Tag_ -> "tag"
 
 type Target =
     | Blank
@@ -394,52 +407,60 @@ type Target =
         | Top -> "_top"
         | Framename framename -> framename
 
-type IAElement = inherit IClosedElement
+type IAElement = inherit INonVoidElement
 
 type A() =
-    static member empty = tag "a" : HtmlTag<IAElement>
+    static member empty = nonVoidTag "a" : HtmlTag<IAElement, FunScript.TypeScript.HTMLAnchorElement>
 
     /// Specifies that the target will be downloaded when a user clicks on the  hyperlink
-    static member download = set<IAElement> "download"
+    static member download = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "download"
 
     /// Specifies the URL of the page the link goes to
-    static member href = set<IAElement> "href"
+    static member href = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "href"
 
     /// Specifies the language of the linked document
-    static member hreflang = set<IAElement> "hreflang"
+    static member hreflang = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "hreflang"
 
     /// Specifies what media/device the linked document is optimized for
-    static member media = set<IAElement> "media"
+    static member media = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "media"
 
     /// Specifies the relationship between the current document and the linked document
-    static member rel (x : Rel) = set<IAElement> "rel" x.Value
+    static member rel (x : Rel) = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "rel" x.Value
 
     /// Specifies where to open the linked document
-    static member target (x : Target) = set<IAElement> "target" x.Value
+    static member target (x : Target) = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "target" x.Value
 
-    /// Specifies the MIME type of the linked document
-    static member ``type`` = set<IAElement> "type"
+    /// Specifies the media type of the linked document
+    static member ``type`` = set<IAElement, FunScript.TypeScript.HTMLAnchorElement> "type"
+
+let a classes children = A.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IAbbrElement = inherit IClosedElement
+type IAbbrElement = inherit INonVoidElement
 
 type Abbr() =
-    static member empty = tag "abbr" : HtmlTag<IAbbrElement>
+    static member empty = nonVoidTag "abbr" : HtmlTag<IAbbrElement, FunScript.TypeScript.HTMLElement>
+
+let abbr classes children = Abbr.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IAcronymElement = inherit IClosedElement
+type IAcronymElement = inherit INonVoidElement
 
 type Acronym() =
-    static member empty = tag "acronym" : HtmlTag<IAcronymElement>
+    static member empty = nonVoidTag "acronym" : HtmlTag<IAcronymElement, FunScript.TypeScript.HTMLElement>
+
+let acronym classes children = Acronym.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IAddressElement = inherit IClosedElement
+type IAddressElement = inherit INonVoidElement
 
 type Address() =
-    static member empty = tag "address" : HtmlTag<IAddressElement>
+    static member empty = nonVoidTag "address" : HtmlTag<IAddressElement, FunScript.TypeScript.HTMLElement>
+
+let address classes children = Address.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -459,43 +480,45 @@ type Align =
         | Middle -> "middle"
         | Baseline -> "baseline"
 
-type IAppletElement = inherit IClosedElement
+type IAppletElement = inherit INonVoidElement
 
 type Applet() =
-    static member empty = tag "applet" : HtmlTag<IAppletElement>
+    static member empty = nonVoidTag "applet" : HtmlTag<IAppletElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies the file name of a Java applet
-    static member code = set<IAppletElement> "code"
+    static member code = set<IAppletElement, FunScript.TypeScript.HTMLElement> "code"
 
     /// Specifies a reference to a serialized representation of an  applet
-    static member ``object`` = set<IAppletElement> "object"
+    static member ``object`` = set<IAppletElement, FunScript.TypeScript.HTMLElement> "object"
 
     /// Specifies the alignment of an applet according to  surrounding elements
-    static member align (x : Align) = set<IAppletElement> "align" x.Value
+    static member align (x : Align) = set<IAppletElement, FunScript.TypeScript.HTMLElement> "align" x.Value
 
     /// Specifies an alternate text for an applet
-    static member alt = set<IAppletElement> "alt"
+    static member alt = set<IAppletElement, FunScript.TypeScript.HTMLElement> "alt"
 
     /// Specifies the location of an archive file
-    static member archive = set<IAppletElement> "archive"
+    static member archive = set<IAppletElement, FunScript.TypeScript.HTMLElement> "archive"
 
     /// Specifies a relative base URL for applets specified in the  code attribute
-    static member codebase = set<IAppletElement> "codebase"
+    static member codebase = set<IAppletElement, FunScript.TypeScript.HTMLElement> "codebase"
 
     /// Specifies the height of an applet
-    static member height (x : int) = set<IAppletElement> "height" (x.ToString())
+    static member height (x : int) = set<IAppletElement, FunScript.TypeScript.HTMLElement> "height" (x.ToString())
 
     /// Defines the horizontal spacing around an applet
-    static member hspace (x : int) = set<IAppletElement> "hspace" (x.ToString())
+    static member hspace (x : int) = set<IAppletElement, FunScript.TypeScript.HTMLElement> "hspace" (x.ToString())
 
     /// Defines the name for an applet (to use in scripts)
-    static member name = set<IAppletElement> "name"
+    static member name = set<IAppletElement, FunScript.TypeScript.HTMLElement> "name"
 
     /// Defines the vertical spacing around an applet
-    static member vspace (x : int) = set<IAppletElement> "vspace" (x.ToString())
+    static member vspace (x : int) = set<IAppletElement, FunScript.TypeScript.HTMLElement> "vspace" (x.ToString())
 
     /// Specifies the width of an applet
-    static member width (x : int) = set<IAppletElement> "width" (x.ToString())
+    static member width (x : int) = set<IAppletElement, FunScript.TypeScript.HTMLElement> "width" (x.ToString())
+
+let applet classes children = Applet.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -511,123 +534,139 @@ type Shape =
         | Circle -> "circle"
         | Poly -> "poly"
 
-type IAreaElement = inherit IUnclosedElement
+type IAreaElement = inherit IVoidElement
 
 type Area() =
-    static member empty = unclosedTag "area" : HtmlTag<IAreaElement>
+    static member empty = voidTag "area" : HtmlTag<IAreaElement, FunScript.TypeScript.HTMLAreaElement>
 
     /// Specifies an alternate text for the area. Required if the href attribute is present
-    static member alt = set<IAreaElement> "alt"
+    static member alt = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "alt"
 
     /// Specifies the coordinates of the area
-    static member coords = set<IAreaElement> "coords"
+    static member coords = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "coords"
 
     /// Specifies that the target will be downloaded when a user clicks on the  hyperlink
-    static member download = set<IAreaElement> "download"
+    static member download = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "download"
 
     /// Specifies the hyperlink target for the area
-    static member href = set<IAreaElement> "href"
+    static member href = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "href"
 
     /// Specifies the language of the target URL
-    static member hreflang = set<IAreaElement> "hreflang"
+    static member hreflang = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "hreflang"
 
     /// Specifies what media/device the target URL is optimized for
-    static member media = set<IAreaElement> "media"
+    static member media = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "media"
 
     /// Specifies the relationship between the current document and  the target URL
-    static member rel (x : Rel) = set<IAreaElement> "rel" x.Value
+    static member rel (x : Rel) = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "rel" x.Value
 
     /// Specifies the shape of the area
-    static member shape (x : Shape) = set<IAreaElement> "shape" x.Value
+    static member shape (x : Shape) = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "shape" x.Value
 
     /// Specifies where to open the target URL
-    static member target (x : Target) = set<IAreaElement> "target" x.Value
+    static member target (x : Target) = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "target" x.Value
 
-    /// Specifies the MIME  type of the target URL
-    static member ``type`` = set<IAreaElement> "type"
+    /// Specifies the media  type of the target URL
+    static member ``type`` = set<IAreaElement, FunScript.TypeScript.HTMLAreaElement> "type"
+
+let area classes = Area.empty |> Element.classes classes
 
 
 
-type IArticleElement = inherit IClosedElement
+type IArticleElement = inherit INonVoidElement
 
 type Article() =
-    static member empty = tag "article" : HtmlTag<IArticleElement>
+    static member empty = nonVoidTag "article" : HtmlTag<IArticleElement, FunScript.TypeScript.HTMLElement>
+
+let article classes children = Article.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IAsideElement = inherit IClosedElement
+type IAsideElement = inherit INonVoidElement
 
 type Aside() =
-    static member empty = tag "aside" : HtmlTag<IAsideElement>
+    static member empty = nonVoidTag "aside" : HtmlTag<IAsideElement, FunScript.TypeScript.HTMLElement>
+
+let aside classes children = Aside.empty |> Element.classes classes |> Element.appendTags children
 
 
 
 type Preload =
     | Auto
     | Metadata
-    | NoneCase
+    | None_
     member x.Value =
         match x with
         | Auto -> "auto"
         | Metadata -> "metadata"
-        | NoneCase -> "none"
+        | None_ -> "none"
 
-type IAudioElement = inherit IClosedElement
+type IAudioElement = inherit INonVoidElement
 
 type Audio() =
-    static member empty = tag "audio" : HtmlTag<IAudioElement>
+    static member empty = nonVoidTag "audio" : HtmlTag<IAudioElement, FunScript.TypeScript.HTMLAudioElement>
 
     /// Specifies that the audio will start playing as soon as it is ready
-    static member autoplay = setEmpty<IAudioElement> "autoplay"
+    static member autoplay = setEmpty<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "autoplay"
 
     /// Specifies that audio controls should be displayed (such as a play/pause button etc)
-    static member controls = setEmpty<IAudioElement> "controls"
+    static member controls = setEmpty<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "controls"
 
     /// Specifies that the audio will start over again, every time it is finished
-    static member loop = setEmpty<IAudioElement> "loop"
+    static member loop = setEmpty<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "loop"
 
     /// Specifies that the audio output should be muted
-    static member muted = setEmpty<IAudioElement> "muted"
+    static member muted = setEmpty<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "muted"
 
     /// Specifies if and how the author thinks the audio should be loaded when the page loads
-    static member preload (x : Preload) = set<IAudioElement> "preload" x.Value
+    static member preload (x : Preload) = set<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "preload" x.Value
 
     /// Specifies the URL of the audio file
-    static member src = set<IAudioElement> "src"
+    static member src = set<IAudioElement, FunScript.TypeScript.HTMLAudioElement> "src"
+
+let audio classes children = Audio.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBElement = inherit IClosedElement
+type IBElement = inherit INonVoidElement
 
 type B() =
-    static member empty = tag "b" : HtmlTag<IBElement>
+    static member empty = nonVoidTag "b" : HtmlTag<IBElement, FunScript.TypeScript.HTMLElement>
+
+let b classes children = B.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBaseElement = inherit IUnclosedElement
+type IBaseElement = inherit IVoidElement
 
 type Base() =
-    static member empty = unclosedTag "base" : HtmlTag<IBaseElement>
+    static member empty = voidTag "base" : HtmlTag<IBaseElement, FunScript.TypeScript.HTMLBaseElement>
 
     /// Specifies the base URL for all relative URLs in the page
-    static member href = set<IBaseElement> "href"
+    static member href = set<IBaseElement, FunScript.TypeScript.HTMLBaseElement> "href"
 
     /// Specifies the default target for all hyperlinks and forms in the page
-    static member target (x : Target) = set<IBaseElement> "target" x.Value
+    static member target (x : Target) = set<IBaseElement, FunScript.TypeScript.HTMLBaseElement> "target" x.Value
+
+let baseTag classes = Base.empty |> Element.classes classes
 
 
 
-type IBasefontElement = inherit IUnclosedElement
+type IBasefontElement = inherit INonVoidElement
 
 type Basefont() =
-    static member empty = unclosedTag "basefont" : HtmlTag<IBasefontElement>
+    static member empty = nonVoidTag "basefont" : HtmlTag<IBasefontElement, FunScript.TypeScript.HTMLElement>
+
+let basefont classes children = Basefont.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBdiElement = inherit IClosedElement
+type IBdiElement = inherit INonVoidElement
 
 type Bdi() =
-    static member empty = tag "bdi" : HtmlTag<IBdiElement>
+    static member empty = nonVoidTag "bdi" : HtmlTag<IBdiElement, FunScript.TypeScript.HTMLElement>
+
+let bdi classes children = Bdi.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -639,44 +678,54 @@ type DirType =
         | Ltr -> "ltr"
         | Rtl -> "rtl"
 
-type IBdoElement = inherit IClosedElement
+type IBdoElement = inherit INonVoidElement
 
 type Bdo() =
-    static member empty = tag "bdo" : HtmlTag<IBdoElement>
+    static member empty = nonVoidTag "bdo" : HtmlTag<IBdoElement, FunScript.TypeScript.HTMLElement>
 
     /// Required. Specifies the text direction of the text inside the <bdo> element
-    static member dir (x : DirType) = set<IBdoElement> "dir" x.Value
+    static member dir (x : DirType) = set<IBdoElement, FunScript.TypeScript.HTMLElement> "dir" x.Value
+
+let bdo classes children = Bdo.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBigElement = inherit IClosedElement
+type IBigElement = inherit INonVoidElement
 
 type Big() =
-    static member empty = tag "big" : HtmlTag<IBigElement>
+    static member empty = nonVoidTag "big" : HtmlTag<IBigElement, FunScript.TypeScript.HTMLElement>
+
+let big classes children = Big.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBlockquoteElement = inherit IClosedElement
+type IBlockquoteElement = inherit INonVoidElement
 
 type Blockquote() =
-    static member empty = tag "blockquote" : HtmlTag<IBlockquoteElement>
+    static member empty = nonVoidTag "blockquote" : HtmlTag<IBlockquoteElement, FunScript.TypeScript.HTMLQuoteElement>
 
     /// Specifies the source of the quotation
-    static member cite = set<IBlockquoteElement> "cite"
+    static member cite = set<IBlockquoteElement, FunScript.TypeScript.HTMLQuoteElement> "cite"
+
+let blockquote classes children = Blockquote.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBodyElement = inherit IClosedElement
+type IBodyElement = inherit INonVoidElement
 
 type Body() =
-    static member empty = tag "body" : HtmlTag<IBodyElement>
+    static member empty = nonVoidTag "body" : HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement>
+
+let body classes children = Body.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IBrElement = inherit IUnclosedElement
+type IBrElement = inherit IVoidElement
 
 type Br() =
-    static member empty = unclosedTag "br" : HtmlTag<IBrElement>
+    static member empty = voidTag "br" : HtmlTag<IBrElement, FunScript.TypeScript.HTMLBRElement>
+
+let br classes = Br.empty |> Element.classes classes
 
 
 
@@ -706,258 +755,308 @@ type Type =
         match x with
         | Button -> "button"
         | Reset -> "reset"
-        | Submit -> "submit&nbsp;"
+        | Submit -> "submit"
 
-type IButtonElement = inherit IClosedElement
+type IButtonElement = inherit INonVoidElement
 
 type Button() =
-    static member empty = tag "button" : HtmlTag<IButtonElement>
+    static member empty = nonVoidTag "button" : HtmlTag<IButtonElement, FunScript.TypeScript.HTMLButtonElement>
 
     /// Specifies that a button should automatically get focus when the page loads
-    static member autofocus = setEmpty<IButtonElement> "autofocus"
+    static member autofocus = setEmpty<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "autofocus"
 
     /// Specifies that a button should be disabled
-    static member disabled = setEmpty<IButtonElement> "disabled"
+    static member disabled = setEmpty<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "disabled"
 
     /// Specifies one or more forms the button belongs to
-    static member form = set<IButtonElement> "form"
+    static member form = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "form"
 
     /// Specifies where to send the form-data when a form is submitted. Only for type="submit"
-    static member formaction = set<IButtonElement> "formaction"
+    static member formaction = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "formaction"
 
     /// Specifies how form-data should be encoded before sending it to a server. Only for type="submit"
-    static member formenctype (x : Formenctype) = set<IButtonElement> "formenctype" x.Value
+    static member formenctype (x : Formenctype) = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "formenctype" x.Value
 
     /// Specifies how to send the form-data (which HTTP method to use). Only for type="submit"
-    static member formmethod (x : Formmethod) = set<IButtonElement> "formmethod" x.Value
+    static member formmethod (x : Formmethod) = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "formmethod" x.Value
 
     /// Specifies that the form-data should not be validated on submission. Only for type="submit"
-    static member formnovalidate = setEmpty<IButtonElement> "formnovalidate"
+    static member formnovalidate = setEmpty<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "formnovalidate"
 
     /// Specifies where to display the response after submitting the form. Only for type="submit"
-    static member formtarget (x : Target) = set<IButtonElement> "formtarget" x.Value
+    static member formtarget (x : Target) = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "formtarget" x.Value
 
     /// Specifies a name for the button
-    static member name = set<IButtonElement> "name"
+    static member name = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "name"
 
     /// Specifies the type of button
-    static member ``type`` (x : Type) = set<IButtonElement> "type" x.Value
+    static member ``type`` (x : Type) = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "type" x.Value
 
     /// Specifies an initial value for the button
-    static member value = set<IButtonElement> "value"
+    static member value = set<IButtonElement, FunScript.TypeScript.HTMLButtonElement> "value"
+
+let button classes children = Button.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ICanvasElement = inherit IClosedElement
+type ICanvasElement = inherit INonVoidElement
 
 type Canvas() =
-    static member empty = tag "canvas" : HtmlTag<ICanvasElement>
+    static member empty = nonVoidTag "canvas" : HtmlTag<ICanvasElement, FunScript.TypeScript.HTMLCanvasElement>
 
     /// Specifies the height of the canvas
-    static member height (x : int) = set<ICanvasElement> "height" (x.ToString())
+    static member height (x : int) = set<ICanvasElement, FunScript.TypeScript.HTMLCanvasElement> "height" (x.ToString())
 
     /// Specifies the width of the canvas
-    static member width (x : int) = set<ICanvasElement> "width" (x.ToString())
+    static member width (x : int) = set<ICanvasElement, FunScript.TypeScript.HTMLCanvasElement> "width" (x.ToString())
+
+let canvas classes children = Canvas.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ICaptionElement = inherit IClosedElement
+type ICaptionElement = inherit INonVoidElement
 
 type Caption() =
-    static member empty = tag "caption" : HtmlTag<ICaptionElement>
+    static member empty = nonVoidTag "caption" : HtmlTag<ICaptionElement, FunScript.TypeScript.HTMLTableCaptionElement>
+
+let caption classes children = Caption.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ICenterElement = inherit IClosedElement
+type ICenterElement = inherit INonVoidElement
 
 type Center() =
-    static member empty = tag "center" : HtmlTag<ICenterElement>
+    static member empty = nonVoidTag "center" : HtmlTag<ICenterElement, FunScript.TypeScript.HTMLElement>
+
+let center classes children = Center.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ICiteElement = inherit IClosedElement
+type ICiteElement = inherit INonVoidElement
 
 type Cite() =
-    static member empty = tag "cite" : HtmlTag<ICiteElement>
+    static member empty = nonVoidTag "cite" : HtmlTag<ICiteElement, FunScript.TypeScript.HTMLElement>
+
+let cite classes children = Cite.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ICodeElement = inherit IClosedElement
+type ICodeElement = inherit INonVoidElement
 
 type Code() =
-    static member empty = tag "code" : HtmlTag<ICodeElement>
+    static member empty = nonVoidTag "code" : HtmlTag<ICodeElement, FunScript.TypeScript.HTMLElement>
+
+let code classes children = Code.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IColElement = inherit IUnclosedElement
+type IColElement = inherit IVoidElement
 
 type Col() =
-    static member empty = unclosedTag "col" : HtmlTag<IColElement>
+    static member empty = voidTag "col" : HtmlTag<IColElement, FunScript.TypeScript.HTMLTableColElement>
 
     /// Specifies the number of columns a <col> element should span
-    static member span = set<IColElement> "span"
+    static member span = set<IColElement, FunScript.TypeScript.HTMLTableColElement> "span"
+
+let col classes = Col.empty |> Element.classes classes
 
 
 
-type IColgroupElement = inherit IClosedElement
+type IColgroupElement = inherit INonVoidElement
 
 type Colgroup() =
-    static member empty = tag "colgroup" : HtmlTag<IColgroupElement>
+    static member empty = nonVoidTag "colgroup" : HtmlTag<IColgroupElement, FunScript.TypeScript.HTMLTableColElement>
 
     /// Specifies the number of columns a column group should span
-    static member span = set<IColgroupElement> "span"
+    static member span = set<IColgroupElement, FunScript.TypeScript.HTMLTableColElement> "span"
+
+let colgroup classes children = Colgroup.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDatalistElement = inherit IClosedElement
+type IDatalistElement = inherit INonVoidElement
 
 type Datalist() =
-    static member empty = tag "datalist" : HtmlTag<IDatalistElement>
+    static member empty = nonVoidTag "datalist" : HtmlTag<IDatalistElement, FunScript.TypeScript.HTMLDataListElement>
+
+let datalist classes children = Datalist.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDdElement = inherit IClosedElement
+type IDdElement = inherit INonVoidElement
 
 type Dd() =
-    static member empty = tag "dd" : HtmlTag<IDdElement>
+    static member empty = nonVoidTag "dd" : HtmlTag<IDdElement, FunScript.TypeScript.HTMLDDElement>
+
+let dd classes children = Dd.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDelElement = inherit IClosedElement
+type IDelElement = inherit INonVoidElement
 
 type Del() =
-    static member empty = tag "del" : HtmlTag<IDelElement>
+    static member empty = nonVoidTag "del" : HtmlTag<IDelElement, FunScript.TypeScript.HTMLModElement>
 
     /// Specifies a URL to a document that explains the reason why the text was deleted
-    static member cite = set<IDelElement> "cite"
+    static member cite = set<IDelElement, FunScript.TypeScript.HTMLModElement> "cite"
 
     /// Specifies the date and time of when the text was deleted
-    static member datetime = set<IDelElement> "datetime"
+    static member datetime = set<IDelElement, FunScript.TypeScript.HTMLModElement> "datetime"
+
+let del classes children = Del.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDetailsElement = inherit IClosedElement
+type IDetailsElement = inherit INonVoidElement
 
 type Details() =
-    static member empty = tag "details" : HtmlTag<IDetailsElement>
+    static member empty = nonVoidTag "details" : HtmlTag<IDetailsElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies that the details should be visible (open) to the user
-    static member ``open`` = setEmpty<IDetailsElement> "open"
+    static member ``open`` = setEmpty<IDetailsElement, FunScript.TypeScript.HTMLElement> "open"
+
+let details classes children = Details.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDfnElement = inherit IClosedElement
+type IDfnElement = inherit INonVoidElement
 
 type Dfn() =
-    static member empty = tag "dfn" : HtmlTag<IDfnElement>
+    static member empty = nonVoidTag "dfn" : HtmlTag<IDfnElement, FunScript.TypeScript.HTMLElement>
+
+let dfn classes children = Dfn.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDialogElement = inherit IClosedElement
+type IDialogElement = inherit INonVoidElement
 
 type Dialog() =
-    static member empty = tag "dialog" : HtmlTag<IDialogElement>
+    static member empty = nonVoidTag "dialog" : HtmlTag<IDialogElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies that the dialog element is active and that the user can  interact with it
-    static member ``open`` = setEmpty<IDialogElement> "open"
+    static member ``open`` = setEmpty<IDialogElement, FunScript.TypeScript.HTMLElement> "open"
+
+let dialog classes children = Dialog.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDirElement = inherit IClosedElement
+type IDirElement = inherit INonVoidElement
 
 type Dir() =
-    static member empty = tag "dir" : HtmlTag<IDirElement>
+    static member empty = nonVoidTag "dir" : HtmlTag<IDirElement, FunScript.TypeScript.HTMLElement>
+
+let dir classes children = Dir.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDivElement = inherit IClosedElement
+type IDivElement = inherit INonVoidElement
 
 type Div() =
-    static member empty = tag "div" : HtmlTag<IDivElement>
+    static member empty = nonVoidTag "div" : HtmlTag<IDivElement, FunScript.TypeScript.HTMLDivElement>
+
+let div classes children = Div.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDlElement = inherit IClosedElement
+type IDlElement = inherit INonVoidElement
 
 type Dl() =
-    static member empty = tag "dl" : HtmlTag<IDlElement>
+    static member empty = nonVoidTag "dl" : HtmlTag<IDlElement, FunScript.TypeScript.HTMLDListElement>
+
+let dl classes children = Dl.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IDtElement = inherit IClosedElement
+type IDtElement = inherit INonVoidElement
 
 type Dt() =
-    static member empty = tag "dt" : HtmlTag<IDtElement>
+    static member empty = nonVoidTag "dt" : HtmlTag<IDtElement, FunScript.TypeScript.HTMLDTElement>
+
+let dt classes children = Dt.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IEmElement = inherit IClosedElement
+type IEmElement = inherit INonVoidElement
 
 type Em() =
-    static member empty = tag "em" : HtmlTag<IEmElement>
+    static member empty = nonVoidTag "em" : HtmlTag<IEmElement, FunScript.TypeScript.HTMLElement>
+
+let em classes children = Em.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IEmbedElement = inherit IUnclosedElement
+type IEmbedElement = inherit IVoidElement
 
 type Embed() =
-    static member empty = unclosedTag "embed" : HtmlTag<IEmbedElement>
+    static member empty = voidTag "embed" : HtmlTag<IEmbedElement, FunScript.TypeScript.HTMLEmbedElement>
 
     /// Specifies the height of the embedded content
-    static member height (x : int) = set<IEmbedElement> "height" (x.ToString())
+    static member height (x : int) = set<IEmbedElement, FunScript.TypeScript.HTMLEmbedElement> "height" (x.ToString())
 
-    ///   Specifies the address of the external file to embed
-    static member src = set<IEmbedElement> "src"
+    /// Specifies the address of the external file to embed
+    static member src = set<IEmbedElement, FunScript.TypeScript.HTMLEmbedElement> "src"
 
-    /// Specifies the MIME type of the embedded content
-    static member ``type`` = set<IEmbedElement> "type"
+    /// Specifies the media type of the embedded content
+    static member ``type`` = set<IEmbedElement, FunScript.TypeScript.HTMLEmbedElement> "type"
 
     /// Specifies the width of the embedded content
-    static member width (x : int) = set<IEmbedElement> "width" (x.ToString())
+    static member width (x : int) = set<IEmbedElement, FunScript.TypeScript.HTMLEmbedElement> "width" (x.ToString())
+
+let embed classes = Embed.empty |> Element.classes classes
 
 
 
-type IFieldsetElement = inherit IClosedElement
+type IFieldsetElement = inherit INonVoidElement
 
 type Fieldset() =
-    static member empty = tag "fieldset" : HtmlTag<IFieldsetElement>
+    static member empty = nonVoidTag "fieldset" : HtmlTag<IFieldsetElement, FunScript.TypeScript.HTMLFieldSetElement>
 
     /// Specifies that a group of related form elements should be disabled
-    static member disabled = setEmpty<IFieldsetElement> "disabled"
+    static member disabled = setEmpty<IFieldsetElement, FunScript.TypeScript.HTMLFieldSetElement> "disabled"
 
     /// Specifies one or more forms the fieldset belongs to
-    static member form = set<IFieldsetElement> "form"
+    static member form = set<IFieldsetElement, FunScript.TypeScript.HTMLFieldSetElement> "form"
 
     /// Specifies a name for the fieldset
-    static member name = set<IFieldsetElement> "name"
+    static member name = set<IFieldsetElement, FunScript.TypeScript.HTMLFieldSetElement> "name"
+
+let fieldset classes children = Fieldset.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFigcaptionElement = inherit IClosedElement
+type IFigcaptionElement = inherit INonVoidElement
 
 type Figcaption() =
-    static member empty = tag "figcaption" : HtmlTag<IFigcaptionElement>
+    static member empty = nonVoidTag "figcaption" : HtmlTag<IFigcaptionElement, FunScript.TypeScript.HTMLElement>
+
+let figcaption classes children = Figcaption.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFigureElement = inherit IClosedElement
+type IFigureElement = inherit INonVoidElement
 
 type Figure() =
-    static member empty = tag "figure" : HtmlTag<IFigureElement>
+    static member empty = nonVoidTag "figure" : HtmlTag<IFigureElement, FunScript.TypeScript.HTMLElement>
+
+let figure classes children = Figure.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFontElement = inherit IClosedElement
+type IFontElement = inherit INonVoidElement
 
 type Font() =
-    static member empty = tag "font" : HtmlTag<IFontElement>
+    static member empty = nonVoidTag "font" : HtmlTag<IFontElement, FunScript.TypeScript.HTMLElement>
+
+let font classes children = Font.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFooterElement = inherit IClosedElement
+type IFooterElement = inherit INonVoidElement
 
 type Footer() =
-    static member empty = tag "footer" : HtmlTag<IFooterElement>
+    static member empty = nonVoidTag "footer" : HtmlTag<IFooterElement, FunScript.TypeScript.HTMLElement>
+
+let footer classes children = Footer.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -981,69 +1080,90 @@ type IFormElementTarget =
         | Parent -> "_parent"
         | Top -> "_top"
 
-type IFormElement = inherit IClosedElement
+type IFormElement = inherit INonVoidElement
 
 type Form() =
-    static member empty = tag "form" : HtmlTag<IFormElement>
+    static member empty = nonVoidTag "form" : HtmlTag<IFormElement, FunScript.TypeScript.HTMLFormElement>
 
     /// Specifies the character encodings that are to be used for the form  submission
-    static member accept_charset = set<IFormElement> "accept-charset"
+    static member accept_charset = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "accept-charset"
 
     /// Specifies where to send the form-data when a form is submitted
-    static member action = set<IFormElement> "action"
+    static member action = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "action"
 
     /// Specifies whether a form should have autocomplete on or off
-    static member autocomplete (x : Autocomplete) = set<IFormElement> "autocomplete" x.Value
+    static member autocomplete (x : Autocomplete) = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "autocomplete" x.Value
 
-    /// Specifies how the form-data should be encoded when submitting it to the  server (only for method="post")
-    static member enctype (x : Formenctype) = set<IFormElement> "enctype" x.Value
+    /// Specifies how the form-data should be encoded when submitting it to the server (only for method="post")
+    static member enctype (x : Formenctype) = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "enctype" x.Value
 
     /// Specifies the HTTP method to use when sending form-data
-    static member ``method`` (x : Formmethod) = set<IFormElement> "method" x.Value
+    static member ``method`` (x : Formmethod) = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "method" x.Value
 
     /// Specifies the name of a form
-    static member name = set<IFormElement> "name"
+    static member name = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "name"
 
     /// Specifies that the form should not be validated when submitted
-    static member novalidate = setEmpty<IFormElement> "novalidate"
+    static member novalidate = setEmpty<IFormElement, FunScript.TypeScript.HTMLFormElement> "novalidate"
 
     /// Specifies where to display the response that is received after submitting the form
-    static member target (x : IFormElementTarget) = set<IFormElement> "target" x.Value
+    static member target (x : IFormElementTarget) = set<IFormElement, FunScript.TypeScript.HTMLFormElement> "target" x.Value
+
+let form classes children = Form.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFrameElement = inherit IUnclosedElement
+type IFrameElement = inherit INonVoidElement
 
 type Frame() =
-    static member empty = unclosedTag "frame" : HtmlTag<IFrameElement>
+    static member empty = nonVoidTag "frame" : HtmlTag<IFrameElement, FunScript.TypeScript.HTMLElement>
+
+let frame classes children = Frame.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IFramesetElement = inherit IClosedElement
+type IFramesetElement = inherit INonVoidElement
 
 type Frameset() =
-    static member empty = tag "frameset" : HtmlTag<IFramesetElement>
+    static member empty = nonVoidTag "frameset" : HtmlTag<IFramesetElement, FunScript.TypeScript.HTMLElement>
+
+let frameset classes children = Frameset.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IHeadElement = inherit IClosedElement
+type IHeadElement = inherit INonVoidElement
 
 type Head() =
-    static member empty = tag "head" : HtmlTag<IHeadElement>
+    static member empty = nonVoidTag "head" : HtmlTag<IHeadElement, FunScript.TypeScript.HTMLHeadElement>
+
+let head classes children = Head.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IHeaderElement = inherit IClosedElement
+type IHeaderElement = inherit INonVoidElement
 
 type Header() =
-    static member empty = tag "header" : HtmlTag<IHeaderElement>
+    static member empty = nonVoidTag "header" : HtmlTag<IHeaderElement, FunScript.TypeScript.HTMLElement>
+
+let header classes children = Header.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IHrElement = inherit IUnclosedElement
+type IHgroupElement = inherit INonVoidElement
+
+type Hgroup() =
+    static member empty = nonVoidTag "hgroup" : HtmlTag<IHgroupElement, FunScript.TypeScript.HTMLElement>
+
+let hgroup classes children = Hgroup.empty |> Element.classes classes |> Element.appendTags children
+
+
+
+type IHrElement = inherit IVoidElement
 
 type Hr() =
-    static member empty = unclosedTag "hr" : HtmlTag<IHrElement>
+    static member empty = voidTag "hr" : HtmlTag<IHrElement, FunScript.TypeScript.HTMLHRElement>
+
+let hr classes = Hr.empty |> Element.classes classes
 
 
 
@@ -1053,23 +1173,27 @@ type Xmlns =
         match x with
         | Http___www_w3_org_1999_xhtml -> "http://www.w3.org/1999/xhtml"
 
-type IHtmlElement = inherit IClosedElement
+type IHtmlElement = inherit INonVoidElement
 
 type Html() =
-    static member empty = tag "html" : HtmlTag<IHtmlElement>
+    static member empty = nonVoidTag "html" : HtmlTag<IHtmlElement, FunScript.TypeScript.HTMLHtmlElement>
 
     /// Specifies the address of the document's cache manifest (for offline browsing)
-    static member manifest = set<IHtmlElement> "manifest"
+    static member manifest = set<IHtmlElement, FunScript.TypeScript.HTMLHtmlElement> "manifest"
 
     /// Specifies the XML namespace attribute (If you need your content to conform to XHTML)
-    static member xmlns (x : Xmlns) = set<IHtmlElement> "xmlns" x.Value
+    static member xmlns (x : Xmlns) = set<IHtmlElement, FunScript.TypeScript.HTMLHtmlElement> "xmlns" x.Value
+
+let html classes children = Html.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IIElement = inherit IClosedElement
+type IIElement = inherit INonVoidElement
 
 type I() =
-    static member empty = tag "i" : HtmlTag<IIElement>
+    static member empty = nonVoidTag "i" : HtmlTag<IIElement, FunScript.TypeScript.HTMLElement>
+
+let i classes children = I.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1087,31 +1211,33 @@ type Sandbox =
         | Allow_scripts -> "allow-scripts"
         | Allow_top_navigation -> "allow-top-navigation"
 
-type IIframeElement = inherit IClosedElement
+type IIframeElement = inherit INonVoidElement
 
 type Iframe() =
-    static member empty = tag "iframe" : HtmlTag<IIframeElement>
+    static member empty = nonVoidTag "iframe" : HtmlTag<IIframeElement, FunScript.TypeScript.HTMLIFrameElement>
 
     /// Specifies the height of an <iframe>
-    static member height (x : int) = set<IIframeElement> "height" (x.ToString())
+    static member height (x : int) = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "height" (x.ToString())
 
     /// Specifies the name of an <iframe>
-    static member name = set<IIframeElement> "name"
+    static member name = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "name"
 
     /// Enables a set of extra restrictions for the content in the <iframe>
-    static member sandbox (x : Sandbox) = set<IIframeElement> "sandbox" x.Value
+    static member sandbox (x : Sandbox) = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "sandbox" x.Value
 
     /// Specifies that the <iframe> should look like it is a part of the containing document
-    static member seamless = setEmpty<IIframeElement> "seamless"
+    static member seamless = setEmpty<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "seamless"
 
     /// Specifies the address of the document to embed in the <iframe>
-    static member src = set<IIframeElement> "src"
+    static member src = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "src"
 
     /// Specifies the HTML content of the page to show in the <iframe>
-    static member srcdoc = set<IIframeElement> "srcdoc"
+    static member srcdoc = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "srcdoc"
 
     /// Specifies the width of an <iframe>
-    static member width (x : int) = set<IIframeElement> "width" (x.ToString())
+    static member width (x : int) = set<IIframeElement, FunScript.TypeScript.HTMLIFrameElement> "width" (x.ToString())
+
+let iframe classes children = Iframe.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1123,45 +1249,49 @@ type Crossorigin =
         | Anonymous -> "anonymous"
         | Use_credentials -> "use-credentials"
 
-type IImgElement = inherit IUnclosedElement
+type IImgElement = inherit IVoidElement
 
 type Img() =
-    static member empty = unclosedTag "img" : HtmlTag<IImgElement>
+    static member empty = voidTag "img" : HtmlTag<IImgElement, FunScript.TypeScript.HTMLImageElement>
 
     /// Specifies an alternate text for an image
-    static member alt = set<IImgElement> "alt"
+    static member alt = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "alt"
 
-    /// Allow images from third-party sites that allow cross-origin access to be  used with canvas
-    static member crossorigin (x : Crossorigin) = set<IImgElement> "crossorigin" x.Value
+    /// Allow images from third-party sites that allow cross-origin access to be used with canvas
+    static member crossorigin (x : Crossorigin) = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "crossorigin" x.Value
 
     /// Specifies the height of an image
-    static member height (x : int) = set<IImgElement> "height" (x.ToString())
+    static member height (x : int) = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "height" (x.ToString())
 
     /// Specifies an image as a server-side image-map
-    static member ismap = setEmpty<IImgElement> "ismap"
+    static member ismap = setEmpty<IImgElement, FunScript.TypeScript.HTMLImageElement> "ismap"
 
     /// Specifies the URL of an image
-    static member src = set<IImgElement> "src"
+    static member src = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "src"
 
     /// Specifies an image as a client-side image-map
-    static member usemap = set<IImgElement> "usemap"
+    static member usemap = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "usemap"
 
     /// Specifies the width of an image
-    static member width (x : int) = set<IImgElement> "width" (x.ToString())
+    static member width (x : int) = set<IImgElement, FunScript.TypeScript.HTMLImageElement> "width" (x.ToString())
+
+let img classes = Img.empty |> Element.classes classes
 
 
 
 type Accept =
+    | File_extension of string
     | Audio_WildCard
     | Video_WildCard
     | Image_WildCard
-    | MIME_type of string
+    | Media_type of string
     member x.Value =
         match x with
+        | File_extension file_extension -> file_extension
         | Audio_WildCard -> "audio/*"
         | Video_WildCard -> "video/*"
         | Image_WildCard -> "image/*"
-        | MIME_type mIME_type -> mIME_type
+        | Media_type media_type -> media_type
 
 type Max =
     | Number of string
@@ -1191,7 +1321,7 @@ type IInputElementType =
     | Search
     | Submit
     | Tel
-    | TextCase
+    | Text_
     | Time
     | Url
     | Week
@@ -1216,122 +1346,128 @@ type IInputElementType =
         | Search -> "search"
         | Submit -> "submit"
         | Tel -> "tel"
-        | TextCase -> "text"
+        | Text_ -> "text"
         | Time -> "time"
         | Url -> "url"
         | Week -> "week"
 
-type IInputElement = inherit IUnclosedElement
+type IInputElement = inherit IVoidElement
 
 type Input() =
-    static member empty = unclosedTag "input" : HtmlTag<IInputElement>
+    static member empty = voidTag "input" : HtmlTag<IInputElement, FunScript.TypeScript.HTMLInputElement>
 
-    /// Specifies the types of files that the server accepts  (only for type="file")
-    static member accept (x : Accept) = set<IInputElement> "accept" x.Value
+    /// Specifies the types of files that the server accepts (only for type="file")
+    static member accept (x : Accept) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "accept" x.Value
 
     /// Specifies an alternate text for images (only for type="image")
-    static member alt = set<IInputElement> "alt"
+    static member alt = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "alt"
 
-    /// Specifies whether an <input> element should have autocomplete  enabled
-    static member autocomplete (x : Autocomplete) = set<IInputElement> "autocomplete" x.Value
+    /// Specifies whether an <input> element should have autocomplete enabled
+    static member autocomplete (x : Autocomplete) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "autocomplete" x.Value
 
-    /// Specifies that an <input> element should automatically get focus when the page  loads
-    static member autofocus = setEmpty<IInputElement> "autofocus"
+    /// Specifies that an <input> element should automatically get focus when the page loads
+    static member autofocus = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "autofocus"
 
     /// Specifies that an <input> element should be pre-selected when the page  loads (for type="checkbox" or type="radio")
-    static member ``checked`` = setEmpty<IInputElement> "checked"
+    static member ``checked`` = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "checked"
 
     /// Specifies that an <input> element should be disabled
-    static member disabled = setEmpty<IInputElement> "disabled"
+    static member disabled = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "disabled"
 
     /// Specifies one or more forms the <input> element belongs to
-    static member form = set<IInputElement> "form"
+    static member form = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "form"
 
     /// Specifies the URL of the file that will process the input control when  the form is submitted (for type="submit" and type="image")
-    static member formaction = set<IInputElement> "formaction"
+    static member formaction = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "formaction"
 
     /// Specifies how the form-data should be encoded when submitting it to the  server (for type="submit" and type="image")
-    static member formenctype (x : Formenctype) = set<IInputElement> "formenctype" x.Value
+    static member formenctype (x : Formenctype) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "formenctype" x.Value
 
-    /// Defines the HTTP  method for sending data to the action URL (for type="submit" and type="image")
-    static member formmethod (x : Formmethod) = set<IInputElement> "formmethod" x.Value
+    /// Defines the HTTP method for sending data to the action URL (for type="submit" and type="image")
+    static member formmethod (x : Formmethod) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "formmethod" x.Value
 
     /// Defines that form elements should not be validated when submitted
-    static member formnovalidate = setEmpty<IInputElement> "formnovalidate"
+    static member formnovalidate = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "formnovalidate"
 
     /// Specifies where to display the response that is received after submitting  the form (for type="submit" and type="image")
-    static member formtarget (x : Target) = set<IInputElement> "formtarget" x.Value
+    static member formtarget (x : Target) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "formtarget" x.Value
 
     /// Specifies the height of an <input> element (only for type="image")
-    static member height (x : int) = set<IInputElement> "height" (x.ToString())
+    static member height (x : int) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "height" (x.ToString())
 
-    /// Refers to a <datalist> element that contains pre-defined options for an  <input> element
-    static member list = set<IInputElement> "list"
+    /// Refers to a <datalist> element that contains pre-defined options for an <input> element
+    static member list = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "list"
 
     /// Specifies the maximum value for an <input> element
-    static member max (x : Max) = set<IInputElement> "max" x.Value
+    static member max (x : Max) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "max" x.Value
 
     /// Specifies the maximum number of characters allowed in an <input> element
-    static member maxlength = set<IInputElement> "maxlength"
+    static member maxlength = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "maxlength"
 
     /// Specifies a minimum value for an <input> element
-    static member min (x : Max) = set<IInputElement> "min" x.Value
+    static member min (x : Max) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "min" x.Value
 
     /// Specifies that a user can enter more than one value in an <input>  element
-    static member multiple = setEmpty<IInputElement> "multiple"
+    static member multiple = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "multiple"
 
     /// Specifies the name of an <input> element
-    static member name = set<IInputElement> "name"
+    static member name = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "name"
 
-    /// Specifies a regular expression that an <input> element's value is  checked against
-    static member pattern = set<IInputElement> "pattern"
+    /// Specifies a regular expression that an <input> element's value is checked against
+    static member pattern = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "pattern"
 
-    /// Specifies a short hint that describes the expected value of an <input>  element
-    static member placeholder = set<IInputElement> "placeholder"
+    /// Specifies a short hint that describes the expected value of an <input> element
+    static member placeholder = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "placeholder"
 
     /// Specifies that an input field is read-only
-    static member ``readonly`` = setEmpty<IInputElement> "readonly"
+    static member ``readonly`` = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "readonly"
 
-    /// Specifies that an input field must be filled out before submitting the  form
-    static member required = setEmpty<IInputElement> "required"
+    /// Specifies that an input field must be filled out before submitting the form
+    static member required = setEmpty<IInputElement, FunScript.TypeScript.HTMLInputElement> "required"
 
     /// Specifies the width, in characters, of an <input> element
-    static member size = set<IInputElement> "size"
+    static member size = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "size"
 
     /// Specifies the URL of the image to use as a submit button (only for  type="image")
-    static member src = set<IInputElement> "src"
+    static member src = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "src"
 
     /// Specifies the legal number intervals for an input field
-    static member step = set<IInputElement> "step"
+    static member step = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "step"
 
     /// Specifies the type <input> element to display
-    static member ``type`` (x : IInputElementType) = set<IInputElement> "type" x.Value
+    static member ``type`` (x : IInputElementType) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "type" x.Value
 
     /// Specifies the value of an <input> element   
-    static member value = set<IInputElement> "value"
+    static member value = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "value"
 
     /// Specifies the width of an <input> element (only for type="image")
-    static member width (x : int) = set<IInputElement> "width" (x.ToString())
+    static member width (x : int) = set<IInputElement, FunScript.TypeScript.HTMLInputElement> "width" (x.ToString())
+
+let input classes = Input.empty |> Element.classes classes
 
 
 
-type IInsElement = inherit IClosedElement
+type IInsElement = inherit INonVoidElement
 
 type Ins() =
-    static member empty = tag "ins" : HtmlTag<IInsElement>
+    static member empty = nonVoidTag "ins" : HtmlTag<IInsElement, FunScript.TypeScript.HTMLModElement>
 
     /// Specifies a URL to a document that explains the reason why the text was  inserted/changed
-    static member cite = set<IInsElement> "cite"
+    static member cite = set<IInsElement, FunScript.TypeScript.HTMLModElement> "cite"
 
     /// Specifies the date and time when the text was inserted/changed
-    static member datetime = set<IInsElement> "datetime"
+    static member datetime = set<IInsElement, FunScript.TypeScript.HTMLModElement> "datetime"
+
+let ins classes children = Ins.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IKbdElement = inherit IClosedElement
+type IKbdElement = inherit INonVoidElement
 
 type Kbd() =
-    static member empty = tag "kbd" : HtmlTag<IKbdElement>
+    static member empty = nonVoidTag "kbd" : HtmlTag<IKbdElement, FunScript.TypeScript.HTMLElement>
+
+let kbd classes children = Kbd.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1345,58 +1481,66 @@ type Keytype =
         | Dsa -> "dsa"
         | Ec -> "ec"
 
-type IKeygenElement = inherit IUnclosedElement
+type IKeygenElement = inherit IVoidElement
 
 type Keygen() =
-    static member empty = unclosedTag "keygen" : HtmlTag<IKeygenElement>
+    static member empty = voidTag "keygen" : HtmlTag<IKeygenElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies that a <keygen> element should automatically get focus when the page loads
-    static member autofocus = setEmpty<IKeygenElement> "autofocus"
+    static member autofocus = setEmpty<IKeygenElement, FunScript.TypeScript.HTMLElement> "autofocus"
 
     /// Specifies that the value of the <keygen> element should be challenged when submitted
-    static member challenge = setEmpty<IKeygenElement> "challenge"
+    static member challenge = setEmpty<IKeygenElement, FunScript.TypeScript.HTMLElement> "challenge"
 
     /// Specifies that a <keygen> element should be disabled
-    static member disabled = setEmpty<IKeygenElement> "disabled"
+    static member disabled = setEmpty<IKeygenElement, FunScript.TypeScript.HTMLElement> "disabled"
 
     /// Specifies one or more forms the <keygen> element belongs to
-    static member form = set<IKeygenElement> "form"
+    static member form = set<IKeygenElement, FunScript.TypeScript.HTMLElement> "form"
 
     /// Specifies the security algorithm of the key
-    static member keytype (x : Keytype) = set<IKeygenElement> "keytype" x.Value
+    static member keytype (x : Keytype) = set<IKeygenElement, FunScript.TypeScript.HTMLElement> "keytype" x.Value
 
     /// Defines a name for the <keygen> element
-    static member name = set<IKeygenElement> "name"
+    static member name = set<IKeygenElement, FunScript.TypeScript.HTMLElement> "name"
+
+let keygen classes = Keygen.empty |> Element.classes classes
 
 
 
-type ILabelElement = inherit IClosedElement
+type ILabelElement = inherit INonVoidElement
 
 type Label() =
-    static member empty = tag "label" : HtmlTag<ILabelElement>
+    static member empty = nonVoidTag "label" : HtmlTag<ILabelElement, FunScript.TypeScript.HTMLLabelElement>
 
     /// Specifies which form element a label is bound to
-    static member ``for`` = set<ILabelElement> "for"
+    static member ``for`` = set<ILabelElement, FunScript.TypeScript.HTMLLabelElement> "for"
 
     /// Specifies one or more forms the label belongs to
-    static member form = set<ILabelElement> "form"
+    static member form = set<ILabelElement, FunScript.TypeScript.HTMLLabelElement> "form"
+
+let label classes children = Label.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ILegendElement = inherit IClosedElement
+type ILegendElement = inherit INonVoidElement
 
 type Legend() =
-    static member empty = tag "legend" : HtmlTag<ILegendElement>
+    static member empty = nonVoidTag "legend" : HtmlTag<ILegendElement, FunScript.TypeScript.HTMLLegendElement>
+
+let legend classes children = Legend.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ILiElement = inherit IClosedElement
+type ILiElement = inherit INonVoidElement
 
 type Li() =
-    static member empty = tag "li" : HtmlTag<ILiElement>
+    static member empty = nonVoidTag "li" : HtmlTag<ILiElement, FunScript.TypeScript.HTMLLIElement>
 
     /// Specifies the value of a list item. The following list items will increment  from that number (only for <ol> lists)
-    static member value = set<ILiElement> "value"
+    static member value = set<ILiElement, FunScript.TypeScript.HTMLLIElement> "value"
+
+let li classes children = Li.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1420,7 +1564,7 @@ type ILinkElementRel =
     | Search
     | Sidebar
     | Stylesheet
-    | TagCase
+    | Tag_
     | Up
     member x.Value =
         match x with
@@ -1443,7 +1587,7 @@ type ILinkElementRel =
         | Search -> "search"
         | Sidebar -> "sidebar"
         | Stylesheet -> "stylesheet"
-        | TagCase -> "tag"
+        | Tag_ -> "tag"
         | Up -> "up"
 
 type Sizes =
@@ -1454,52 +1598,60 @@ type Sizes =
         | HeightxWidth heightxWidth -> heightxWidth
         | Any -> "any"
 
-type ILinkElement = inherit IUnclosedElement
+type ILinkElement = inherit IVoidElement
 
 type Link() =
-    static member empty = unclosedTag "link" : HtmlTag<ILinkElement>
+    static member empty = voidTag "link" : HtmlTag<ILinkElement, FunScript.TypeScript.HTMLLIElement>
 
     /// Specifies the location of the linked document
-    static member href = set<ILinkElement> "href"
+    static member href = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "href"
 
     /// Specifies the language of the text in the linked document
-    static member hreflang = set<ILinkElement> "hreflang"
+    static member hreflang = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "hreflang"
 
     /// Specifies on what device the linked document will be displayed
-    static member media = set<ILinkElement> "media"
+    static member media = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "media"
 
-    /// Required. Specifies the relationship between the current document and the linked  document
-    static member rel (x : ILinkElementRel) = set<ILinkElement> "rel" x.Value
+    /// Required. Specifies the relationship between the current document and the linked document
+    static member rel (x : ILinkElementRel) = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "rel" x.Value
 
     /// Specifies the size of the linked resource. Only for rel="icon"
-    static member sizes (x : Sizes) = set<ILinkElement> "sizes" x.Value
+    static member sizes (x : Sizes) = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "sizes" x.Value
 
-    /// Specifies the MIME type of the linked document
-    static member ``type`` = set<ILinkElement> "type"
+    /// Specifies the media type of the linked document
+    static member ``type`` = set<ILinkElement, FunScript.TypeScript.HTMLLIElement> "type"
+
+let link classes = Link.empty |> Element.classes classes
 
 
 
-type IMainElement = inherit IClosedElement
+type IMainElement = inherit INonVoidElement
 
 type Main() =
-    static member empty = tag "main" : HtmlTag<IMainElement>
+    static member empty = nonVoidTag "main" : HtmlTag<IMainElement, FunScript.TypeScript.HTMLElement>
+
+let main classes children = Main.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IMapElementElement = inherit IClosedElement
+type IMapElementElement = inherit INonVoidElement
 
 type MapElement() =
-    static member empty = tag "map" : HtmlTag<IMapElementElement>
+    static member empty = nonVoidTag "map" : HtmlTag<IMapElementElement, FunScript.TypeScript.HTMLMapElement>
 
     /// Required. Specifies the name of an image-map
-    static member name = set<IMapElementElement> "name"
+    static member name = set<IMapElementElement, FunScript.TypeScript.HTMLMapElement> "name"
+
+let map classes children = MapElement.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IMarkElement = inherit IClosedElement
+type IMarkElement = inherit INonVoidElement
 
 type Mark() =
-    static member empty = tag "mark" : HtmlTag<IMarkElement>
+    static member empty = nonVoidTag "mark" : HtmlTag<IMarkElement, FunScript.TypeScript.HTMLElement>
+
+let mark classes children = Mark.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1513,16 +1665,18 @@ type IMenuElementType =
         | Toolbar -> "toolbar"
         | Context -> "context"
 
-type IMenuElement = inherit IClosedElement
+type IMenuElement = inherit INonVoidElement
 
 type Menu() =
-    static member empty = tag "menu" : HtmlTag<IMenuElement>
+    static member empty = nonVoidTag "menu" : HtmlTag<IMenuElement, FunScript.TypeScript.HTMLMenuElement>
 
     /// Specifies a visible label for the menu
-    static member label = set<IMenuElement> "label"
+    static member label = set<IMenuElement, FunScript.TypeScript.HTMLMenuElement> "label"
 
     /// Specifies which type of menu to display
-    static member ``type`` (x : IMenuElementType) = set<IMenuElement> "type" x.Value
+    static member ``type`` (x : IMenuElementType) = set<IMenuElement, FunScript.TypeScript.HTMLMenuElement> "type" x.Value
+
+let menu classes children = Menu.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1530,7 +1684,7 @@ type Command =
     | Empty
     member x.Value =
         match x with
-        | Empty -> "&nbsp;"
+        | Empty -> ""
 
 type IMenuitemElementType =
     | Checkbox
@@ -1542,34 +1696,36 @@ type IMenuitemElementType =
         | Command -> "command"
         | Radio -> "radio"
 
-type IMenuitemElement = inherit IClosedElement
+type IMenuitemElement = inherit INonVoidElement
 
 type Menuitem() =
-    static member empty = tag "menuitem" : HtmlTag<IMenuitemElement>
+    static member empty = nonVoidTag "menuitem" : HtmlTag<IMenuitemElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies that the command/menu item should be checked when the page loads. Only  for type="radio" or type="checkbox"
-    static member ``checked`` = setEmpty<IMenuitemElement> "checked"
+    static member ``checked`` = setEmpty<IMenuitemElement, FunScript.TypeScript.HTMLElement> "checked"
 
     ///  
-    static member command (x : Command) = set<IMenuitemElement> "command" x.Value
+    static member command (x : Command) = set<IMenuitemElement, FunScript.TypeScript.HTMLElement> "command" x.Value
 
     /// Marks the command/menu item as being a default command
-    static member ``default`` = setEmpty<IMenuitemElement> "default"
+    static member ``default`` = setEmpty<IMenuitemElement, FunScript.TypeScript.HTMLElement> "default"
 
     /// Specifies that the command/menu item should be disabled
-    static member disabled = setEmpty<IMenuitemElement> "disabled"
+    static member disabled = setEmpty<IMenuitemElement, FunScript.TypeScript.HTMLElement> "disabled"
 
     /// Specifies an icon for the command/menu item
-    static member icon = set<IMenuitemElement> "icon"
+    static member icon = set<IMenuitemElement, FunScript.TypeScript.HTMLElement> "icon"
 
     /// Required. Specifies the name of the command/menu item, as shown to the user
-    static member label = set<IMenuitemElement> "label"
+    static member label = set<IMenuitemElement, FunScript.TypeScript.HTMLElement> "label"
 
-    /// Specifies the name of the group of commands that will be toggled when the  command/menu item itself is toggled.  Only for type="radio"
-    static member radiogroup = set<IMenuitemElement> "radiogroup"
+    /// Specifies the name of the group of commands that will be toggled when the  command/menu item itself is toggled. Only for type="radio"
+    static member radiogroup = set<IMenuitemElement, FunScript.TypeScript.HTMLElement> "radiogroup"
 
     /// Specifies the type of command/menu item. Default is "command"
-    static member ``type`` (x : IMenuitemElementType) = set<IMenuitemElement> "type" x.Value
+    static member ``type`` (x : IMenuitemElementType) = set<IMenuitemElement, FunScript.TypeScript.HTMLElement> "type" x.Value
+
+let menuitem classes children = Menuitem.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1597,99 +1753,111 @@ type Name =
         | Generator generator -> generator
         | Keywords -> "keywords"
 
-type IMetaElement = inherit IUnclosedElement
+type IMetaElement = inherit IVoidElement
 
 type Meta() =
-    static member empty = unclosedTag "meta" : HtmlTag<IMetaElement>
+    static member empty = voidTag "meta" : HtmlTag<IMetaElement, FunScript.TypeScript.HTMLMetaElement>
 
     /// Specifies the character encoding for the HTML document
-    static member charset = set<IMetaElement> "charset"
+    static member charset = set<IMetaElement, FunScript.TypeScript.HTMLMetaElement> "charset"
 
     /// Gives the value associated with the http-equiv or name attribute
-    static member content = set<IMetaElement> "content"
+    static member content = set<IMetaElement, FunScript.TypeScript.HTMLMetaElement> "content"
 
-    /// Provides an HTTP header for the information/value of the content  attribute
-    static member http_equiv (x : Http_equiv) = set<IMetaElement> "http-equiv" x.Value
+    /// Provides an HTTP header for the information/value of the content attribute
+    static member http_equiv (x : Http_equiv) = set<IMetaElement, FunScript.TypeScript.HTMLMetaElement> "http-equiv" x.Value
 
     /// Specifies a name for the metadata
-    static member name (x : Name) = set<IMetaElement> "name" x.Value
+    static member name (x : Name) = set<IMetaElement, FunScript.TypeScript.HTMLMetaElement> "name" x.Value
+
+let meta classes = Meta.empty |> Element.classes classes
 
 
 
-type IMeterElement = inherit IClosedElement
+type IMeterElement = inherit INonVoidElement
 
 type Meter() =
-    static member empty = tag "meter" : HtmlTag<IMeterElement>
+    static member empty = nonVoidTag "meter" : HtmlTag<IMeterElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies one or more forms the <meter> element belongs to
-    static member form = set<IMeterElement> "form"
+    static member form = set<IMeterElement, FunScript.TypeScript.HTMLElement> "form"
 
     /// Specifies the range that is considered to be a high value
-    static member high = set<IMeterElement> "high"
+    static member high = set<IMeterElement, FunScript.TypeScript.HTMLElement> "high"
 
     /// Specifies the range that is considered to be a low value
-    static member low = set<IMeterElement> "low"
+    static member low = set<IMeterElement, FunScript.TypeScript.HTMLElement> "low"
 
     /// Specifies the maximum value of the range
-    static member max = set<IMeterElement> "max"
+    static member max = set<IMeterElement, FunScript.TypeScript.HTMLElement> "max"
 
     /// Specifies the minimum value of the range
-    static member min = set<IMeterElement> "min"
+    static member min = set<IMeterElement, FunScript.TypeScript.HTMLElement> "min"
 
     /// Specifies what value is the optimal value for the gauge
-    static member optimum = set<IMeterElement> "optimum"
+    static member optimum = set<IMeterElement, FunScript.TypeScript.HTMLElement> "optimum"
 
     /// Required. Specifies the current value of the gauge
-    static member value = set<IMeterElement> "value"
+    static member value = set<IMeterElement, FunScript.TypeScript.HTMLElement> "value"
+
+let meter classes children = Meter.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type INavElement = inherit IClosedElement
+type INavElement = inherit INonVoidElement
 
 type Nav() =
-    static member empty = tag "nav" : HtmlTag<INavElement>
+    static member empty = nonVoidTag "nav" : HtmlTag<INavElement, FunScript.TypeScript.HTMLElement>
+
+let nav classes children = Nav.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type INoframesElement = inherit IClosedElement
+type INoframesElement = inherit INonVoidElement
 
 type Noframes() =
-    static member empty = tag "noframes" : HtmlTag<INoframesElement>
+    static member empty = nonVoidTag "noframes" : HtmlTag<INoframesElement, FunScript.TypeScript.HTMLElement>
+
+let noframes classes children = Noframes.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type INoscriptElement = inherit IClosedElement
+type INoscriptElement = inherit INonVoidElement
 
 type Noscript() =
-    static member empty = tag "noscript" : HtmlTag<INoscriptElement>
+    static member empty = nonVoidTag "noscript" : HtmlTag<INoscriptElement, FunScript.TypeScript.HTMLElement>
+
+let noscript classes children = Noscript.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IObjectElement = inherit IClosedElement
+type IObjectElement = inherit INonVoidElement
 
 type Object() =
-    static member empty = tag "object" : HtmlTag<IObjectElement>
+    static member empty = nonVoidTag "object" : HtmlTag<IObjectElement, FunScript.TypeScript.HTMLObjectElement>
 
     /// Specifies the URL of the resource to be used by the object
-    static member data = set<IObjectElement> "data"
+    static member data = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "data"
 
     /// Specifies one or more forms the object belongs to
-    static member form = set<IObjectElement> "form"
+    static member form = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "form"
 
     /// Specifies the height of the object
-    static member height (x : int) = set<IObjectElement> "height" (x.ToString())
+    static member height (x : int) = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "height" (x.ToString())
 
     /// Specifies a name for the object
-    static member name = set<IObjectElement> "name"
+    static member name = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "name"
 
-    /// Specifies the MIME type of data specified in the data attribute
-    static member ``type`` = set<IObjectElement> "type"
+    /// Specifies the media type of data specified in the data attribute
+    static member ``type`` = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "type"
 
     /// Specifies the name of a client-side image map to be used with the object
-    static member usemap = set<IObjectElement> "usemap"
+    static member usemap = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "usemap"
 
     /// Specifies the width of the object
-    static member width (x : int) = set<IObjectElement> "width" (x.ToString())
+    static member width (x : int) = set<IObjectElement, FunScript.TypeScript.HTMLObjectElement> "width" (x.ToString())
+
+let objectTag classes children = Object.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1707,253 +1875,297 @@ type IOlElementType =
         | I -> "I"
         | I1 -> "i"
 
-type IOlElement = inherit IClosedElement
+type IOlElement = inherit INonVoidElement
 
 type Ol() =
-    static member empty = tag "ol" : HtmlTag<IOlElement>
+    static member empty = nonVoidTag "ol" : HtmlTag<IOlElement, FunScript.TypeScript.HTMLOListElement>
 
     /// Specifies that the list order should be descending (9,8,7...)
-    static member reversed = setEmpty<IOlElement> "reversed"
+    static member reversed = setEmpty<IOlElement, FunScript.TypeScript.HTMLOListElement> "reversed"
 
     /// Specifies the start value of an ordered list
-    static member start = set<IOlElement> "start"
+    static member start = set<IOlElement, FunScript.TypeScript.HTMLOListElement> "start"
 
     /// Specifies the kind of marker to use in the list
-    static member ``type`` (x : IOlElementType) = set<IOlElement> "type" x.Value
+    static member ``type`` (x : IOlElementType) = set<IOlElement, FunScript.TypeScript.HTMLOListElement> "type" x.Value
+
+let ol classes children = Ol.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IOptgroupElement = inherit IClosedElement
+type IOptgroupElement = inherit INonVoidElement
 
 type Optgroup() =
-    static member empty = tag "optgroup" : HtmlTag<IOptgroupElement>
+    static member empty = nonVoidTag "optgroup" : HtmlTag<IOptgroupElement, FunScript.TypeScript.HTMLOptGroupElement>
 
     /// Specifies that an option-group should be disabled
-    static member disabled = setEmpty<IOptgroupElement> "disabled"
+    static member disabled = setEmpty<IOptgroupElement, FunScript.TypeScript.HTMLOptGroupElement> "disabled"
 
     /// Specifies a label for an option-group
-    static member label = set<IOptgroupElement> "label"
+    static member label = set<IOptgroupElement, FunScript.TypeScript.HTMLOptGroupElement> "label"
+
+let optgroup classes children = Optgroup.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IOptionElement = inherit IClosedElement
+type IOptionElement = inherit INonVoidElement
 
 type Option() =
-    static member empty = tag "option" : HtmlTag<IOptionElement>
+    static member empty = nonVoidTag "option" : HtmlTag<IOptionElement, FunScript.TypeScript.HTMLOptionElement>
 
     /// Specifies that an option should be disabled
-    static member disabled = setEmpty<IOptionElement> "disabled"
+    static member disabled = setEmpty<IOptionElement, FunScript.TypeScript.HTMLOptionElement> "disabled"
 
     /// Specifies a shorter label for an option
-    static member label = set<IOptionElement> "label"
+    static member label = set<IOptionElement, FunScript.TypeScript.HTMLOptionElement> "label"
 
     /// Specifies that an option should be pre-selected when the page loads
-    static member selected = setEmpty<IOptionElement> "selected"
+    static member selected = setEmpty<IOptionElement, FunScript.TypeScript.HTMLOptionElement> "selected"
 
     /// Specifies the value to be sent to a server
-    static member value = set<IOptionElement> "value"
+    static member value = set<IOptionElement, FunScript.TypeScript.HTMLOptionElement> "value"
+
+let option classes children = Option.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IOutputElement = inherit IClosedElement
+type IOutputElement = inherit INonVoidElement
 
 type Output() =
-    static member empty = tag "output" : HtmlTag<IOutputElement>
+    static member empty = nonVoidTag "output" : HtmlTag<IOutputElement, FunScript.TypeScript.HTMLElement>
 
     /// Specifies the relationship between the result of the calculation, and the elements used in the calculation
-    static member ``for`` = set<IOutputElement> "for"
+    static member ``for`` = set<IOutputElement, FunScript.TypeScript.HTMLElement> "for"
 
     /// Specifies one or more forms the output element belongs to
-    static member form = set<IOutputElement> "form"
+    static member form = set<IOutputElement, FunScript.TypeScript.HTMLElement> "form"
 
     /// Specifies a name for the output element
-    static member name = set<IOutputElement> "name"
+    static member name = set<IOutputElement, FunScript.TypeScript.HTMLElement> "name"
+
+let output classes children = Output.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IPElement = inherit IClosedElement
+type IPElement = inherit INonVoidElement
 
 type P() =
-    static member empty = tag "p" : HtmlTag<IPElement>
+    static member empty = nonVoidTag "p" : HtmlTag<IPElement, FunScript.TypeScript.HTMLParagraphElement>
+
+let p classes children = P.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IParamElement = inherit IUnclosedElement
+type IParamElement = inherit IVoidElement
 
 type Param() =
-    static member empty = unclosedTag "param" : HtmlTag<IParamElement>
+    static member empty = voidTag "param" : HtmlTag<IParamElement, FunScript.TypeScript.HTMLParamElement>
 
     /// Specifies the name of a parameter
-    static member name = set<IParamElement> "name"
+    static member name = set<IParamElement, FunScript.TypeScript.HTMLParamElement> "name"
 
     /// Specifies the value of the parameter
-    static member value = set<IParamElement> "value"
+    static member value = set<IParamElement, FunScript.TypeScript.HTMLParamElement> "value"
+
+let param classes = Param.empty |> Element.classes classes
 
 
 
-type IPreElement = inherit IClosedElement
+type IPreElement = inherit INonVoidElement
 
 type Pre() =
-    static member empty = tag "pre" : HtmlTag<IPreElement>
+    static member empty = nonVoidTag "pre" : HtmlTag<IPreElement, FunScript.TypeScript.HTMLPreElement>
+
+let pre classes children = Pre.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IProgressElement = inherit IClosedElement
+type IProgressElement = inherit INonVoidElement
 
 type Progress() =
-    static member empty = tag "progress" : HtmlTag<IProgressElement>
+    static member empty = nonVoidTag "progress" : HtmlTag<IProgressElement, FunScript.TypeScript.HTMLProgressElement>
 
     /// Specifies how much work the task requires in total
-    static member max = set<IProgressElement> "max"
+    static member max = set<IProgressElement, FunScript.TypeScript.HTMLProgressElement> "max"
 
     /// Specifies how much of the task has been completed
-    static member value = set<IProgressElement> "value"
+    static member value = set<IProgressElement, FunScript.TypeScript.HTMLProgressElement> "value"
+
+let progress classes children = Progress.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IQElement = inherit IClosedElement
+type IQElement = inherit INonVoidElement
 
 type Q() =
-    static member empty = tag "q" : HtmlTag<IQElement>
+    static member empty = nonVoidTag "q" : HtmlTag<IQElement, FunScript.TypeScript.HTMLQuoteElement>
 
     /// Specifies the source URL of the quote
-    static member cite = set<IQElement> "cite"
+    static member cite = set<IQElement, FunScript.TypeScript.HTMLQuoteElement> "cite"
+
+let q classes children = Q.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IRpElement = inherit IClosedElement
+type IRpElement = inherit INonVoidElement
 
 type Rp() =
-    static member empty = tag "rp" : HtmlTag<IRpElement>
+    static member empty = nonVoidTag "rp" : HtmlTag<IRpElement, FunScript.TypeScript.HTMLElement>
+
+let rp classes children = Rp.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IRtElement = inherit IClosedElement
+type IRtElement = inherit INonVoidElement
 
 type Rt() =
-    static member empty = tag "rt" : HtmlTag<IRtElement>
+    static member empty = nonVoidTag "rt" : HtmlTag<IRtElement, FunScript.TypeScript.HTMLElement>
+
+let rt classes children = Rt.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IRubyElement = inherit IClosedElement
+type IRubyElement = inherit INonVoidElement
 
 type Ruby() =
-    static member empty = tag "ruby" : HtmlTag<IRubyElement>
+    static member empty = nonVoidTag "ruby" : HtmlTag<IRubyElement, FunScript.TypeScript.HTMLElement>
+
+let ruby classes children = Ruby.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISElement = inherit IClosedElement
+type ISElement = inherit INonVoidElement
 
 type S() =
-    static member empty = tag "s" : HtmlTag<ISElement>
+    static member empty = nonVoidTag "s" : HtmlTag<ISElement, FunScript.TypeScript.HTMLElement>
+
+let s classes children = S.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISampElement = inherit IClosedElement
+type ISampElement = inherit INonVoidElement
 
 type Samp() =
-    static member empty = tag "samp" : HtmlTag<ISampElement>
+    static member empty = nonVoidTag "samp" : HtmlTag<ISampElement, FunScript.TypeScript.HTMLElement>
+
+let samp classes children = Samp.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IScriptElement = inherit IClosedElement
+type IScriptElement = inherit INonVoidElement
 
 type Script() =
-    static member empty = tag "script" : HtmlTag<IScriptElement>
+    static member empty = nonVoidTag "script" : HtmlTag<IScriptElement, FunScript.TypeScript.HTMLScriptElement>
 
     /// Specifies that the script is executed asynchronously (only for external scripts)
-    static member ``async`` = setEmpty<IScriptElement> "async"
+    static member ``async`` = setEmpty<IScriptElement, FunScript.TypeScript.HTMLScriptElement> "async"
 
     /// Specifies the character encoding used in an external script  file
-    static member charset = set<IScriptElement> "charset"
+    static member charset = set<IScriptElement, FunScript.TypeScript.HTMLScriptElement> "charset"
 
     /// Specifies that the script is executed when the page has finished parsing  (only for external scripts)
-    static member defer = setEmpty<IScriptElement> "defer"
+    static member defer = setEmpty<IScriptElement, FunScript.TypeScript.HTMLScriptElement> "defer"
 
     /// Specifies the URL of an external script file
-    static member src = set<IScriptElement> "src"
+    static member src = set<IScriptElement, FunScript.TypeScript.HTMLScriptElement> "src"
 
-    /// Specifies the MIME type of the script
-    static member ``type`` = set<IScriptElement> "type"
+    /// Specifies the media type of the script
+    static member ``type`` = set<IScriptElement, FunScript.TypeScript.HTMLScriptElement> "type"
+
+let script classes children = Script.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISectionElement = inherit IClosedElement
+type ISectionElement = inherit INonVoidElement
 
 type Section() =
-    static member empty = tag "section" : HtmlTag<ISectionElement>
+    static member empty = nonVoidTag "section" : HtmlTag<ISectionElement, FunScript.TypeScript.HTMLElement>
+
+let section classes children = Section.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISelectElement = inherit IClosedElement
+type ISelectElement = inherit INonVoidElement
 
 type Select() =
-    static member empty = tag "select" : HtmlTag<ISelectElement>
+    static member empty = nonVoidTag "select" : HtmlTag<ISelectElement, FunScript.TypeScript.HTMLSelectElement>
 
     /// Specifies that the drop-down list should automatically get focus when  the page loads
-    static member autofocus = setEmpty<ISelectElement> "autofocus"
+    static member autofocus = setEmpty<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "autofocus"
 
     /// Specifies that a drop-down list should be disabled
-    static member disabled = setEmpty<ISelectElement> "disabled"
+    static member disabled = setEmpty<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "disabled"
 
     /// Defines one or more forms the select field belongs to
-    static member form = set<ISelectElement> "form"
+    static member form = set<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "form"
 
     /// Specifies that multiple options can be selected at once
-    static member multiple = setEmpty<ISelectElement> "multiple"
+    static member multiple = setEmpty<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "multiple"
 
     /// Defines a name for the drop-down list
-    static member name = set<ISelectElement> "name"
+    static member name = set<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "name"
 
-    /// Specifies that the user is required to select a value before submitting  the form
-    static member required = setEmpty<ISelectElement> "required"
+    /// Specifies that the user is required to select a value before submitting the form
+    static member required = setEmpty<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "required"
 
     /// Defines the number of visible options in a drop-down list
-    static member size = set<ISelectElement> "size"
+    static member size = set<ISelectElement, FunScript.TypeScript.HTMLSelectElement> "size"
+
+let select classes children = Select.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISmallElement = inherit IClosedElement
+type ISmallElement = inherit INonVoidElement
 
 type Small() =
-    static member empty = tag "small" : HtmlTag<ISmallElement>
+    static member empty = nonVoidTag "small" : HtmlTag<ISmallElement, FunScript.TypeScript.HTMLElement>
+
+let small classes children = Small.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISourceElement = inherit IUnclosedElement
+type ISourceElement = inherit IVoidElement
 
 type Source() =
-    static member empty = unclosedTag "source" : HtmlTag<ISourceElement>
+    static member empty = voidTag "source" : HtmlTag<ISourceElement, FunScript.TypeScript.HTMLSourceElement>
 
     /// Specifies the type of media resource
-    static member media = set<ISourceElement> "media"
+    static member media = set<ISourceElement, FunScript.TypeScript.HTMLSourceElement> "media"
 
     /// Specifies the URL of the media file
-    static member src = set<ISourceElement> "src"
+    static member src = set<ISourceElement, FunScript.TypeScript.HTMLSourceElement> "src"
 
-    /// Specifies the MIME type of the media resource
-    static member ``type`` = set<ISourceElement> "type"
+    /// Specifies the media type of the media resource
+    static member ``type`` = set<ISourceElement, FunScript.TypeScript.HTMLSourceElement> "type"
+
+let source classes = Source.empty |> Element.classes classes
 
 
 
-type ISpanElement = inherit IClosedElement
+type ISpanElement = inherit INonVoidElement
 
 type Span() =
-    static member empty = tag "span" : HtmlTag<ISpanElement>
+    static member empty = nonVoidTag "span" : HtmlTag<ISpanElement, FunScript.TypeScript.HTMLSpanElement>
+
+let span classes children = Span.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IStrikeElement = inherit IClosedElement
+type IStrikeElement = inherit INonVoidElement
 
 type Strike() =
-    static member empty = tag "strike" : HtmlTag<IStrikeElement>
+    static member empty = nonVoidTag "strike" : HtmlTag<IStrikeElement, FunScript.TypeScript.HTMLElement>
+
+let strike classes children = Strike.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IStrongElement = inherit IClosedElement
+type IStrongElement = inherit INonVoidElement
 
 type Strong() =
-    static member empty = tag "strong" : HtmlTag<IStrongElement>
+    static member empty = nonVoidTag "strong" : HtmlTag<IStrongElement, FunScript.TypeScript.HTMLElement>
+
+let strong classes children = Strong.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -1963,73 +2175,87 @@ type IStyleElementType =
         match x with
         | Text_css -> "text/css"
 
-type IStyleElement = inherit IClosedElement
+type IStyleElement = inherit INonVoidElement
 
 type Style() =
-    static member empty = tag "style" : HtmlTag<IStyleElement>
+    static member empty = nonVoidTag "style" : HtmlTag<IStyleElement, FunScript.TypeScript.HTMLStyleElement>
 
     /// Specifies what media/device the media resource is optimized for
-    static member media = set<IStyleElement> "media"
+    static member media = set<IStyleElement, FunScript.TypeScript.HTMLStyleElement> "media"
 
     /// Specifies that the styles only apply to this element's parent element  and that element's child elements
-    static member scoped = setEmpty<IStyleElement> "scoped"
+    static member scoped = setEmpty<IStyleElement, FunScript.TypeScript.HTMLStyleElement> "scoped"
 
-    /// Specifies the MIME type of the style sheet
-    static member ``type`` (x : IStyleElementType) = set<IStyleElement> "type" x.Value
+    /// Specifies the media type of the <style> tag
+    static member ``type`` (x : IStyleElementType) = set<IStyleElement, FunScript.TypeScript.HTMLStyleElement> "type" x.Value
+
+let style classes children = Style.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISubElement = inherit IClosedElement
+type ISubElement = inherit INonVoidElement
 
 type Sub() =
-    static member empty = tag "sub" : HtmlTag<ISubElement>
+    static member empty = nonVoidTag "sub" : HtmlTag<ISubElement, FunScript.TypeScript.HTMLElement>
+
+let sub classes children = Sub.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISummaryElement = inherit IClosedElement
+type ISummaryElement = inherit INonVoidElement
 
 type Summary() =
-    static member empty = tag "summary" : HtmlTag<ISummaryElement>
+    static member empty = nonVoidTag "summary" : HtmlTag<ISummaryElement, FunScript.TypeScript.HTMLElement>
+
+let summary classes children = Summary.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ISupElement = inherit IClosedElement
+type ISupElement = inherit INonVoidElement
 
 type Sup() =
-    static member empty = tag "sup" : HtmlTag<ISupElement>
+    static member empty = nonVoidTag "sup" : HtmlTag<ISupElement, FunScript.TypeScript.HTMLElement>
+
+let sup classes children = Sup.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITableElement = inherit IClosedElement
+type ITableElement = inherit INonVoidElement
 
 type Table() =
-    static member empty = tag "table" : HtmlTag<ITableElement>
+    static member empty = nonVoidTag "table" : HtmlTag<ITableElement, FunScript.TypeScript.HTMLTableElement>
 
     /// Specifies that the table should be sortable
-    static member sortable = setEmpty<ITableElement> "sortable"
+    static member sortable = setEmpty<ITableElement, FunScript.TypeScript.HTMLTableElement> "sortable"
+
+let table classes children = Table.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITbodyElement = inherit IClosedElement
+type ITbodyElement = inherit INonVoidElement
 
 type Tbody() =
-    static member empty = tag "tbody" : HtmlTag<ITbodyElement>
+    static member empty = nonVoidTag "tbody" : HtmlTag<ITbodyElement, FunScript.TypeScript.HTMLTableSectionElement>
+
+let tbody classes children = Tbody.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITdElement = inherit IClosedElement
+type ITdElement = inherit INonVoidElement
 
 type Td() =
-    static member empty = tag "td" : HtmlTag<ITdElement>
+    static member empty = nonVoidTag "td" : HtmlTag<ITdElement, FunScript.TypeScript.HTMLTableDataCellElement>
 
     /// Specifies the number of columns a cell should span
-    static member colspan = set<ITdElement> "colspan"
+    static member colspan = set<ITdElement, FunScript.TypeScript.HTMLTableDataCellElement> "colspan"
 
     /// Specifies one or more header cells a cell is related to
-    static member headers = set<ITdElement> "headers"
+    static member headers = set<ITdElement, FunScript.TypeScript.HTMLTableDataCellElement> "headers"
 
     /// Sets the number of rows a cell should span
-    static member rowspan = set<ITdElement> "rowspan"
+    static member rowspan = set<ITdElement, FunScript.TypeScript.HTMLTableDataCellElement> "rowspan"
+
+let td classes children = Td.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -2041,50 +2267,54 @@ type Wrap =
         | Hard -> "hard"
         | Soft -> "soft"
 
-type ITextareaElement = inherit IClosedElement
+type ITextareaElement = inherit INonVoidElement
 
 type Textarea() =
-    static member empty = tag "textarea" : HtmlTag<ITextareaElement>
+    static member empty = nonVoidTag "textarea" : HtmlTag<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement>
 
-    /// Specifies that a text area should automatically get focus when the page  loads
-    static member autofocus = setEmpty<ITextareaElement> "autofocus"
+    /// Specifies that a text area should automatically get focus when the page loads
+    static member autofocus = setEmpty<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "autofocus"
 
     /// Specifies the visible width of a text area
-    static member cols = set<ITextareaElement> "cols"
+    static member cols = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "cols"
 
     /// Specifies that a text area should be disabled
-    static member disabled = setEmpty<ITextareaElement> "disabled"
+    static member disabled = setEmpty<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "disabled"
 
     /// Specifies one or more forms the text area belongs to
-    static member form = set<ITextareaElement> "form"
+    static member form = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "form"
 
     /// Specifies the maximum number of characters allowed in the text area
-    static member maxlength = set<ITextareaElement> "maxlength"
+    static member maxlength = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "maxlength"
 
     /// Specifies a name for a text area
-    static member name = set<ITextareaElement> "name"
+    static member name = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "name"
 
     /// Specifies a short hint that describes the expected value of a text area
-    static member placeholder = set<ITextareaElement> "placeholder"
+    static member placeholder = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "placeholder"
 
     /// Specifies that a text area should be read-only
-    static member ``readonly`` = setEmpty<ITextareaElement> "readonly"
+    static member ``readonly`` = setEmpty<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "readonly"
 
     /// Specifies that a text area is required/must be filled out
-    static member required = setEmpty<ITextareaElement> "required"
+    static member required = setEmpty<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "required"
 
     /// Specifies the visible number of lines in a text area
-    static member rows = set<ITextareaElement> "rows"
+    static member rows = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "rows"
 
     /// Specifies how the text in a text area is to be wrapped when submitted in a form
-    static member wrap (x : Wrap) = set<ITextareaElement> "wrap" x.Value
+    static member wrap (x : Wrap) = set<ITextareaElement, FunScript.TypeScript.HTMLTextAreaElement> "wrap" x.Value
+
+let textarea classes children = Textarea.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITfootElement = inherit IClosedElement
+type ITfootElement = inherit INonVoidElement
 
 type Tfoot() =
-    static member empty = tag "tfoot" : HtmlTag<ITfootElement>
+    static member empty = nonVoidTag "tfoot" : HtmlTag<ITfootElement, FunScript.TypeScript.HTMLTableSectionElement>
+
+let tfoot classes children = Tfoot.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -2112,59 +2342,69 @@ type Sorted =
         | Reversed_number reversed_number -> reversed_number
         | Number_reversed number_reversed -> number_reversed
 
-type IThElement = inherit IClosedElement
+type IThElement = inherit INonVoidElement
 
 type Th() =
-    static member empty = tag "th" : HtmlTag<IThElement>
+    static member empty = nonVoidTag "th" : HtmlTag<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement>
 
     /// Specifies an abbreviated version of the content in a  header cell
-    static member abbr = set<IThElement> "abbr"
+    static member abbr = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "abbr"
 
     /// Specifies the number of columns a header cell should span
-    static member colspan = set<IThElement> "colspan"
+    static member colspan = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "colspan"
 
     /// Specifies one or more header cells a cell is related to
-    static member headers = set<IThElement> "headers"
+    static member headers = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "headers"
 
     /// Specifies the number of rows a header cell should span
-    static member rowspan = set<IThElement> "rowspan"
+    static member rowspan = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "rowspan"
 
     /// Specifies whether a header cell is a header for a column, row, or group  of columns or rows
-    static member scope (x : Scope) = set<IThElement> "scope" x.Value
+    static member scope (x : Scope) = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "scope" x.Value
 
     /// Defines the sort direction of a column
-    static member sorted (x : Sorted) = set<IThElement> "sorted" x.Value
+    static member sorted (x : Sorted) = set<IThElement, FunScript.TypeScript.HTMLTableHeaderCellElement> "sorted" x.Value
+
+let th classes children = Th.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITheadElement = inherit IClosedElement
+type ITheadElement = inherit INonVoidElement
 
 type Thead() =
-    static member empty = tag "thead" : HtmlTag<ITheadElement>
+    static member empty = nonVoidTag "thead" : HtmlTag<ITheadElement, FunScript.TypeScript.HTMLTableSectionElement>
+
+let thead classes children = Thead.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITimeElement = inherit IClosedElement
+type ITimeElement = inherit INonVoidElement
 
 type Time() =
-    static member empty = tag "time" : HtmlTag<ITimeElement>
+    static member empty = nonVoidTag "time" : HtmlTag<ITimeElement, FunScript.TypeScript.HTMLElement>
 
-    /// Gives the date/time being specified. Otherwise, the date/time is given  by the element's contents
-    static member datetime = set<ITimeElement> "datetime"
+    /// Represent a machine-readable date/time of the <time> element
+    static member datetime = set<ITimeElement, FunScript.TypeScript.HTMLElement> "datetime"
+
+let time classes children = Time.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITitleElement = inherit IClosedElement
+type ITitleElement = inherit INonVoidElement
 
 type Title() =
-    static member empty = tag "title" : HtmlTag<ITitleElement>
+    static member empty = nonVoidTag "title" : HtmlTag<ITitleElement, FunScript.TypeScript.HTMLTitleElement>
+
+let title classes children = Title.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type ITrElement = inherit IClosedElement
+type ITrElement = inherit INonVoidElement
 
 type Tr() =
-    static member empty = tag "tr" : HtmlTag<ITrElement>
+    static member empty = nonVoidTag "tr" : HtmlTag<ITrElement, FunScript.TypeScript.HTMLTableRowElement>
+
+let tr classes children = Tr.empty |> Element.classes classes |> Element.appendTags children
 
 
 
@@ -2182,91 +2422,105 @@ type Kind =
         | Metadata -> "metadata"
         | Subtitles -> "subtitles"
 
-type ITrackElement = inherit IUnclosedElement
+type ITrackElement = inherit IVoidElement
 
 type Track() =
-    static member empty = unclosedTag "track" : HtmlTag<ITrackElement>
+    static member empty = voidTag "track" : HtmlTag<ITrackElement, FunScript.TypeScript.HTMLTrackElement>
 
     /// Specifies that the track is to be enabled if the user's preferences do  not indicate that another track would be more appropriate
-    static member ``default`` = setEmpty<ITrackElement> "default"
+    static member ``default`` = setEmpty<ITrackElement, FunScript.TypeScript.HTMLTrackElement> "default"
 
     /// Specifies the kind of text track
-    static member kind (x : Kind) = set<ITrackElement> "kind" x.Value
+    static member kind (x : Kind) = set<ITrackElement, FunScript.TypeScript.HTMLTrackElement> "kind" x.Value
 
     /// Specifies the title of the text track
-    static member label = set<ITrackElement> "label"
+    static member label = set<ITrackElement, FunScript.TypeScript.HTMLTrackElement> "label"
 
     /// Required. Specifies the URL of the track file
-    static member src = set<ITrackElement> "src"
+    static member src = set<ITrackElement, FunScript.TypeScript.HTMLTrackElement> "src"
 
     /// Specifies the language of the track text data (required if kind="subtitles")
-    static member srclang = set<ITrackElement> "srclang"
+    static member srclang = set<ITrackElement, FunScript.TypeScript.HTMLTrackElement> "srclang"
+
+let track classes = Track.empty |> Element.classes classes
 
 
 
-type ITtElement = inherit IClosedElement
+type ITtElement = inherit INonVoidElement
 
 type Tt() =
-    static member empty = tag "tt" : HtmlTag<ITtElement>
+    static member empty = nonVoidTag "tt" : HtmlTag<ITtElement, FunScript.TypeScript.HTMLElement>
+
+let tt classes children = Tt.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IUElement = inherit IClosedElement
+type IUElement = inherit INonVoidElement
 
 type U() =
-    static member empty = tag "u" : HtmlTag<IUElement>
+    static member empty = nonVoidTag "u" : HtmlTag<IUElement, FunScript.TypeScript.HTMLElement>
+
+let u classes children = U.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IUlElement = inherit IClosedElement
+type IUlElement = inherit INonVoidElement
 
 type Ul() =
-    static member empty = tag "ul" : HtmlTag<IUlElement>
+    static member empty = nonVoidTag "ul" : HtmlTag<IUlElement, FunScript.TypeScript.HTMLUListElement>
+
+let ul classes children = Ul.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IVarElement = inherit IClosedElement
+type IVarElement = inherit INonVoidElement
 
 type Var() =
-    static member empty = tag "var" : HtmlTag<IVarElement>
+    static member empty = nonVoidTag "var" : HtmlTag<IVarElement, FunScript.TypeScript.HTMLElement>
+
+let var classes children = Var.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IVideoElement = inherit IClosedElement
+type IVideoElement = inherit INonVoidElement
 
 type Video() =
-    static member empty = tag "video" : HtmlTag<IVideoElement>
+    static member empty = nonVoidTag "video" : HtmlTag<IVideoElement, FunScript.TypeScript.HTMLVideoElement>
 
     /// Specifies that the video will start playing as soon as it is ready
-    static member autoplay = setEmpty<IVideoElement> "autoplay"
+    static member autoplay = setEmpty<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "autoplay"
 
     /// Specifies that video controls should be displayed (such as a play/pause button etc).
-    static member controls = setEmpty<IVideoElement> "controls"
+    static member controls = setEmpty<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "controls"
 
     /// Sets the height of the video player
-    static member height (x : int) = set<IVideoElement> "height" (x.ToString())
+    static member height (x : int) = set<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "height" (x.ToString())
 
     /// Specifies that the video will start over again, every time it is finished
-    static member loop = setEmpty<IVideoElement> "loop"
+    static member loop = setEmpty<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "loop"
 
     /// Specifies that the audio output of the video should be muted
-    static member muted = setEmpty<IVideoElement> "muted"
+    static member muted = setEmpty<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "muted"
 
     /// Specifies an image to be shown while the video is downloading, or until the user hits the play button
-    static member poster = set<IVideoElement> "poster"
+    static member poster = set<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "poster"
 
     /// Specifies if and how the author thinks the video should be loaded when the page loads
-    static member preload (x : Preload) = set<IVideoElement> "preload" x.Value
+    static member preload (x : Preload) = set<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "preload" x.Value
 
     /// Specifies the URL of the video file
-    static member src = set<IVideoElement> "src"
+    static member src = set<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "src"
 
     /// Sets the width of the video player
-    static member width (x : int) = set<IVideoElement> "width" (x.ToString())
+    static member width (x : int) = set<IVideoElement, FunScript.TypeScript.HTMLVideoElement> "width" (x.ToString())
+
+let video classes children = Video.empty |> Element.classes classes |> Element.appendTags children
 
 
 
-type IWbrElement = inherit IUnclosedElement
+type IWbrElement = inherit IVoidElement
 
 type Wbr() =
-    static member empty = unclosedTag "wbr" : HtmlTag<IWbrElement>
+    static member empty = voidTag "wbr" : HtmlTag<IWbrElement, FunScript.TypeScript.HTMLElement>
+
+let wbr classes = Wbr.empty |> Element.classes classes

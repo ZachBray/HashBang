@@ -15,7 +15,7 @@ type SignUpPage() =
             currentUri
             "Sign Up" 
             "Please fill in your details." [
-            P.empty --> "TODO: ADD CONTENT"
+            p [] [] --> "TODO: ADD CONTENT"
         ]
 
     interface IPage with

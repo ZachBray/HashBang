@@ -1,10 +1,10 @@
 ﻿#r "System.Xml"
 #r "System.Xml.Linq"
-#r @"..\..\..\lib\HtmlAgilityPack.dll"
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.dll"
-#r @"..\..\packages\FunScript.1.1.47\lib\net40\FunScript.Interop.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.lib.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.lib.dll"
-#r @"..\..\packages\FunScript.TypeScript.Binding.jquery.1.1.0.37\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
+#r @"..\..\temp\HtmlAgilityPack.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.dll"
+#r @"..\..\packages\FunScript\lib\net40\FunScript.Interop.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.lib\lib\net40\FunScript.TypeScript.Binding.lib.dll"
+#r @"..\..\packages\FunScript.TypeScript.Binding.jquery\lib\net40\FunScript.TypeScript.Binding.jquery.dll"
 
 open System
 open System.IO
@@ -59,17 +59,16 @@ let findTagPages() =
             |> Seq.distinct
             |> Seq.toArray
             |> Array.map (fun x ->
-                x.Split([|'_'; '.'|]).[1],
-                "http://www.w3schools.com/tags/" + x)
+                let tag = x.Split([|'_'; '.'|]).[1]
+                tag,
+                "http://www.w3schools.com/tags/" + x,
+                "http://www.w3.org/TR/html-markup/" + tag + ".html")
     }
 
-let hasClosingTag tag root =
-    root |> choose (fun n ->
-        match n?``class`` with
-        | Some "example_code notranslate" ->
-            Some(n.InnerText.Contains("&lt;/" + tag + "&gt;"))
-        | Some _ | None -> None)
-    |> Array.forall id
+/// See: http://www.w3.org/TR/html-markup/syntax.html and search for "void element"
+let voidElements = Set ["area"; "base"; "br"; "col"; "command"; "embed"; "hr"; "img"; "input"; "keygen"; "link"; "meta"; "param"; "source"; "track"; "wbr"]
+
+let isVoid (tag : string) = voidElements.Contains(tag.ToLowerInvariant())
 
 type ValueType =
     | Empty
@@ -100,6 +99,9 @@ let findAttributes tag root =
                             let clean (str : string) =  
                                 str.Replace("<i>", "").Replace("</i>", "")
                                    .Replace("<em>", "").Replace("</em>", "")
+                                   .Replace("\n", "").Replace("\r", "")
+                                   .Replace("\t", "")
+                                   .Replace("&nbsp;", "")
                             if str = name then Empty
                             elif (clean str).ToLower().Contains "pixels" then
                                 PixelsVariable(clean str)
@@ -123,22 +125,36 @@ let findAttributes tag root =
             else None
         | _ -> None)
 
-let findTagAttributes tag page =
+let findElementType(text:string) =
+    let prefix = "class=\"idl\""
+    let i = text.IndexOf prefix + prefix.Length
+    let section = text.Substring i
+    let j = section.IndexOf "HTML"
+    let wordSection = section.Substring j
+    let n = wordSection.IndexOf "<"
+    wordSection.Substring(0, n)
+
+let findTagAttributes tag page w3page =
     async {
         let! text = downloadAsync page
         let doc = HtmlDocument()
         doc.LoadHtml text
-        let hasClosingTag = hasClosingTag tag doc.DocumentNode
         let attributes = findAttributes tag doc.DocumentNode
-        return tag, hasClosingTag, attributes
+        let isVoid = isVoid tag
+        try
+            let! w3text = downloadAsync w3page
+            let typeScriptType = findElementType w3text
+            return tag, isVoid, attributes, typeScriptType
+        with ex -> 
+            return tag, isVoid, attributes, "HTMLElement"
     }
 
 let findTags() =
     async {
         let! pages = findTagPages()
         return! 
-            pages |> Array.map (fun (tag, page) ->
-                findTagAttributes tag page)
+            pages |> Array.map (fun (tag, page, w3page) ->
+                findTagAttributes tag page w3page)
             |> Async.Parallel
     }
 
@@ -237,10 +253,10 @@ let generateValueType holderT (name, values, desc) =
                     let name =
                         // Exceptions
                         match name with
-                        | "Some" -> "SomeCase"
-                        | "None" -> "NoneCase"
-                        | "Text" -> "TextCase"
-                        | "Tag" -> "TagCase"
+                        | "Some" -> "Some_"
+                        | "None" -> "None_"
+                        | "Text" -> "Text_"
+                        | "Tag" -> "Tag_"
                         | _ -> name
                     match !used |> Map.tryFind name with
                     | Some y when x = y -> name
@@ -287,17 +303,23 @@ let generateValueType holderT (name, values, desc) =
 let htmlAssembly =
     typeof<HTMLDivElement>.Assembly
 
-let tryGetTagClass tag =
-    let t = htmlAssembly.GetType("HTML" + tag + "Element", false, true)
-    if t = null then None
-    else Some t.Name
+let getTypeScriptTagClass tag typeScriptType =
+    let tryFindType name =
+        let t = htmlAssembly.GetType("FunScript.TypeScript." + name, false, true)
+        if t = null then None
+        else Some t.FullName
+    let format tag = sprintf "HTML%sElement" tag
+    defaultArg (
+        [typeScriptType; format tag; format (toPascalCase tag); format(tag.ToUpperInvariant())]
+        |> List.tryPick tryFindType)
+        typeof<HTMLElement>.FullName
 
-let generateTagCode (tag, hasClosingTag, attributes) =
+let generateTagCode (tag, isVoid, attributes, typeScriptType) =
     [
         yield ""
         yield ""
-        let meth = if hasClosingTag then "tag" else "unclosedTag"
-        let baseT = if hasClosingTag then "IClosedElement" else "IUnclosedElement"
+        let meth = if isVoid then "voidTag" else "nonVoidTag"
+        let baseT = if isVoid then "IVoidElement" else "INonVoidElement"
         let t = "I" + toPascalCase tag + "Element"
         let valueTypes = attributes |> Array.map (generateValueType t)
         let typeLookup = valueTypes |> Array.map fst |> Map.ofArray
@@ -307,16 +329,8 @@ let generateTagCode (tag, hasClosingTag, attributes) =
         yield sprintf "type %s = inherit %s" t baseT
         yield ""
         yield sprintf "type %s() =" (toPascalCase tag)
-        yield sprintf "    static member empty = %s \"%s\" : HtmlTag<%s>" meth tag t
-        match tryGetTagClass tag with
-        | None -> ()
-        | Some specialization ->
-            yield ""
-            yield sprintf "    static member appendSetUp f (x : HtmlTag<%s>) =" t
-            yield sprintf "        Element.appendSetUp (fun el -> f(unbox<%s> el)) x" specialization
-            yield ""
-            yield sprintf "    static member getById (x : HtmlTag<%s>) =" t
-            yield sprintf "        unbox<%s> (Globals.document.getElementById x.Id)" specialization
+        let tsT = getTypeScriptTagClass tag typeScriptType
+        yield sprintf "    static member empty = %s \"%s\" : HtmlTag<%s, %s>" meth tag t tsT
         for name, values, desc in attributes do
             
             yield ""
@@ -324,15 +338,22 @@ let generateTagCode (tag, hasClosingTag, attributes) =
             let funName = toCamelCase name
             match typeLookup.[name] with
             | Some "string" ->
-                yield sprintf "    static member %s = set<%s> \"%s\"" funName t name
+                yield sprintf "    static member %s = set<%s, %s> \"%s\"" funName t tsT name
             | Some "float" ->
-                yield sprintf "    static member %s (x : float) = set<%s> \"%s\" (x.ToString())" funName t name
+                yield sprintf "    static member %s (x : float) = set<%s, %s> \"%s\" (x.ToString())" funName t tsT name
             | Some "int" ->
-                yield sprintf "    static member %s (x : int) = set<%s> \"%s\" (x.ToString())" funName t name
+                yield sprintf "    static member %s (x : int) = set<%s, %s> \"%s\" (x.ToString())" funName t tsT name
             | Some vt ->
-                yield sprintf "    static member %s (x : %s) = set<%s> \"%s\" x.Value" funName vt t name
+                yield sprintf "    static member %s (x : %s) = set<%s, %s> \"%s\" x.Value" funName vt t tsT name
             | None ->
-                yield sprintf "    static member %s = setEmpty<%s> \"%s\"" funName t name
+                yield sprintf "    static member %s = setEmpty<%s, %s> \"%s\"" funName t tsT name
+        yield ""
+        let safeTag = if fsharpKeywords.Contains tag then tag + "Tag" else tag
+        if isVoid then
+            yield sprintf "let %s classes = %s.empty |> Element.classes classes" safeTag (toPascalCase tag)
+        else
+            yield sprintf "let %s classes children = %s.empty |> Element.classes classes |> Element.appendTags children" safeTag (toPascalCase tag)
+            
     ]
 
 let generateFile() =

@@ -11,7 +11,7 @@ type Request = { Path: Path;  QueryParams: QueryParams }
 
 [<JS>]
 type IPage =
-    abstract TryHandle : Request -> HtmlTag<IBodyElement> option Async
+    abstract TryHandle : Request -> HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement> option Async
 
 type AdvancedHashbangOptions =
     {
@@ -44,9 +44,9 @@ type HashBangOptions =
         /// The template provided should organise all JavaScript and stylesheet imports.
         /// DO NOT use this as a template for individual pages, as it will only be used on the initial
         /// render and not for client (#!) page transitions.
-        ServerServedPageTemplate : HtmlTag<IBodyElement> * HtmlTag<IScriptElement> -> HtmlTag<IHtmlElement>
+        ServerServedPageTemplate : HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement> * HtmlTag<IScriptElement, FunScript.TypeScript.HTMLScriptElement> -> HtmlTag<IHtmlElement, FunScript.TypeScript.HTMLHtmlElement>
         /// This is the template that is used to display error messages to the user.
-        ErrorPageTemplate : (string -> HtmlTag<IBodyElement>) Expr
+        ErrorPageTemplate : (string -> HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement>) Expr
         /// This is the list of pages that can be rendered by both the client or the server.
         Pages : IPage list
         /// This is the list of services that can be injected into the constructors of pages.
