@@ -59,6 +59,10 @@
     <Compile Include="Providers.fs" />
     <None Include="Generate.fsx" />
     <None Include="Header.fsx" />
+    <Compile Include="FormResult.fs" />
+    <Compile Include="FormQuery.fs" />
+    <Compile Include="Validate.fs" />
+    <Compile Include="InputFactories.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
