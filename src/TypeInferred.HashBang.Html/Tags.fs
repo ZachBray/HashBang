@@ -116,6 +116,13 @@ module Unchecked =
     let setEmpty<'TElement, 'TTypeScriptElement> n t =
         { t with Attributes = t.Attributes |> Map.add n None } : HtmlTag<'TElement, 'TTypeScriptElement>
 
+    let addAttributeValue<'TElement, 'TTypeScriptElement> n v (t : HtmlTag<'TElement, 'TTypeScriptElement>) = 
+        let updatedAttributes =
+            match t.Attributes.TryFind n with
+            | Some None -> failwith "Unexpected attribute type"
+            | Some(Some "") | None -> t.Attributes |> Map.add n (Some v)
+            | Some(Some oldV) -> t.Attributes |> Map.add n (Some(oldV + " " + v))
+        { t with Attributes = updatedAttributes } : HtmlTag<'TElement, 'TTypeScriptElement>
 
     [<JSEmitInline("{0}")>]
     let unsafeUnbox<'T> (x:obj) : 'T = failwithf "JavaScript only"
@@ -174,6 +181,12 @@ module Element =
 
     /// Specifies one or more classnames for an element (refers to a class in a style sheet)
     let classes vs = set "class" (vs |> String.concat " ")
+
+    /// Specifies one or more classnames for an element (refers to a class in a style sheet)
+    let appendClass v = addAttributeValue "class" v
+
+    /// Specifies one or more classnames for an element (refers to a class in a style sheet)
+    let appendClasses vs = addAttributeValue "class" (vs |> String.concat " ")
 
     /// Specifies whether the content of an element is editable or not
     let contenteditable v = set "contenteditable" v

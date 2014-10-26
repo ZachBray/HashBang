@@ -95,7 +95,9 @@ type JsonReader(jsonStr : string) =
                 else
                     consume()
                     readUpToExcl (count + 1) (c = '\\')
-            | _ -> failwith "Out of range."
+            | _ -> count
+            // TODO: check this is ok... 
+            // used to be: | _ -> failwith "Out of range."
         let startPosition = position
         let count = readUpToExcl 0 false
         jsonStr.Substring(startPosition, count)

@@ -29,9 +29,3 @@ type JQuery with
         let text = Compiler.compileSection tag
         let acc = jq.before(text)
         Compiler.initialize tag
-
-let (==>) x ys = x |> Element.appendTags ys
-
-let (-->) x y = x |> Element.appendText [y]
-
-let (+.) x ys = x |> Element.classes ys

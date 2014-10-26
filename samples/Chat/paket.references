@@ -1,6 +1,7 @@
 ﻿FunScript
 FunScript.TypeScript.Binding.lib
 FunScript.TypeScript.Binding.jquery
+FunScript.TypeScript.Binding.bootstrap
 FSharp.Control.Reactive
 SimpleInjector
 Microsoft.Owin

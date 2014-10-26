@@ -5,7 +5,7 @@ open FunScript
 [<JS>]
 type FormInvalidReason =
     | Unset
-    | Error of string
+    | FieldError of string
 
 [<JS>]
 type 'TValue FormQueryResult = 

@@ -6,6 +6,8 @@ open TypeInferred.HashBang.Html.Extensions
 open Chat.Client
 open Chat.Client.Stylesheets
 
+let (-->) tag text = tag |> Element.appendText [text]
+
 let ie8MediaFix = """<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
