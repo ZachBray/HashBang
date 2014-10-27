@@ -55,6 +55,7 @@
     <Compile Include="Client.Stylesheets.fs" />
     <Compile Include="Client.Scripts.fs" />
     <Compile Include="Client.Routes.fs" />
+    <Compile Include="Client.ApplicationState.fs" />
     <Compile Include="Client.Templates.fs" />
     <Compile Include="Client.Pages.LogIn.fs" />
     <Compile Include="Client.Pages.SignUp.fs" />

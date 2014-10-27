@@ -13,7 +13,7 @@ NUGET
       FSharp.Compiler.Service (>= 0.0.62)
       Microsoft.AspNet.Razor (2.0.30506.0)
       RazorEngine (3.3.0)
-    FunScript (1.1.72)
+    FunScript (1.1.76)
     FunScript.TypeScript.Binding.bootstrap (1.1.0.37)
       FunScript.TypeScript.Binding.jquery (>= 1.1.0.37)
       FunScript.TypeScript.Binding.lib (>= 1.1.0.37)

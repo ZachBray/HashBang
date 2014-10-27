@@ -4,6 +4,7 @@ module Chat.Client.Templates
 open TypeInferred.HashBang.Html
 open TypeInferred.HashBang.Html.Extensions
 open Chat.Client
+open Chat.Client.ApplicationState
 open Chat.Client.Stylesheets
 
 let (-->) tag text = tag |> Element.appendText [text]
@@ -47,6 +48,35 @@ let navLink description uri currentUri =
         a [] [] --> description |> A.href uri
     ]
 
+let alertsSection() =
+    div [] [] |> Element.appendSetUpByJQuery(fun q ->
+        alerts.Publish |> Observable.subscribe (fun (alertType, title, error) ->
+            let alertClass =
+                match alertType with
+                | Success -> Bootstrap.alert_success
+                | Info -> Bootstrap.alert_info
+                | Warning -> Bootstrap.alert_warning
+                | Danger -> Bootstrap.alert_danger
+            div [Bootstrap.alert; alertClass; Bootstrap.alert_dismissible] [
+                button [] [
+                    span [] [] |> Element.appendText ["&times;"]
+                    |> Unchecked.set "aria-hidden" "true"
+
+                    span [Bootstrap.sr_only] [] |> Element.appendText ["Close"]
+                ] 
+                |> Button.``type`` Type.Button
+                |> Element.``class`` Bootstrap.close
+                |> Unchecked.set "data-dismiss" "alert"
+
+                strong [] [] |> Element.appendText [title]
+            ] 
+            |> Element.appendText [error]
+            |> q.append
+            |> fun r -> r.Dispose() // Alerts should not set up any resources
+                                    // so we get rid of them straight away.
+        )
+    )
+
 let insideNavBar currentBaseUri title blurb children =
     body [] [
         div [Application.site_wrapper] [
@@ -72,6 +102,8 @@ let insideNavBar currentBaseUri title blurb children =
                         h1 [] [] --> title
 
                         p [Bootstrap.lead] [] --> blurb
+
+                        alertsSection()
 
                         div [] children
                     ]

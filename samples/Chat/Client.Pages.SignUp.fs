@@ -64,8 +64,11 @@ type SignUpPage(authService : IAuthenticationService) =
             <*> Inputs.text "Second Name" "Bloggs" Validate.isNotEmpty
             |> FormQuery.withSubmitButton "Sign Up" (fun userDetails ->
                 async {
-                    let! _ = authService.SignUp userDetails
-                    Globals.location.href <- Routes.Conversation.View.CreateUri()
+                    try
+                        let! _ = authService.SignUp userDetails
+                        Globals.location.href <- Routes.Conversation.View.CreateUri()
+                    with ex ->
+                        ApplicationState.alerts.Trigger(ApplicationState.Danger, "Error", ex.Message)
                 })
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap
