@@ -66,18 +66,18 @@ type SignUpPage(authService : IAuthenticationService) =
             <*> Inputs.text "Second Name" "Bloggs" Validate.isNotEmpty
             |> FormQuery.withSubmitButton "Sign Up" (fun userDetails ->
                 Async.FromContinuations(fun (onValue, onError, _) ->
-                    authService.SignUp(userDetails) 
-                    |> Observable.subscribeWithCallbacks
-                        (fun token -> 
-                            authenticationState := LoggedIn token
-                            Globals.location.href <- Routes.Conversation.View.CreateUri()
-                            onValue())
-                        (fun ex -> 
-                            ApplicationState.alerts.Trigger(Danger, "Failed to sign up.", ex.Message)
-                            onValue())
-                        (fun () ->
-                            ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
-                    |> ignore //TODO: capture for log out
+                    sessionSubscription :=
+                        authService.SignUp(userDetails) 
+                        |> Observable.subscribeWithCallbacks
+                            (fun token -> 
+                                authenticationState := LoggedIn token
+                                Globals.location.href <- Routes.Conversation.View.CreateUri()
+                                onValue())
+                            (fun ex -> 
+                                ApplicationState.alerts.Trigger(Danger, "Failed to sign up.", ex.Message)
+                                onValue())
+                            (fun () ->
+                                ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
                 ))
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap

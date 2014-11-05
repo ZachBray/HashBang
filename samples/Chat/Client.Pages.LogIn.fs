@@ -47,17 +47,17 @@ type LogInPage(authService : IAuthenticationService) =
             <*> Inputs.checkbox "Remember me?" id
             |> FormQuery.withSubmitButton "Log in" (fun info ->
                 Async.FromContinuations(fun (onValue, onError, _) ->
-                    authService.LogIn(info.Email, info.Password) 
-                    |> Observable.subscribeWithCallbacks
-                        (fun token -> 
-                            authenticationState := LoggedIn token
-                            Globals.location.href <- Routes.Conversation.View.CreateUri()
-                            onValue())
-                        (fun ex -> 
-                            ApplicationState.alerts.Trigger(Danger, "Failed to log in.", ex.Message)
-                            onValue())
-                        (fun () -> ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
-                    |> ignore //TODO: capture for log out
+                    sessionSubscription :=
+                        authService.LogIn(info.Email, info.Password) 
+                        |> Observable.subscribeWithCallbacks
+                            (fun token -> 
+                                authenticationState := LoggedIn token
+                                Globals.location.href <- Routes.Conversation.View.CreateUri()
+                                onValue())
+                            (fun ex -> 
+                                ApplicationState.alerts.Trigger(Danger, "Failed to log in.", ex.Message)
+                                onValue())
+                            (fun () -> ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
                 ))
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap

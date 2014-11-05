@@ -48,6 +48,11 @@ let navLink description uri currentUri =
         a [] [] --> description |> A.href uri
     ]
 
+let navCommand description action =
+    li [] [
+        a [] [] --> description |> Element.onclick(fun _ -> action())
+    ]
+
 let alertsSection() =
     div [] [] |> Element.appendSetUpByJQuery(fun q ->
         alerts.Publish |> Observable.subscribe (fun (alertType, title, error) ->
@@ -87,10 +92,14 @@ let insideNavBar currentBaseUri title blurb children =
                         div [Application.inner] [
                             h3 [Application.masthead_brand] [] --> "Chat"
                             div [Bootstrap.nav; Application.masthead_nav] [
-                                // Here we use a type-safe uri builder to that ensures our link is correct
-                                // wherever we reference it.
-                                navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
-                                navLink "Sign Up" (Routes.Session.SignUp.CreateUri()) currentBaseUri
+                                match !ApplicationState.authenticationState with
+                                | LoggedIn _ ->
+                                    yield upcast navCommand "Log Out" ApplicationState.logOut
+                                | NotLoggedIn _ ->
+                                    // Here we use a type-safe uri builder to that ensures our link is correct
+                                    // wherever we reference it.
+                                    yield upcast navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
+                                    yield upcast navLink "Sign Up" (Routes.Session.SignUp.CreateUri()) currentBaseUri
                             ]
                         ]
                     ]
