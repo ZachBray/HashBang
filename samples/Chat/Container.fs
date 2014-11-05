@@ -15,6 +15,7 @@ let private container =
             [|
                 Lifestyle.Singleton.CreateRegistration<LogInPage>(container)
                 Lifestyle.Singleton.CreateRegistration<SignUpPage>(container)
+                Lifestyle.Singleton.CreateRegistration<ConversationPage>(container)
             |])
         container.Verify()
         container

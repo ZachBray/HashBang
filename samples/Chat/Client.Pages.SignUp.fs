@@ -2,6 +2,7 @@
 
 open System
 open FunScript.TypeScript
+open FunScript.Rx
 open TypeInferred.HashBang
 open TypeInferred.HashBang.Html
 open TypeInferred.HashBang.Bootstrap
@@ -10,6 +11,7 @@ open Chat.Domain
 open Chat.Client
 open Chat.Client.Stylesheets
 open Chat.Server
+open Chat.Client.ApplicationState
 
 [<FunScript.JS>]
 type SignUpPage(authService : IAuthenticationService) =
@@ -63,13 +65,20 @@ type SignUpPage(authService : IAuthenticationService) =
             <*> Inputs.text "First Name" "Joe" Validate.isNotEmpty
             <*> Inputs.text "Second Name" "Bloggs" Validate.isNotEmpty
             |> FormQuery.withSubmitButton "Sign Up" (fun userDetails ->
-                async {
-                    try
-                        let! _ = authService.SignUp userDetails
-                        Globals.location.href <- Routes.Conversation.View.CreateUri()
-                    with ex ->
-                        ApplicationState.alerts.Trigger(ApplicationState.Danger, "Error", ex.Message)
-                })
+                Async.FromContinuations(fun (onValue, onError, _) ->
+                    authService.SignUp(userDetails) 
+                    |> Observable.subscribeWithCallbacks
+                        (fun token -> 
+                            authenticationState := LoggedIn token
+                            Globals.location.href <- Routes.Conversation.View.CreateUri()
+                            onValue())
+                        (fun ex -> 
+                            ApplicationState.alerts.Trigger(Danger, "Failed to sign up.", ex.Message)
+                            onValue())
+                        (fun () ->
+                            ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
+                    |> ignore //TODO: capture for log out
+                ))
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap
         ]

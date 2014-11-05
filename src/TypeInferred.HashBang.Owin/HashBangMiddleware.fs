@@ -57,7 +57,7 @@ type HashBangMiddleware(next, options:HashBangOptions) =
     let compiledScript =
         let isCompressionEnabled = options.Advanced.IsJavaScriptCompressionEnabled
         let script = ClientSide.createPageScript(pageTypes, options.ErrorPageTemplate)
-        let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled)
+        let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled, isEventMappingEnabled = false)
         if isCompressionEnabled then compressor.Value.Compress raw
         else raw
     do logger.Log(Info, fun () -> "Completed compilation of F#/FunScript in IPage types.")

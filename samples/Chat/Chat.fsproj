@@ -59,6 +59,7 @@
     <Compile Include="Client.Templates.fs" />
     <Compile Include="Client.Pages.LogIn.fs" />
     <Compile Include="Client.Pages.SignUp.fs" />
+    <Compile Include="Client.Pages.Conversation.fs" />
     <Compile Include="Container.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
@@ -1775,6 +1776,83 @@
       <ItemGroup>
         <Reference Include="Microsoft.Owin.Host.HttpListener">
           <HintPath>..\..\packages\Microsoft.Owin.Host.HttpListener\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework'">
+      <Choose>
+        <When Condition="$(TargetFrameworkVersion) == 'v1.0'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v1.1'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v2.0'">
+        </When>
+        <When Condition="$(TargetFrameworkVersion) == 'v3.5'">
+        </When>
+        <Otherwise>
+          <ItemGroup>
+            <Reference Include="FunScript.Rx">
+              <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+              <Private>True</Private>
+              <Paket>True</Paket>
+            </Reference>
+          </ItemGroup>
+        </Otherwise>
+      </Choose>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'MonoAndroid'">
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'MonoTouch'">
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'Silverlight'">
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'Windows'">
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'WindowsPhoneApp'">
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="FunScript.Rx">
+          <HintPath>..\..\packages\FunScript.Rx\lib\net40\FunScript.Rx.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

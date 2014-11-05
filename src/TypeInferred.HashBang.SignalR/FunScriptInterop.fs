@@ -5,6 +5,7 @@ open System.Reflection
 open System.Collections.Generic
 open Microsoft.FSharp.Quotations
 open FunScript
+open FunScript.Rx
 open TypeInferred.HashBang
 open TypeInferred.HashBang.SignalR.ServiceProtocol
 
@@ -137,25 +138,6 @@ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     return v.toString(16);
 }); """)>]
     let random() = System.Guid.NewGuid().ToString() 
-        
-
-[<FunScript.JS>]
-module ObservableEx = // TODO: Create FunScript mapping from Rx.NET to rx.js
-
-    type private CreateObservable<'T>(f: IObserver<'T> -> IDisposable) =
-        interface IObservable<'T> with
-            member x.Subscribe(observer) = f observer
-
-    let create f = CreateObservable(f) :> IObservable<'T>
-
-//    type private ActionObserver<'T> (onNext : 'T -> unit, onError : exn -> unit, onCompleted : unit -> unit) =    
-//        interface IObserver<'T> with
-//             member this.OnNext v = onNext v
-//             member this.OnError e = onError e
-//             member this.OnCompleted() = onCompleted()
-//
-//    let subscribe onNext onError onCompleted (xs : IObservable<'T>) =
-//        xs.Subscribe(ActionObserver(onNext, onError, onCompleted))
 
 [<FunScript.JS>]
 module DisposableEx =
@@ -191,7 +173,7 @@ module internal ServicesConnection =
 
     let subscribe(serviceName, memberName, typeArgs, args) =
         let connection = connection.Value
-        ObservableEx.create(fun observer ->
+        Observable.createWithDisposable(fun observer ->
             let correlationId = GuidEx.random()
             let resources = new DisposableEx.SerialDisposable()
             let hasCompleted = ref false
@@ -292,7 +274,6 @@ module Interop =
                             %%argArrayExpression) @>
                 deserializeAsyncExpr itemType serializedAsyncResult
                 |> Some
-                //|> compiler.Compile returnStrategy
             | n when n = iobservableName ->
                 let serializedIObservable =
                     <@ ServicesConnection.subscribe(
@@ -301,12 +282,13 @@ module Interop =
                             %%argArrayExpression) @>
                 deserializeObservableExpr itemType serializedIObservable
                 |> Some
-                //|> compiler.Compile returnStrategy
             | _ -> None
         | _ -> None
 
     let components = [
-        CompilerComponent.unaryTyped 
+        yield! FunScript.Rx.Interop.components()
+        
+        yield CompilerComponent.unaryTyped 
             <@ Scripts.getRoute @>
             (fun t _ ->
                 t.GetCustomAttributes(false) |> Seq.tryPick (fun attribute ->
@@ -315,7 +297,7 @@ module Interop =
                     | _ -> None  
                 ))
 
-        CompilerComponent.create (fun _ compiler returnStrategy expr ->
+        yield CompilerComponent.create (fun _ compiler returnStrategy expr ->
             match expr with
             | Patterns.Call(Some _, methodInfo, argExpressions) 
               when ServiceEx.isAHashBangService methodInfo.DeclaringType ->

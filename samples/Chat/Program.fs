@@ -13,7 +13,15 @@ let settings =
         ErrorPageTemplate = <@ Client.Templates.errorTemplate @>
         Pages = Container.createPages()
         Services = Container.createServices()
-        Advanced = { AdvancedHashbangOptions.Default with IsJavaScriptCompressionEnabled = false }
+        Advanced = 
+        { 
+            AdvancedHashbangOptions.Default with 
+#if DEBUG
+                IsJavaScriptCompressionEnabled = false
+#else
+                IsJavaScriptCompressionEnabled = true
+#endif
+        }
     }
 
 [<EntryPoint>]

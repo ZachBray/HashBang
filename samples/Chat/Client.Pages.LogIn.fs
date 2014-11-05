@@ -1,6 +1,7 @@
 ﻿namespace Chat.Client.Pages
 
 open System
+open FunScript.Rx
 open FunScript.TypeScript
 open TypeInferred.HashBang
 open TypeInferred.HashBang.Html
@@ -9,6 +10,7 @@ open Chat.Domain.Query
 open Chat.Domain
 open Chat.Client
 open Chat.Client.Stylesheets
+open Chat.Client.ApplicationState
 open Chat.Server
 
 [<FunScript.JS>]
@@ -43,10 +45,20 @@ type LogInPage(authService : IAuthenticationService) =
             <*> Inputs.text "Email" "joebloggs@gmail.com" (Validate.isNotEmpty >> isEmail >> isRegistered)
             <*> Inputs.password "Password" "my_s3cr3t" (Validate.isAtLeast 8)
             <*> Inputs.checkbox "Remember me?" id
-            |> FormQuery.withSubmitButton "Log in" (fun logInInfo ->
-                async {
-                    do! Async.Sleep 2000
-                })
+            |> FormQuery.withSubmitButton "Log in" (fun info ->
+                Async.FromContinuations(fun (onValue, onError, _) ->
+                    authService.LogIn(info.Email, info.Password) 
+                    |> Observable.subscribeWithCallbacks
+                        (fun token -> 
+                            authenticationState := LoggedIn token
+                            Globals.location.href <- Routes.Conversation.View.CreateUri()
+                            onValue())
+                        (fun ex -> 
+                            ApplicationState.alerts.Trigger(Danger, "Failed to log in.", ex.Message)
+                            onValue())
+                        (fun () -> ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
+                    |> ignore //TODO: capture for log out
+                ))
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap
         ]

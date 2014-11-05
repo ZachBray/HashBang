@@ -9,3 +9,5 @@ Microsoft.Owin.Security
 Microsoft.Owin.Hosting
 Microsoft.Owin.Diagnostics
 Microsoft.Owin.Host.HttpListener
+
+FunScript.Rx
