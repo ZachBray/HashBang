@@ -64,7 +64,7 @@ type LogInPage(authService : IAuthenticationService) =
         ]
 
     interface IPage with
-        member __.TryHandle request = 
+        member val RequestHandler = 
             Routes.Session.LogIn.CreateHandler (fun ps -> 
                 async { return Some(createPage()) }
-            ) request.Path request.QueryParams
+            )

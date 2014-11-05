@@ -20,6 +20,5 @@ type internal RouteAttribute(path : string) =
     member val Path = path
 
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple=false)>]
-type ClientCannotAccessAttribute(path : string) =
+type ClientCannotAccessAttribute() =
     inherit Attribute()
-    member val Path = path

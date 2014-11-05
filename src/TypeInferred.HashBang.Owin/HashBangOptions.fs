@@ -9,9 +9,11 @@ open Microsoft.FSharp.Linq
 [<JS>]
 type Request = { Path: Path;  QueryParams: QueryParams }
 
+type RequestHandler = Path -> QueryParams -> HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement> option Async
+
 [<JS>]
 type IPage =
-    abstract TryHandle : Request -> HtmlTag<IBodyElement, FunScript.TypeScript.HTMLBodyElement> option Async
+    abstract RequestHandler : RequestHandler
 
 type AdvancedHashbangOptions =
     {

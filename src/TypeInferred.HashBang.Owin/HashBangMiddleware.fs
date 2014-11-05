@@ -67,9 +67,9 @@ type HashBangMiddleware(next, options:HashBangOptions) =
         options.ServerServedPageTemplate(page, hashBangScript)
         |> Compiler.compilePage
 
-    let findPage request =
+    let findPage(request : Request) =
         options.Pages |> List.tryPickAsync (fun page ->
-            page.TryHandle request)
+            page.RequestHandler request.Path request.QueryParams)
         |> Async.map (Option.map compilePage)
     
     let rootPage = findPage { Path = [||]; QueryParams = Map.empty } |> Async.cache

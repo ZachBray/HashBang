@@ -32,9 +32,8 @@ let createPageScript(pageTypes, errorPageTemplate) =
                 if i = -1 then "/"
                 else address.Substring(i + 2, address.Length - i - 2)
             let segments, queryParams = WebUtility.SplitRelativeUri path
-            let request = { Path = segments; QueryParams = queryParams }
             async {
-                let! newHtml = pages |> List.tryPickAsync (fun (p : IPage) -> p.TryHandle request)
+                let! newHtml = pages |> List.tryPickAsync (fun (p : IPage) -> p.RequestHandler segments queryParams)
                 let newHtml =
                     match newHtml with
                     | None -> (%errorPageTemplate) ("Error! Unable to find: " + path)
