@@ -2,7 +2,7 @@
 [<FunScript.JS>]
 module Chat.Domain.Query
 
-type UserId = UserId of string
+open Chat.Domain.Identifiers
 
 /// Represents a user of the chat system
 type User =
@@ -16,20 +16,20 @@ type User =
 /// Represents a message in a conversation
 type Message =
     {
+        CorrelationId : MessageId
         Sender : UserId
         Time : string
         EscapedContent : string
     }
 
-type ConversationId = ConversationId of string
-
 /// Represents a conversation between multiple users
 type Conversation =
     {
-        Id : ConversationId
+        CorrelationId : ConversationId
         Topic : string
         Participants : UserId[]
     }
 
-/// Provided by the server on log in. Allows access to secured methods.
-type AccessToken = AccessToken of string
+type Result<'T> =
+    | Success of 'T
+    | Failure of string

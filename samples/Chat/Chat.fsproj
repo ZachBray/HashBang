@@ -46,16 +46,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain.Identifiers.fs" />
     <Compile Include="Domain.Query.fs" />
     <Compile Include="Domain.Command.fs" />
     <Compile Include="Domain.Validation.fs" />
-    <Compile Include="Server.AuthenticationService.fs" />
+    <Compile Include="Server.Authentication.fs" />
+    <Compile Include="Server.Conversation.fs" />
     <None Include="App.css" />
     <Compile Include="Client.Stylesheets.fs" />
     <Compile Include="Client.Scripts.fs" />
     <Compile Include="Client.Routes.fs" />
     <Compile Include="Client.ViewModels.Alerts.fs" />
     <Compile Include="Client.ViewModels.Authentication.fs" />
+    <Compile Include="Client.ViewModels.Conversation.fs" />
     <Compile Include="Client.Templates.fs" />
     <Compile Include="Client.Pages.LogIn.fs" />
     <Compile Include="Client.Pages.SignUp.fs" />

@@ -19,6 +19,8 @@ type ConversationPage(navBarPageTemplate : NavBarPageTemplate) =
     
     let currentUri = Routes.Conversation.View.CreateUri() 
 
+
+
     let createPage() =
         navBarPageTemplate.Apply
             currentUri

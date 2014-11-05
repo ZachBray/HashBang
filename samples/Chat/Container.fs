@@ -14,7 +14,11 @@ let private container =
         // Services
         let authentication = Lifestyle.Singleton.CreateRegistration<AuthenticationService>(container)
         container.AddRegistration(typeof<IAuthenticationService>, authentication)
-        container.RegisterAll(typeof<IService>, authentication)
+        container.AddRegistration(typeof<IAccessTokenExchangeService>, authentication)
+        container.AddRegistration(typeof<IUserService>, authentication)
+        let conversation = Lifestyle.Singleton.CreateRegistration<ConversationService>(container)
+        container.AddRegistration(typeof<IConversationService>, conversation)
+        container.RegisterAll(typeof<IService>, authentication, conversation)
 
         // View Models
         container.Register<AlertsViewModel>(Lifestyle.Singleton)

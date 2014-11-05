@@ -46,6 +46,7 @@ let (|UInt64Type|_|) t = isType<uint64> t
 let (|FloatType|_|) t = isType<float> t
 let (|DecimalType|_|) t = isType<decimal> t
 let (|BoolType|_|) t = isType<bool> t
+let (|GuidType|_|) t = isType<Guid> t
 
 type JsonReader(jsonStr : string) =
     let mutable position = 0
@@ -221,6 +222,7 @@ let precomputeDeserializerAux (precomputeDeserializer : _ -> _ Lazy) t : JsonRea
     | FloatType _ -> fun jr -> readValue Double.Parse jr
     | DecimalType _ -> fun jr -> readValue Decimal.Parse jr
     | BoolType _ -> fun jr -> readValue Boolean.Parse jr
+    | GuidType _ -> fun jr -> readValue Guid.Parse jr
     | _ -> failwith ("Cannot serialize type: " + t.Name)
 
 type StringWriter with
@@ -330,6 +332,10 @@ let precomputeSerializerAux (precomputeSerializer : _ -> _ Lazy) t : obj -> Stri
                 | true -> "true"
                 | false -> "false"
             sb.Append(value) |> ignore
+    | GuidType extract ->
+        fun obj (sb : StringWriter) ->
+            let x = extract obj
+            sb.Append(x.ToString()) |> ignore
     | _ -> failwith ("Cannot serialize type: " + t.Name)
 
 let memoizeRec f  =
