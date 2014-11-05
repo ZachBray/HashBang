@@ -10,8 +10,8 @@ open Chat.Domain.Query
 open Chat.Domain
 open Chat.Client
 open Chat.Client.Stylesheets
-open Chat.Client.ApplicationState
-open Chat.Server
+open Chat.Client.ViewModels
+open Chat.Client.Templates
 
 [<FunScript.JS>]
 type LogInInfo =
@@ -23,16 +23,16 @@ type LogInInfo =
         
 
 [<FunScript.JS>]
-type LogInPage(authService : IAuthenticationService) =
+type LogInPage(authViewModel : AuthenticationViewModel, navBarPageTemplate : NavBarPageTemplate) =
 
     let currentUri = Routes.Session.LogIn.CreateUri() 
 
     let isEmail = Validate.checkThat Validation.isEmail "Must be a valid email."
 
-    let isRegistered = Validate.checkThatAsync authService.IsEmailRegistered "Must be a registered email."
+    let isRegistered = Validate.checkThatAsync authViewModel.IsEmailRegistered "Must be a registered email."
 
     let createPage() =
-        Templates.insideNavBar
+        navBarPageTemplate.Apply
             currentUri
             "Log In" 
             "Please fill in your email address and password or sign-up for a new account." [
@@ -46,19 +46,8 @@ type LogInPage(authService : IAuthenticationService) =
             <*> Inputs.password "Password" "my_s3cr3t" (Validate.isAtLeast 8)
             <*> Inputs.checkbox "Remember me?" id
             |> FormQuery.withSubmitButton "Log in" (fun info ->
-                Async.FromContinuations(fun (onValue, onError, _) ->
-                    sessionSubscription :=
-                        authService.LogIn(info.Email, info.Password) 
-                        |> Observable.subscribeWithCallbacks
-                            (fun token -> 
-                                authenticationState := LoggedIn token
-                                Globals.location.href <- Routes.Conversation.View.CreateUri()
-                                onValue())
-                            (fun ex -> 
-                                ApplicationState.alerts.Trigger(Danger, "Failed to log in.", ex.Message)
-                                onValue())
-                            (fun () -> ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
-                ))
+                authViewModel.LogIn(info.Email, info.Password)
+            )
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap
         ]

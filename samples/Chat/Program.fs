@@ -9,10 +9,11 @@ open TypeInferred.HashBang
 let settings =
     {
         /// Note: this is only a template for the first rendering of the page.
-        ServerServedPageTemplate = Client.Templates.headedPage
-        ErrorPageTemplate = <@ Client.Templates.errorTemplate @>
+        ServerServedPageTemplate = Client.Templates.Shared.headedPage
+        ErrorPageTemplate = <@ Client.Templates.Shared.errorTemplate @>
         Pages = Container.createPages()
         Services = Container.createServices()
+        IsRegisteredAsSingleton = Container.isRegisteredAsSingleton
         Advanced = 
         { 
             AdvancedHashbangOptions.Default with 

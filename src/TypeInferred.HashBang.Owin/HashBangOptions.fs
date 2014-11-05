@@ -58,6 +58,9 @@ type HashBangOptions =
         /// This is the list of services that can be injected into the constructors of pages.
         /// When client-side rendering takes place proxies to these services will be injected instead.
         Services : IService list
+        /// This function should call out to whatever container the application is using and return
+        /// whether or not the type is registered as a singleton.
+        IsRegisteredAsSingleton : System.Type -> bool
         /// These are advanced options that you don't have to alter from the defaults to get started.
         /// Initially you can just use `AdvancedHashbangOptions.Default`
         Advanced : AdvancedHashbangOptions

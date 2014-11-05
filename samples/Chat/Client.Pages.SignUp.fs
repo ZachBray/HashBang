@@ -10,11 +10,11 @@ open Chat.Domain.Command
 open Chat.Domain
 open Chat.Client
 open Chat.Client.Stylesheets
-open Chat.Server
-open Chat.Client.ApplicationState
+open Chat.Client.Templates
+open Chat.Client.ViewModels
 
 [<FunScript.JS>]
-type SignUpPage(authService : IAuthenticationService) =
+type SignUpPage(authViewModel : AuthenticationViewModel, navBarPageTemplate : NavBarPageTemplate) =
     
     let password = ref None
     let passwordConfirmation = ref None
@@ -37,12 +37,12 @@ type SignUpPage(authService : IAuthenticationService) =
     let isNotRegistered = 
         Validate.checkThatAsync (fun email ->
             async { 
-                let! isRegistered = authService.IsEmailRegistered email
+                let! isRegistered = authViewModel.IsEmailRegistered email
                 return not isRegistered
             }) "Email is already registered."
 
     let createPage() =
-        Templates.insideNavBar 
+        navBarPageTemplate.Apply
             currentUri
             "Sign Up" 
             "Please fill in your details." [
@@ -64,21 +64,7 @@ type SignUpPage(authService : IAuthenticationService) =
                     >> isSameAs password "Passwords must match.")
             <*> Inputs.text "First Name" "Joe" Validate.isNotEmpty
             <*> Inputs.text "Second Name" "Bloggs" Validate.isNotEmpty
-            |> FormQuery.withSubmitButton "Sign Up" (fun userDetails ->
-                Async.FromContinuations(fun (onValue, onError, _) ->
-                    sessionSubscription :=
-                        authService.SignUp(userDetails) 
-                        |> Observable.subscribeWithCallbacks
-                            (fun token -> 
-                                authenticationState := LoggedIn token
-                                Globals.location.href <- Routes.Conversation.View.CreateUri()
-                                onValue())
-                            (fun ex -> 
-                                ApplicationState.alerts.Trigger(Danger, "Failed to sign up.", ex.Message)
-                                onValue())
-                            (fun () ->
-                                ApplicationState.alerts.Trigger(Danger, "Server connection interrupted.", "Please refresh the page."))
-                ))
+            |> FormQuery.withSubmitButton "Sign Up" authViewModel.SignUp
             |> FormQuery.withDisablingFieldset
             |> FormQuery.runBootstrap
         ]

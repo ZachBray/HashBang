@@ -8,18 +8,19 @@ open TypeInferred.HashBang.Html
 open TypeInferred.HashBang.Bootstrap
 open Chat.Domain.Command
 open Chat.Domain
+open Chat.Server
 open Chat.Client
 open Chat.Client.Stylesheets
-open Chat.Server
-open Chat.Client.ApplicationState
+open Chat.Client.Templates
+open Chat.Client.ViewModels
 
 [<FunScript.JS>]
-type ConversationPage(authService : IAuthenticationService) =
+type ConversationPage(navBarPageTemplate : NavBarPageTemplate) =
     
     let currentUri = Routes.Conversation.View.CreateUri() 
 
     let createPage() =
-        Templates.insideNavBar 
+        navBarPageTemplate.Apply
             currentUri
             "Conversation" 
             "Talk to people."

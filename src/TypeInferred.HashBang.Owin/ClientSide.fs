@@ -7,20 +7,45 @@ open TypeInferred.HashBang
 open TypeInferred.HashBang.Owin.Utilities
 open TypeInferred.HashBang.Routing
 open TypeInferred.HashBang.Html
+open System.Collections.Generic
 
-let createPages(pageTypes : System.Type list) =
+[<FunScript.JS>]
+module internal Singleton =
+    let instances = Dictionary<string, obj>()
+
+
+let rec construct(isSingletonType, t : System.Type) =
+    if ServiceEx.isAHashBangService t then Expr.Value(null, t)
+    else
+        let constructors = t.GetConstructors()
+        if constructors.Length <> 1 then failwith "Multiple constuctors not supported in IPage implementation constructor parameters."
+        let consInfo = constructors.[0]
+        let args =
+            consInfo.GetParameters() |> Array.map (fun parameter ->
+                construct(isSingletonType, parameter.ParameterType))
+            |> Array.toList
+        let constructionExpr = Expr.NewObject(consInfo, args)
+        if isSingletonType t then
+            let boxedConstructionExpr = Expr.Coerce(constructionExpr, typeof<obj>)
+            let typeName = t.FullName
+            let findOrCreateExpr =
+                <@@
+                    if not (Singleton.instances.ContainsKey typeName)then
+                        Singleton.instances.Add(typeName, %%boxedConstructionExpr)
+                    Singleton.instances.[typeName]
+                @@>
+            Expr.Coerce(findOrCreateExpr, t)
+        else constructionExpr
+
+let createPages(isSingletonType, pageTypes : System.Type list) =
     let pageExprs =
         pageTypes |> List.map (fun pageType ->
-            let consInfo = pageType.GetConstructors().[0]
-            let parameters =
-                consInfo.GetParameters() |> Array.map (fun parameter ->
-                    Expr.Value(null, parameter.ParameterType))
-                |> Array.toList
-            Expr.Coerce(Expr.NewObject(consInfo, parameters), typeof<IPage>))
+            let constructionExpr = construct(isSingletonType, pageType)
+            Expr.Coerce(constructionExpr, typeof<IPage>))
     Expr.NewArray(typeof<IPage>, pageExprs)
 
-let createPageScript(pageTypes, errorPageTemplate) =
-    let pages = createPages pageTypes
+let createPageScript(isSingletonType, pageTypes, errorPageTemplate) =
+    let pages = createPages(isSingletonType, pageTypes)
     <@
         let pages  = (%%pages : IPage[]) |> Array.toList
         let resources = ref None

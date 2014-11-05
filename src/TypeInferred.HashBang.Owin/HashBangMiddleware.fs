@@ -33,33 +33,18 @@ type HashBangMiddleware(next, options:HashBangOptions) =
             logger.Log(Debug, fun () -> "Initializing JavaScriptCompressor.")
             JavaScriptCompressor()
 
-    do logger.Log(Debug, fun () -> "Verifying IPage constructors.")
-    let pageTypes =
-        options.Pages |> List.map (fun page ->
-            let pageType = page.GetType()
-            match pageType.GetConstructors() with
-            | [|consInfo|] ->
-                let areAllParametersServices =
-                    consInfo.GetParameters() |> Array.forall (fun parameter ->
-                        ServiceEx.isAHashBangService parameter.ParameterType)
-                if not areAllParametersServices then 
-                    logger.Log(Error, fun () -> sprintf "Pages can only take service types as constructor parameters but found: %s" pageType.FullName)
-                    failwithf "Pages can only take service types as constructor parameters but found: %s" pageType.FullName
-                else pageType 
-            | _ -> 
-                logger.Log(Error, fun () -> "Pages must have exactly one constructor.")  
-                failwithf "Pages must have exactly one constructor."
-        )
-    do logger.Log(Debug, fun () -> "Completed verifification of IPage constructors.")
-
-
     do logger.Log(Info, fun () -> "Compiling F#/FunScript in IPage types.")
     let compiledScript =
-        let isCompressionEnabled = options.Advanced.IsJavaScriptCompressionEnabled
-        let script = ClientSide.createPageScript(pageTypes, options.ErrorPageTemplate)
-        let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled, isEventMappingEnabled = false)
-        if isCompressionEnabled then compressor.Value.Compress raw
-        else raw
+        try
+            let isCompressionEnabled = options.Advanced.IsJavaScriptCompressionEnabled
+            let pageTypes = options.Pages |> List.map (fun page -> page.GetType())
+            let script = ClientSide.createPageScript(options.IsRegisteredAsSingleton, pageTypes, options.ErrorPageTemplate)
+            let raw = FunScript.Compiler.Compiler.Compile(script, funScriptComponentInjector, noReturn = true, shouldCompress = isCompressionEnabled, isEventMappingEnabled = false)
+            if isCompressionEnabled then compressor.Value.Compress raw
+            else raw
+        with ex ->
+            logger.Log(Error, fun () -> ex.Message)
+            raise ex
     do logger.Log(Info, fun () -> "Completed compilation of F#/FunScript in IPage types.")
 
     let compilePage page =
