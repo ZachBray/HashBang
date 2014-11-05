@@ -49,7 +49,6 @@
     <Compile Include="Domain.Query.fs" />
     <Compile Include="Domain.Command.fs" />
     <Compile Include="Domain.Validation.fs" />
-    <Compile Include="Server.Utilities.Cryptography.fs" />
     <Compile Include="Server.AuthenticationService.fs" />
     <None Include="App.css" />
     <Compile Include="Client.Stylesheets.fs" />
