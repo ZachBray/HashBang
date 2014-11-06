@@ -9,6 +9,7 @@ let labelSpace = Bootstrap.col_xs_2
 let labelOffset = Bootstrap.col_xs_offset_2
 let formSpace = Bootstrap.col_xs_10
 
+
 /// Adds a placeholder to an input element
 let withPlaceholder placeholderText f =
     f |> FormQuery.mapElements (fun elements context ->
@@ -96,6 +97,42 @@ let withErrorIconFeedback f =
                             |> ignore))
             ]))
 
+
+[<FunScript.JS>]
+module internal Typeahead =
+    [<FunScript.JSEmit("""
+    {0}.typeahead({
+        minLength: 3,
+        highlight: true
+    }, {
+        source: {1},
+        displayKey : {2},
+        templates : {
+            suggestion : {3}
+        }
+    });""")>]
+    let setUp 
+            (jquerySelector : obj) 
+            (fetchData : System.Action<string, 'a[] -> unit>) 
+            (displayKey : 'a -> string)
+            (suggestionTemplate : 'a -> string) : unit =
+        failwith "JavaScript Only"
+
+let withTypeahead fetchData selectKey suggestionTemplate f =
+    let fetchData = System.Action<_,_>(fun query cb -> 
+        async {
+            let! data = fetchData query 
+            cb data
+        } |> Async.StartImmediate)
+    let suggestionTemplate x =
+        Compiler.compileSection (suggestionTemplate x)
+    f |> FormQuery.mapElements (fun elements context ->
+        elements |> Array.map (fun element ->
+            element |> Element.appendSetUpByJQuery (fun q ->
+                Typeahead.setUp q fetchData selectKey suggestionTemplate
+                Disposable.empty
+            )))
+
 /// Creates a text input with the label and placeholder text provided.
 let text labelText placeholderText validate = 
     InputFactories.text []
@@ -168,3 +205,14 @@ let radioGroupInline values validate =
         [| div [labelOffset; formSpace] (elements |> Array.toList) |])
     |> withErrorFeedback
     |> withErrorTooltip
+
+/// Creates a text input with the label and placeholder text provided.
+let typeahead labelText placeholderText fetchData selectKey suggestionTemplate validate = 
+    InputFactories.text []
+    |> withTypeahead fetchData selectKey suggestionTemplate
+    |> withPlaceholder placeholderText
+    |> validate
+    |> withErrorTooltip
+    |> withLabel labelText
+    |> withSuccessAndErrorFeedback
+    |> withErrorIconFeedback

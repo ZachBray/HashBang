@@ -23,6 +23,7 @@ let private container =
         // View Models
         container.Register<AlertsViewModel>(Lifestyle.Singleton)
         container.Register<AuthenticationViewModel>(Lifestyle.Singleton)
+        container.Register<ConversationViewModel>(Lifestyle.Singleton)
 
         // Pages + Templates
         container.Register<NavBarPageTemplate>(Lifestyle.Singleton)

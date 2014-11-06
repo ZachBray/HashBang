@@ -48,6 +48,10 @@ module Stylesheets =
 
     let rawFontAwesomeWithEmbeddedFont = Fonts.fontAwesome.ReplaceUri("../fonts/fontawesome-webfont", FontAwesome.RawStyleSheet)
 
+    
 [<JS>]
 module Scripts = 
     type Bootstrap = ResourceProvider< "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" >
+
+    type Typeahead = ResourceProvider< "http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js" >
+    

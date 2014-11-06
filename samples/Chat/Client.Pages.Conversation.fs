@@ -15,11 +15,9 @@ open Chat.Client.Templates
 open Chat.Client.ViewModels
 
 [<FunScript.JS>]
-type ConversationPage(navBarPageTemplate : NavBarPageTemplate) =
+type ConversationPage(navBarPageTemplate : NavBarPageTemplate, conversationViewModel : ConversationViewModel) =
     
     let currentUri = Routes.Conversation.View.CreateUri() 
-
-
 
     let createPage() =
         navBarPageTemplate.Apply
@@ -28,6 +26,18 @@ type ConversationPage(navBarPageTemplate : NavBarPageTemplate) =
             "Talk to people."
             [
                 p [] [] |> Element.appendText ["TODO"]
+
+                FormQuery.puree id
+                <*> Inputs.typeahead "User" "joebloggs@gmail.com" 
+                        conversationViewModel.FindUsers
+                        (fun user -> user.Email)
+                        (fun user -> p [] [] |> Element.appendText [user.FirstName + " " + user.SecondName + " | " + user.Email])
+                        (Validate.isNotEmpty)  //>> isEmail >> isRegistered)
+                |> FormQuery.withSubmitButton "Add" (fun info ->
+                    async { return () }
+                )
+                |> FormQuery.withDisablingFieldset
+                |> FormQuery.runBootstrap
             ]
     
     interface IPage with

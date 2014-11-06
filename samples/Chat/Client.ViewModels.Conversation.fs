@@ -10,7 +10,7 @@ open Chat.Server
 open Chat.Client.ViewModels
 
 [<JS>]
-type AuthenticationViewModel(alerts : AlertsViewModel, userService : IUserService, conversationService : IConversationService) =
+type ConversationViewModel(alerts : AlertsViewModel, userService : IUserService, conversationService : IConversationService) =
     
     member __.FindUsers(nameFilter : string) =
         async {

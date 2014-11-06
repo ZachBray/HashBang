@@ -11,3 +11,5 @@ Microsoft.Owin.Diagnostics
 Microsoft.Owin.Host.HttpListener
 
 FunScript.Rx
+
+FunScript.TypeScript.Binding.typeahead

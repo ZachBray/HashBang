@@ -58,6 +58,8 @@ type AuthenticationService() =
         let allBytes = Array.append passBytes saltBytes
         sha256.ComputeHash allBytes |> Convert.ToBase64String
 
+    let sanitizeEmail email =
+        (System.Uri.EscapeDataString email).Replace("%40", "@")
 
     /// Returns whether or not the email address provided has already been taken.
     member __.IsEmailRegistered(email) =
@@ -75,7 +77,7 @@ type AuthenticationService() =
                 Id = UserId.NewRandom()
                 FirstName = System.Uri.EscapeDataString details.FirstName
                 SecondName = System.Uri.EscapeDataString details.SecondName
-                Email = System.Uri.EscapeDataString details.Email
+                Email = sanitizeEmail details.Email
             }
             let salt = generateSalt()
             let saltedPassword = computeHash details.Password salt
@@ -90,7 +92,6 @@ type AuthenticationService() =
     ///       the password insecurely across the wire.
     member __.LogIn(email, password) =
         Observable.defer(fun () ->
-            let email = System.Uri.EscapeDataString email
             match users.TryGetValue(email) with
             | false, _ -> Observable.throw(exn(sprintf "Cannot find a registered user with email: %s" email))
             | true, (user, salt, saltedPassword) ->
