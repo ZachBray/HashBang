@@ -10,14 +10,14 @@ type User =
         Id : UserId
         FirstName : string
         SecondName : string
-        Email : string
+        Email : string // TODO: Don't expose email addresses. Show usernames instead.
     }
 
 /// Represents a message in a conversation
 type Message =
     {
         CorrelationId : MessageId
-        Sender : UserId
+        Sender : User // TODO: user UserId and cache users on the client instead.
         Time : string
         EscapedContent : string
     }

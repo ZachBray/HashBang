@@ -71,7 +71,7 @@ type ConversationService(tokenExchange : IAccessTokenExchangeService) =
                 | Some messages ->
                     let message = {
                         CorrelationId = details.CorrelationId
-                        Sender = user.Id
+                        Sender = user
                         Time = DateTimeOffset.UtcNow.ToString()
                         EscapedContent = System.Uri.EscapeDataString details.UnescapedContent
                     }

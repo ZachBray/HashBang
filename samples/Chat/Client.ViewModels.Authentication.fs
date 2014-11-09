@@ -13,9 +13,27 @@ open Chat.Client.ViewModels
 [<JS>]
 type AuthenticationViewModel(alerts : AlertsViewModel, authService : IAuthenticationService) =
     let mutable sessionSubscription = Disposable.empty
-    let mutable accessToken = None
+    let mutable accessTokenAndUser = None
 
-    member __.IsLoggedIn = accessToken |> Option.isSome
+    member __.GetAccessTokenAsync() =
+        Async.FromContinuations(fun (onSuccess, onError, _) ->
+            match accessTokenAndUser with
+            | None -> 
+                Globals.location.href <- Routes.Session.LogIn.CreateUri()
+                alerts.Show(Danger, "Not logged in", "Please log in again.")
+            | Some token -> onSuccess token
+        )
+
+    member __.GetAccessTokenObservable() =
+        Observable.defer(fun () ->
+            match accessTokenAndUser with
+            | None ->
+                Globals.location.href <- Routes.Session.LogIn.CreateUri()
+                alerts.Show(Danger, "Not logged in", "Please log in again.")
+                Observable.empty
+            | Some token -> Observable.result token)
+            
+    member __.IsLoggedIn = accessTokenAndUser |> Option.isSome
 
     member __.IsEmailRegistered email = authService.IsEmailRegistered email
 
@@ -25,7 +43,7 @@ type AuthenticationViewModel(alerts : AlertsViewModel, authService : IAuthentica
                 authService.LogIn(email, password) 
                 |> Observable.subscribeWithCallbacks
                     (fun token -> 
-                        accessToken <- Some token
+                        accessTokenAndUser <- Some token
                         Globals.location.href <- Routes.Conversation.View.CreateUri()
                         onValue())
                     (fun ex -> 
@@ -38,7 +56,7 @@ type AuthenticationViewModel(alerts : AlertsViewModel, authService : IAuthentica
         let oldSubscription = sessionSubscription
         sessionSubscription <- Disposable.empty
         oldSubscription.Dispose()
-        accessToken <- None
+        accessTokenAndUser <- None
         Globals.location.href <- Routes.Session.LogIn.CreateUri()
 
     member __.SignUp userDetails =
@@ -47,7 +65,7 @@ type AuthenticationViewModel(alerts : AlertsViewModel, authService : IAuthentica
                 authService.SignUp(userDetails) 
                 |> Observable.subscribeWithCallbacks
                     (fun token -> 
-                        accessToken <- Some token
+                        accessTokenAndUser <- Some token 
                         Globals.location.href <- Routes.Conversation.View.CreateUri()
                         onValue())
                     (fun ex -> 

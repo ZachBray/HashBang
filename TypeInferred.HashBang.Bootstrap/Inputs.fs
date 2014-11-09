@@ -99,7 +99,7 @@ let withErrorIconFeedback f =
 
 
 [<FunScript.JS>]
-module internal Typeahead =
+module Typeahead =
     [<FunScript.JSEmit("""
     {0}.typeahead({
         minLength: 3,

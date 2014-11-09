@@ -62,7 +62,7 @@ type NavBarPageTemplate(alerts : AlertsViewModel, auth : AuthenticationViewModel
             alerts.NewAlert |> Observable.subscribe (fun (alertType, title, error) ->
                 let alertClass =
                     match alertType with
-                    | Success -> Bootstrap.alert_success
+                    | Good -> Bootstrap.alert_success
                     | Info -> Bootstrap.alert_info
                     | Warning -> Bootstrap.alert_warning
                     | Danger -> Bootstrap.alert_danger
@@ -86,46 +86,64 @@ type NavBarPageTemplate(alerts : AlertsViewModel, auth : AuthenticationViewModel
             )
         )
 
+    let navbarToggleButton (navLinks : IHtmlTag) =
+        button [Bootstrap.navbar_toggle] [
+            span [Bootstrap.sr_only] [] |> Element.appendText ["Toggle navigation"]
+            span [Bootstrap.icon_bar] []
+            span [Bootstrap.icon_bar] []
+            span [Bootstrap.icon_bar] []
+        ] 
+        |> Element.appendClass "collapsed" //?
+        |> Unchecked.set "data-toggle" "collapse"
+        |> Unchecked.set "data-target" ("#" + navLinks.Id)
+
+    (*
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link</a></li>
+        <li><a href="#">Link</a></li>
+    *)
+
+    let navLinks currentBaseUri =
+        div [Bootstrap.collapse; Bootstrap.navbar_collapse] [
+            ul [Bootstrap.nav; Bootstrap.navbar_nav] [
+                if auth.IsLoggedIn then
+                    yield upcast navCommand "Log Out" auth.LogOut
+                else
+                    // Here we use a type-safe uri builder to that ensures our link is correct
+                    // wherever we reference it.
+                    yield upcast navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
+                    yield upcast navLink "Sign Up" (Routes.Session.SignUp.CreateUri()) currentBaseUri
+            ]
+        ]
+
     member __.Apply currentBaseUri title blurb children =
+        let navLinks = navLinks currentBaseUri
+
         body [] [
-            div [Application.site_wrapper] [
-                div [Application.site_wrapper_inner] [
-                    div [Application.cover_container] [
-
-                        div [Application.masthead; Bootstrap.clearfix] [
-                            div [Application.inner] [
-                                h3 [Application.masthead_brand] [] --> "Chat"
-                                div [Bootstrap.nav; Application.masthead_nav] [
-                                    if auth.IsLoggedIn then
-                                        yield upcast navCommand "Log Out" auth.LogOut
-                                    else
-                                        // Here we use a type-safe uri builder to that ensures our link is correct
-                                        // wherever we reference it.
-                                        yield upcast navLink "Log In" (Routes.Session.LogIn.CreateUri()) currentBaseUri
-                                        yield upcast navLink "Sign Up" (Routes.Session.SignUp.CreateUri()) currentBaseUri
-                                ]
-                            ]
-                        ]
-
-                        // Note: we took this template from: http://getbootstrap.com/examples/cover/#
-                        //       and interestingly we found a "mistake" here using the type provider.
-                        //       They reference a class cover-heading that isn't used.
-                        div [Application.inner; Application.cover] [
-                            h1 [] [] --> title
-
-                            p [Bootstrap.lead] [] --> blurb
-
-                            alertsSection()
-
-                            div [] children
-                        ]
-                    
-                        div [Application.mastfoot] [
-                            div [Application.inner] [
-                                p [] [] --> "Copyright 2014 Type Inferred Ltd."
-                            ]
-                        ]
+            nav [Bootstrap.navbar; Bootstrap.navbar_default; Bootstrap.navbar_fixed_top; Bootstrap.navbar_inverse] [
+                div [Bootstrap.container_fluid] [
+                    div [Bootstrap.navbar_header] [
+                        navbarToggleButton navLinks
+                        a [Bootstrap.navbar_brand] [] |> Element.appendText ["HashBang Chat"]
                     ]
+                    navLinks
+                ]
+            ] |> Unchecked.set "role" "navigation"
+
+            div [Bootstrap.container_fluid] [
+                yield h1 [] [] --> title :> _
+
+                yield p [Bootstrap.lead] [] --> blurb :> _
+
+                yield alertsSection() :> _
+
+                yield! children
+            ]
+                    
+            div [Application.footer] [
+                div [Bootstrap.container_fluid][
+                    p [Bootstrap.text_center] [] --> "Copyright 2014 Type Inferred Ltd."
                 ]
             ]
         ]

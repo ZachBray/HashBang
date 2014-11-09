@@ -6,11 +6,15 @@ open System
 
 type UserId = 
     | UserId of Guid
+    member userId.AsParameter = let (UserId id) = userId in id.ToString()
     static member NewRandom() = UserId(Guid.NewGuid())
 
 type ConversationId = 
     | ConversationId of Guid
+    member convId.AsParameter = let (ConversationId id) = convId in id.ToString()
+    static member Parse str = ConversationId(Guid.Parse str)
     static member NewRandom() = ConversationId(Guid.NewGuid())
+    
 
 type MessageId = 
     | MessageId of Guid

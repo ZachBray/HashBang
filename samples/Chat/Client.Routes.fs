@@ -6,12 +6,10 @@ open TypeInferred.HashBang.Routing
 /// Routes can include query parameters where the parameter types are primitives.
 type Routes = RoutesProvider<"""
 
-/                   # Session.LogIn         # Log in here
+/                                   # Session.LogIn         # Log in here
 
-/sign-up            # Session.SignUp        # Sign up here
+/sign-up                            # Session.SignUp        # Sign up here
 
-/conversation       # Conversation.View     # See conversation(s) here
-
-/user?email=string  # User.View             # See user(s) here
+/conversation?id=string_option      # Conversation.View     # See conversation(s) here
 
 """>

@@ -99,6 +99,21 @@ module FormQuery =
                 (fun reason -> processResult(Invalid reason))
             |> xs)
 
+    let mapValueAsync f (FormQuery xs) = 
+        FormQuery(fun context -> 
+            let processResult x =
+                async {
+                    let! z = f x
+                    match z with
+                    | Valid y -> context.OnValidated y
+                    | Invalid reason -> context.OnInvalidated reason
+                } |> Async.StartImmediate
+            FormContext.fromFunctions
+                context
+                (fun x -> processResult(Valid x))
+                (fun reason -> processResult(Invalid reason))
+            |> xs)
+
     let tapValue f xs = mapValue (fun x -> f x; x) xs
 
     let filter f (FormQuery xs) = 

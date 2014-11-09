@@ -4,7 +4,7 @@ open FunScript
 
 [<JS>]
 type AlertType =
-    | Success
+    | Good
     | Info
     | Warning
     | Danger

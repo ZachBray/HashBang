@@ -13,6 +13,7 @@ open Chat.Domain.Command
 
 type IUserService =
     inherit IService
+    abstract FindUserById : id:UserId -> User Result Async
     abstract FindUser : email:string -> User Result Async
     abstract FindUsers : nameFilter:string -> User[] Async
 
@@ -20,8 +21,8 @@ type IAuthenticationService =
     inherit IService
 
     abstract IsEmailRegistered : email:string -> bool Async
-    abstract SignUp : UserDetails -> AccessToken IObservable
-    abstract LogIn : email:string * password:string -> AccessToken IObservable
+    abstract SignUp : UserDetails -> (User * AccessToken) IObservable
+    abstract LogIn : email:string * password:string -> (User * AccessToken) IObservable
 
 type IAccessTokenExchangeService =
     abstract TryExchangeTokenForUser : AccessToken -> User option
@@ -31,6 +32,7 @@ type IAccessTokenExchangeService =
 type AuthenticationService() =
     
     let users = ConcurrentDictionary()
+    let usersById = ConcurrentDictionary()
     let accessTokens = ConcurrentDictionary()
     let accessTokensChanged = Event<_>()
 
@@ -82,6 +84,7 @@ type AuthenticationService() =
             let salt = generateSalt()
             let saltedPassword = computeHash details.Password salt
             if users.TryAdd(newUser.Email, (newUser, salt, saltedPassword)) then
+                usersById.TryAdd(newUser.Id, newUser) |> ignore
                 __.LogIn(details.Email, details.Password)
             else Observable.throw(exn(sprintf "Email %s is already registered." newUser.Email))
         )
@@ -101,7 +104,7 @@ type AuthenticationService() =
                 else Observable.createWithDisposable(fun observer ->
                     let user, _, _ = users.[email]
                     let accessToken = generateAccessToken user
-                    observer.OnNext accessToken
+                    observer.OnNext (user, accessToken)
                     DisposableEx.create(fun () ->
                         accessTokens.TryRemove(accessToken) |> ignore
                         accessTokensChanged.Trigger()
@@ -112,10 +115,18 @@ type AuthenticationService() =
     /// Returns the user with the provided email if any exist.
     member __.FindUser email =
         async {
-            let email = System.Uri.EscapeDataString email
+            let email = sanitizeEmail email
             match users.TryGetValue email with
             | false, _ -> return Failure ("No users exist with the email: " + System.Uri.EscapeDataString email)
             | true, (user,_,_) -> return Success user
+        }
+
+    /// Returns the user with the provided id if any exist.
+    member __.FindUserById id =
+        async {
+            match usersById.TryGetValue id with
+            | false, _ -> return Failure ("No users exist with the id: " + System.Uri.EscapeDataString id.AsParameter)
+            | true, user -> return Success user
         }
 
     /// If nameFilter has at least 3 characters this returns the users that 
@@ -148,6 +159,7 @@ type AuthenticationService() =
         member __.SignUp userDetails = __.SignUp userDetails
 
     interface IUserService with
+        member __.FindUserById id = __.FindUserById id
         member __.FindUser email = __.FindUser email
         member __.FindUsers nameFilter = __.FindUsers nameFilter
 
