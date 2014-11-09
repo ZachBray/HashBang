@@ -6,6 +6,7 @@ open TypeInferred.HashBang.Html.Extensions
 open Chat.Client
 open Chat.Client.ViewModels
 open Chat.Client.Stylesheets
+open FunScript.TypeScript
 
 module Shared =
 
@@ -54,7 +55,11 @@ type NavBarPageTemplate(alerts : AlertsViewModel, auth : AuthenticationViewModel
 
     let navCommand description action =
         li [] [
-            a [] [] --> description |> Element.onclick(fun _ -> action())
+            a [] [] --> description 
+            |> A.href "#"
+            |> Element.onclick(fun evt -> 
+                evt.preventDefault()
+                action())
         ]
 
     let alertsSection() =
