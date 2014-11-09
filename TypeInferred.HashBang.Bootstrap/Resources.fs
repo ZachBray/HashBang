@@ -3,6 +3,10 @@
 open FunScript
 open TypeInferred.HashBang
 
+module Literals =
+    [<Literal>]
+    let directory = __SOURCE_DIRECTORY__
+
 type Extension = string
 type Replacement = string
 
@@ -16,17 +20,17 @@ type FontDefinition =
             acc.Replace(uriWithoutExtension + ext, replacement)) css
 [<JS>]
 module Fonts =
-    type Glyphicons = ResourceProvider< "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/fonts/glyphicons-halflings-regular.woff" >
+    type Glyphicons = ResourceProvider< "../../lib/Bootstrap/glyphicons-halflings-regular.woff", Literals.directory >
     let glyphicons = 
         FontDefinition(
             Map [
-                ".eot", "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/fonts/glyphicons-halflings-regular.eot"
-                ".ttf", "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/fonts/glyphicons-halflings-regular.ttf"
-                ".svg", "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/fonts/glyphicons-halflings-regular.svg"
+                ".eot", "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/fonts/glyphicons-halflings-regular.eot"
+                ".ttf", "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/fonts/glyphicons-halflings-regular.ttf"
+                ".svg", "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/fonts/glyphicons-halflings-regular.svg"
                 ".woff", Glyphicons.RawDataUri
             ])
 
-    type FontAwesome =  ResourceProvider< "http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.woff" >
+    type FontAwesome =  ResourceProvider< "../../lib/FontAwesome/fontawesome-webfont.woff", Literals.directory >
 
     let fontAwesome = 
         FontDefinition(
@@ -40,18 +44,18 @@ module Fonts =
 [<JS>]
 module Stylesheets =
     /// Static stylesheet from CDN (unmonitored)
-    type Bootstrap = CssClassesProvider< "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css", ShouldMonitorChanges=false >
+    type Bootstrap = CssClassesProvider< "../../lib/Bootstrap/bootstrap.min.css", ShouldMonitorChanges=false, Directory=Literals.directory >
     
     let rawBootstrapWithEmeddedFont = Fonts.glyphicons.ReplaceUri("../fonts/glyphicons-halflings-regular", Bootstrap.RawStyleSheet)
 
-    type FontAwesome = CssClassesProvider< "http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css", ShouldMonitorChanges=false >
+    type FontAwesome = CssClassesProvider< "../../lib/FontAwesome/font-awesome.min.css", ShouldMonitorChanges=false, Directory=Literals.directory >
 
     let rawFontAwesomeWithEmbeddedFont = Fonts.fontAwesome.ReplaceUri("../fonts/fontawesome-webfont", FontAwesome.RawStyleSheet)
 
     
 [<JS>]
 module Scripts = 
-    type Bootstrap = ResourceProvider< "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" >
+    type Bootstrap = ResourceProvider< "../../lib/Bootstrap/bootstrap.min.js", Literals.directory >
 
-    type Typeahead = ResourceProvider< "http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js" >
+    type Typeahead = ResourceProvider< "../../lib/Typeahead/typeahead.bundle.js", Literals.directory > //TODO: get min version
     

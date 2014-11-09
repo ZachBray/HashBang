@@ -69,12 +69,13 @@ type CssProviderImpl(config : TypeProviderConfig) as this =
         let providerType = ProvidedTypeDefinition(ass, nspace, "CssClassesProvider", None)
         let schemaUrl = ProvidedStaticParameter("CssFileOrUrl", typeof<string>)
         let shouldMonitorChanges = ProvidedStaticParameter("ShouldMonitorChanges", typeof<bool>)
+        let directory = ProvidedStaticParameter("Directory", typeof<string>, "")
         providerType.DefineStaticParameters(
-            [schemaUrl; shouldMonitorChanges], 
+            [schemaUrl; shouldMonitorChanges; directory], 
             fun requestedName -> 
             function
-                | [| :? string as url; :? bool as shouldMonitor |] -> 
-                    generateTypeGraph requestedName url shouldMonitor
+                | [| :? string as url; :? bool as shouldMonitor; :? string as directory |] -> 
+                    generateTypeGraph requestedName (directory + url) shouldMonitor
                 | _ -> failwith "Invalid parameters")
         this.AddNamespace(nspace, [providerType])
 
@@ -131,12 +132,13 @@ type ResourceProviderImpl(config : TypeProviderConfig) as this =
         |> Seq.distinct |> Seq.iter this.RegisterProbingFolder
         let providerType = ProvidedTypeDefinition(ass, nspace, "ResourceProvider", None)
         let schemaUrl = ProvidedStaticParameter("FileOrUrl", typeof<string>)
+        let directory = ProvidedStaticParameter("Directory", typeof<string>, "")
         providerType.DefineStaticParameters(
-            [schemaUrl], 
+            [schemaUrl; directory], 
             fun requestedName -> 
             function
-                | [| :? string as url |] -> 
-                    generateTypeGraph requestedName url
+                | [| :? string as url; :? string as directory |] ->
+                    generateTypeGraph requestedName (directory + url)
                 | _ -> failwith "Invalid parameters")
         this.AddNamespace(nspace, [providerType])
 
