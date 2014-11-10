@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8EC1
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Chat", "samples\Chat\Chat.fsproj", "{28E6E68F-9EB9-464B-B269-0075A7AA892B}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Bootstrap", "TypeInferred.HashBang.Bootstrap\TypeInferred.HashBang.Bootstrap.fsproj", "{8B4F0575-9631-4741-9936-9F55979776C5}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TypeInferred.HashBang.Bootstrap", "src\TypeInferred.HashBang.Bootstrap\TypeInferred.HashBang.Bootstrap.fsproj", "{8B4F0575-9631-4741-9936-9F55979776C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
