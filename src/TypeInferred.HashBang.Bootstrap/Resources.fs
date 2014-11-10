@@ -20,7 +20,7 @@ type FontDefinition =
             acc.Replace(uriWithoutExtension + ext, replacement)) css
 [<JS>]
 module Fonts =
-    type Glyphicons = ResourceProvider< "../../../lib/Bootstrap/glyphicons-halflings-regular.woff", Literals.directory >
+    type Glyphicons = ResourceProvider< "../../lib/Bootstrap/glyphicons-halflings-regular.woff" >
     let glyphicons = 
         FontDefinition(
             Map [
